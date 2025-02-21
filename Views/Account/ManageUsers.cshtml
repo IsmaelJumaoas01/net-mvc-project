@@ -1,0 +1,249 @@
+@model homeowner.ViewModels.ManageUsersViewModel
+
+@{
+    ViewBag.Title = "Manage Users";
+}
+
+<h1>Manage Users</h1>
+
+<!-- Greeting -->
+<p>Welcome, @Context.Session.GetString("Username")!</p>
+
+<!-- Flash Messages -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<!-- Add User Button -->
+<button class="btn btn-primary" onclick="showAddUserModal()">Add User</button>
+<a asp-controller="Account" asp-action="Logout" class="btn btn-secondary">Logout</a>
+<button class="btn btn-secondary" onclick="history.back()">Back</button>
+
+<!-- User Management Table -->
+<h2>Users</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>Last Name</th>
+            <th>Phone Number</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td>@user.Username</td>
+                <td>@user.Email</td>
+                <td>@user.FirstName</td>
+                <td>@user.MiddleName</td>
+                <td>@user.LastName</td>
+                <td>@user.PhoneNumber</td>
+                <td>@user.Role</td>
+                <td>
+                    <button class="btn btn-primary" onclick="showEditModal(@user.UserID)">Edit</button>
+                    <a asp-action="DeleteUser" asp-route-id="@user.UserID" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUserModalLabel">Add User</h5>
+                <button type="button" class="close" onclick="closeModal('#addUserModal')" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addUserForm" asp-action="AddUser" method="post">
+                    <div class="form-group">
+                        <label asp-for="AddUser.Username"></label>
+                        <input asp-for="AddUser.Username" class="form-control" name="Username" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="AddUser.PasswordHash"></label>
+                        <input asp-for="AddUser.PasswordHash" class="form-control" type="password" name="PasswordHash" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="AddUser.Email"></label>
+                        <input asp-for="AddUser.Email" class="form-control" name="Email" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="AddUser.FirstName"></label>
+                        <input asp-for="AddUser.FirstName" class="form-control" name="FirstName" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="AddUser.MiddleName"></label>
+                        <input asp-for="AddUser.MiddleName" class="form-control" name="MiddleName" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="AddUser.LastName"></label>
+                        <input asp-for="AddUser.LastName" class="form-control" name="LastName" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="AddUser.PhoneNumber"></label>
+                        <input asp-for="AddUser.PhoneNumber" class="form-control" name="PhoneNumber" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="AddUser.Role"></label>
+                        <select asp-for="AddUser.Role" class="form-control" name="Role">
+                            <option value="Homeowner">Homeowner</option>
+                            @if (Context.Session.GetString("Role") == "Administrator")
+                            {
+                                <option value="Staff">Staff</option>
+                                <option value="Administrator">Administrator</option>
+                            }
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+                <button type="button" class="close" onclick="closeModal('#editUserModal')" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editUserForm" asp-action="EditUser" method="post">
+                    <div class="form-group">
+                        <label asp-for="EditUser.Username"></label>
+                        <input asp-for="EditUser.Username" class="form-control" name="Username" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="EditUser.PasswordHash"></label>
+                        <input asp-for="EditUser.PasswordHash" class="form-control" type="password" name="PasswordHash" placeholder="Current password" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="EditUser.Email"></label>
+                        <input asp-for="EditUser.Email" class="form-control" name="Email" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="EditUser.FirstName"></label>
+                        <input asp-for="EditUser.FirstName" class="form-control" name="FirstName" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="EditUser.MiddleName"></label>
+                        <input asp-for="EditUser.MiddleName" class="form-control" name="MiddleName" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="EditUser.LastName"></label>
+                        <input asp-for="EditUser.LastName" class="form-control" name="LastName" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="EditUser.PhoneNumber"></label>
+                        <input asp-for="EditUser.PhoneNumber" class="form-control" name="PhoneNumber" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="EditUser.Role"></label>
+                        <select asp-for="EditUser.Role" class="form-control" name="Role">
+                            <option value="Homeowner">Homeowner</option>
+                            @if (Context.Session.GetString("Role") == "Administrator")
+                            {
+                                <option value="Staff">Staff</option>
+                                <option value="Administrator">Administrator</option>
+                            }
+                        </select>
+                    </div>
+                    <input type="hidden" asp-for="EditUser.UserID" name="UserID" />
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showAddUserModal() {
+            $('#addUserModal').modal('show');
+        }
+
+        function showEditModal(userId) {
+            $.ajax({
+                url: '@Url.Action("GetUser", "Account")',
+                type: 'GET',
+                data: { id: userId },
+                success: function (data) {
+                    $('#editUserForm').find('input[name="Username"]').val(data.username);
+                    $('#editUserForm').find('input[name="PasswordHash"]').attr('placeholder', 'Current password');
+                    $('#editUserForm').find('input[name="Email"]').val(data.email);
+                    $('#editUserForm').find('input[name="FirstName"]').val(data.firstName);
+                    $('#editUserForm').find('input[name="MiddleName"]').val(data.middleName);
+                    $('#editUserForm').find('input[name="LastName"]').val(data.lastName);
+                    $('#editUserForm').find('input[name="PhoneNumber"]').val(data.phoneNumber);
+                    $('#editUserForm').find('select[name="Role"]').val(data.role);
+                    $('#editUserForm').find('input[name="UserID"]').val(data.userID);
+                    $('#editUserModal').modal('show');
+                }
+            });
+        }
+
+        function closeModal(modalId) {
+            $(modalId).modal('hide');
+        }
+
+        $(document).ready(function () {
+            $('#addUserForm').submit(function (event) {
+                event.preventDefault();
+                var form = $(this);
+                $.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    data: form.serialize(),
+                    success: function (response) {
+                        closeModal('#addUserModal');
+                        location.reload();
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Error: ' + xhr.responseText);
+                    }
+                });
+            });
+
+            $('#editUserForm').submit(function (event) {
+                event.preventDefault();
+                var form = $(this);
+                $.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    data: form.serialize(),
+                    success: function (response) {
+                        closeModal('#editUserModal');
+                        location.reload();
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Error: ' + xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+}

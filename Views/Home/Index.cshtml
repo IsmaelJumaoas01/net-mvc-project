@@ -1,0 +1,143 @@
+@{
+    ViewBag.Title = "Welcome to Your Subdivision";
+    bool isLoggedIn = ViewBag.IsLoggedIn ?? false;
+    string username = ViewBag.Username ?? "Guest";
+}
+
+<link rel="stylesheet" href="~/css/home.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" asp-controller="Home" asp-action="Index">Subdivision Portal</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            @if (isLoggedIn)
+            {
+                <li class="nav-item">
+                    <a class="nav-link">Welcome, @username!</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-danger text-white" asp-controller="Account" asp-action="Logout">Logout</a>
+                </li>
+            }
+            else
+            {
+                <li class="nav-item">
+                    <a class="nav-link btn btn-primary text-white" asp-controller="Account" asp-action="Login">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-secondary text-white" asp-controller="Account" asp-action="Register">Register</a>
+                </li>
+            }
+        </ul>
+    </div>
+</nav>
+
+<!-- Flash Messages -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<!-- Hero Section -->
+<div class="hero" style="background-image: url('/images/hero-bg.jpg'); background-size: cover; background-position: center;">
+    <div class="overlay">
+        <h1>Welcome to Our Subdivision</h1>
+        <p>Your community portal for announcements, payments, reservations, and more.</p>
+
+        @if (!isLoggedIn)
+        {
+            <div class="auth-buttons">
+                <a asp-controller="Account" asp-action="Login" class="btn btn-primary">Login</a>
+                <a asp-controller="Account" asp-action="Register" class="btn btn-secondary">Register</a>
+            </div>
+        }
+        else
+        {
+            <div class="dashboard">
+                <p>Welcome back, @username!</p>
+                <a asp-controller="Dashboard" asp-action="Index" class="btn btn-primary">Go to Dashboard</a>
+                <a asp-controller="Account" asp-action="Logout" class="btn btn-danger">Logout</a>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Features Section -->
+<section class="features">
+    <h2>Explore Our Community Services</h2>
+    <div class="feature-list">
+        <div class="feature">
+            <i class="fas fa-newspaper fa-3x"></i>
+            <h3>Community News</h3>
+            <p>Stay updated with the latest announcements and events.</p>
+        </div>
+        <div class="feature">
+            <i class="fas fa-credit-card fa-3x"></i>
+            <h3>Online Payments</h3>
+            <p>Pay your dues and fees securely through our portal.</p>
+        </div>
+        <div class="feature">
+            <i class="fas fa-calendar-alt fa-3x"></i>
+            <h3>Facility Booking</h3>
+            <p>Reserve function halls, sports courts, and other amenities.</p>
+        </div>
+        <div class="feature">
+            <i class="fas fa-tools fa-3x"></i>
+            <h3>Service Requests</h3>
+            <p>Request maintenance, security assistance, and other services.</p>
+        </div>
+    </div>
+</section>
+
+<style>
+    .hero {
+        position: relative;
+        color: white;
+        text-align: center;
+        padding: 100px 20px;
+    }
+    .hero .overlay {
+        background: rgba(0, 0, 0, 0.5);
+        padding: 50px;
+    }
+    .auth-buttons .btn, .dashboard .btn {
+        margin: 10px;
+    }
+    .features {
+        padding: 50px 20px;
+        text-align: center;
+    }
+    .feature-list {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+    }
+    .feature {
+        flex: 1 1 200px;
+        margin: 20px;
+        padding: 20px;
+        background: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .feature i {
+        color: #007bff;
+        margin-bottom: 10px;
+    }
+</style>

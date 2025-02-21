@@ -1,0 +1,10 @@
+@{
+    ViewBag.Title = "Staff Dashboard";
+}
+
+<h1>Staff Dashboard</h1>
+<p>Welcome, @Context.Session.GetString("Username")!</p>
+<!-- Add staff-specific content here -->
+
+<a asp-controller="Account" asp-action="ManageUsers" class="btn btn-primary">Manage Users</a>
+<a asp-controller="Account" asp-action="Logout" class="btn btn-secondary">Logout</a>

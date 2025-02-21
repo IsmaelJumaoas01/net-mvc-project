@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\homeowner_app.props" />
+</Project>

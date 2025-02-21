@@ -1,0 +1,67 @@
+@model homeowner.Models.UserModel
+
+@{
+    ViewBag.Title = "Register Homeowner";
+    ViewBag.PageCss = "~/css/register.css";
+}
+
+<div class="auth-container">
+    <h2>Register Homeowner</h2>
+
+    @if (TempData["Success"] != null)
+    {
+        <p class="success">@TempData["Success"]</p>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <form asp-action="Register" method="POST">
+        <div class="input-field">
+            <label asp-for="Username"></label>
+            <input asp-for="Username" required />
+            <span asp-validation-for="Username" class="error"></span>
+        </div>
+
+        <div class="input-field">
+            <label for="Password">Password</label>
+            <input name="password" type="password" required />
+            <span asp-validation-for="PasswordHash" class="error"></span>
+        </div>
+
+        <div class="input-field">
+            <label asp-for="Email"></label>
+            <input asp-for="Email" required />
+            <span asp-validation-for="Email" class="error"></span>
+        </div>
+
+        <div class="input-field">
+            <label asp-for="FirstName"></label>
+            <input asp-for="FirstName" />
+            <span asp-validation-for="FirstName" class="error"></span>
+        </div>
+
+        <div class="input-field">
+            <label asp-for="MiddleName"></label>
+            <input asp-for="MiddleName" />
+            <span asp-validation-for="MiddleName" class="error"></span>
+        </div>
+
+        <div class="input-field">
+            <label asp-for="LastName"></label>
+            <input asp-for="LastName" />
+            <span asp-validation-for="LastName" class="error"></span>
+        </div>
+
+        <div class="input-field">
+            <label asp-for="PhoneNumber"></label>
+            <input asp-for="PhoneNumber" />
+            <span asp-validation-for="PhoneNumber" class="error"></span>
+        </div>
+
+        <button type="submit" class="register-button">Register Homeowner</button>
+    </form>
+</div>
