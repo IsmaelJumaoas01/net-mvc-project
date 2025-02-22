@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using MySql.Data.MySqlClient;
+using homeowner.Models;
+using System.Collections.Generic;
 
 namespace homeowner.Controllers
 {
@@ -21,6 +24,30 @@ namespace homeowner.Controllers
             {
                 return RedirectToAction("AdminDashboard");
             }
+
+            List<AnnouncementModel> announcements = new List<AnnouncementModel>();
+
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = "SELECT * FROM announcements ORDER BY CreatedAt DESC";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    announcements.Add(new AnnouncementModel
+                    {
+                        AnnouncementID = reader.GetInt32("AnnouncementID"),
+                        Title = reader.GetString("Title"),
+                        Content = reader.GetString("Content"),
+                        CreatedAt = reader.GetDateTime("CreatedAt"),
+                        UserID = reader.GetInt32("UserID")
+                    });
+                }
+            }
+
+            ViewBag.Announcements = announcements;
 
             return View();
         }

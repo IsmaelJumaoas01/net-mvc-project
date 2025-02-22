@@ -18,7 +18,6 @@ namespace homeowner_app
             app.UseAuthorization();
             app.UseSession(); // ✅ Enable Session Middleware
 
-
             // Configure endpoints
             app.MapControllerRoute(
                 name: "default",
@@ -31,8 +30,14 @@ namespace homeowner_app
                 defaults: new { controller = "Account", action = "Register" }
             );
 
-            app.Run();
+            // Add route for Announcements
+            app.MapControllerRoute(
+                name: "Announcements",
+                pattern: "announcements",
+                defaults: new { controller = "Announcement", action = "Index" }
+            );
 
+            app.Run();
         }
     }
 }

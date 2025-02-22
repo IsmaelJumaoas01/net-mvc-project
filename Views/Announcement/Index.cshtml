@@ -1,0 +1,202 @@
+@model IEnumerable<homeowner.Models.AnnouncementModel>
+
+@{
+    ViewBag.Title = "Announcements";
+}
+<!-- Add these in your _Layout.cshtml or Index.cshtml -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<h1>Announcements</h1>
+
+@if (ViewBag.Role == "Administrator" || ViewBag.Role == "Staff")
+{
+    <button class="btn btn-primary" data-toggle="modal" data-target="#createModal">Create New Announcement</button>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Created At</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var announcement in Model)
+        {
+            <tr>
+                <td>@announcement.AnnouncementID</td>
+                <td>@announcement.Title</td>
+                <td>@announcement.Content</td>
+                <td>@announcement.CreatedAt</td>
+                <td>
+                    @if (ViewBag.Role == "Administrator" || ViewBag.Role == "Staff")
+                    {
+                        <button class="btn btn-warning"
+                            onclick="showEditModal(@announcement.AnnouncementID, '@announcement.Title', '@announcement.Content')">Edit</button>
+                        <button class="btn btn-danger"
+                            onclick="showDeleteModal(@announcement.AnnouncementID, '@announcement.Title')">Delete</button>
+
+
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Create Modal -->
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createModalLabel">Create Announcement</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="createForm">
+                    <div class="form-group">
+                        <label for="createTitle">Title</label>
+                        <input type="text" class="form-control" id="createTitle" name="Title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="createContent">Content</label>
+                        <textarea class="form-control" id="createContent" name="Content" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Announcement</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <input type="hidden" id="editAnnouncementID" name="AnnouncementID" required>
+                    <div class="form-group">
+                        <label for="editTitle">Title</label>
+                        <input type="text" class="form-control" id="editTitle" name="Title">
+                    </div>
+                    <div class="form-group">
+                        <label for="editContent">Content</label>
+                        <textarea class="form-control" id="editContent" name="Content"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Announcement</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this announcement?</p>
+                <form id="deleteForm">
+                    <input type="hidden" id="deleteAnnouncementID" name="AnnouncementID">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showEditModal(id, title, content) {
+            $('#editAnnouncementID').val(id);
+            $('#editTitle').val(title);
+            $('#editContent').val(content);
+            $('#editModal').modal('show');
+        }
+
+        function showDeleteModal(id, title) {
+            $('#deleteAnnouncementID').val(id);
+            $('#deleteModal .modal-body p').text(`Are you sure you want to delete the announcement titled "${title}"?`);
+            $('#deleteModal').modal('show');
+        }
+
+        $(document).ready(function () {
+            // Handle create form submission
+            $('#createForm').submit(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '@Url.Action("Create", "Announcement")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        console.log(response);
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            });
+
+            // Handle edit form submission
+            $('#editForm').submit(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '@Url.Action("Edit", "Announcement")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        console.log(response);
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            });
+
+            // Handle delete form submission
+            $('#deleteForm').submit(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '@Url.Action("Delete", "Announcement")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        console.log(response);
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -78,6 +78,28 @@
     </div>
 </div>
 
+<!-- Announcements Section -->
+<section class="announcements">
+    <h2>Latest Announcements</h2>
+    <div class="announcement-list">
+        @if (ViewBag.Announcements != null && ViewBag.Announcements.Count > 0)
+        {
+            @foreach (var announcement in ViewBag.Announcements)
+            {
+                <div class="announcement">
+                    <h3>@announcement.Title</h3>
+                    <p>@announcement.Content</p>
+                    <p><small>Posted on @announcement.CreatedAt</small></p>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No announcements available.</p>
+        }
+    </div>
+</section>
+
 <!-- Features Section -->
 <section class="features">
     <h2>Explore Our Community Services</h2>
@@ -139,5 +161,22 @@
     .feature i {
         color: #007bff;
         margin-bottom: 10px;
+    }
+    .announcements {
+        padding: 50px 20px;
+        text-align: center;
+    }
+    .announcement-list {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .announcement {
+        background: #f9f9f9;
+        padding: 20px;
+        margin: 10px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 80%;
     }
 </style>
