@@ -56,10 +56,54 @@ namespace homeowner.Controllers
         {
             return View();
         }
-
+        
         public IActionResult AdminDashboard()
         {
             return View();
+        }
+
+        public IActionResult Profile()
+        {
+            string userId = HttpContext.Session.GetString("UserID");
+            if (string.IsNullOrEmpty(userId))
+            {
+                TempData["ErrorMessage"] = "You must be logged in to view your profile.";
+                return RedirectToAction("Login", "Account");
+            }
+
+            UserModel user = null;
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = "SELECT * FROM USERS WHERE UserID = @UserID";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UserID", userId);
+                var reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    user = new UserModel
+                    {
+                        UserID = reader.GetInt32("UserID"),
+                        Username = reader.GetString("Username"),
+                        Email = reader.GetString("Email"),
+                        FirstName = reader["FirstName"] as string,
+                        MiddleName = reader["MiddleName"] as string,
+                        LastName = reader["LastName"] as string,
+                        PhoneNumber = reader["PhoneNumber"] as string,
+                        Role = reader.GetString("Role"),
+                        CreatedAt = reader.GetDateTime("CreatedAt")
+                    };
+                }
+            }
+
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "User not found.";
+                return RedirectToAction("Login", "Account");
+            }
+
+            return View(user);
         }
     }
 }

@@ -59,73 +59,113 @@ namespace homeowner.Controllers
                             string role = reader["Role"].ToString();
                             if (role == "Staff")
                             {
-                                return RedirectToAction("StaffDashboard", "Home");
+                                return Json(new { success = true, redirectUrl = Url.Action("StaffDashboard", "Home") });
                             }
                             else if (role == "Administrator")
                             {
-                                return RedirectToAction("AdminDashboard", "Home");
+                                return Json(new { success = true, redirectUrl = Url.Action("AdminDashboard", "Home") });
                             }
                             else
                             {
-                                return RedirectToAction("Index", "Home");
+                                return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
                             }
                         }
                         else
                         {
                             _logger.LogWarning("Invalid password for user: {Username}", username);
-                            TempData["ErrorMessage"] = "Invalid password.";
+                            return Json(new { success = false, message = "Invalid password." });
                         }
                     }
                     else
                     {
                         _logger.LogWarning("User not found: {Username}", username);
-                        TempData["ErrorMessage"] = "User not found.";
+                        return Json(new { success = false, message = "User not found." });
                     }
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during login process for user: {Username}", username);
-                TempData["ErrorMessage"] = "An error occurred while logging in. Please try again.";
+                return Json(new { success = false, message = "An error occurred while logging in. Please try again." });
             }
-
-            return View();
         }
-
         public IActionResult Register()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult Register(string username, string password, string email, string firstName, string middleName, string lastName, string phoneNumber)
+        public IActionResult Register(string username, string password, string confirmPassword, string email, string firstName, string middleName, string lastName, string phoneNumber)
         {
             if (string.IsNullOrWhiteSpace(password))
             {
-                TempData["ErrorMessage"] = "Password is required.";
-                return View();
+                return Json(new { success = false, message = "Password is required." });
+            }
+
+            if (password != confirmPassword)
+            {
+                return Json(new { success = false, message = "Passwords do not match." });
             }
 
             string hashedPassword = HashPassword(password);
 
-            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            try
             {
-                conn.Open();
-                string query = "INSERT INTO USERS (Username, PasswordHash, Email, FirstName, MiddleName, LastName, PhoneNumber, Role, CreatedAt) VALUES (@Username, @Password, @Email, @FirstName, @MiddleName, @LastName, @PhoneNumber, 'Homeowner', NOW())";
-                MySqlCommand cmd = new MySqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@Username", username);
-                cmd.Parameters.AddWithValue("@Password", hashedPassword);
-                cmd.Parameters.AddWithValue("@Email", email);
-                cmd.Parameters.AddWithValue("@FirstName", firstName);
-                cmd.Parameters.AddWithValue("@MiddleName", middleName);
-                cmd.Parameters.AddWithValue("@LastName", lastName);
-                cmd.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
+                using (MySqlConnection conn = new MySqlConnection(connectionString))
+                {
+                    conn.Open();
 
-                cmd.ExecuteNonQuery();
+                    // Check for duplicate username
+                    string checkUsernameQuery = "SELECT COUNT(*) FROM USERS WHERE Username = @Username";
+                    MySqlCommand checkUsernameCmd = new MySqlCommand(checkUsernameQuery, conn);
+                    checkUsernameCmd.Parameters.AddWithValue("@Username", username);
+                    long usernameCount = (long)checkUsernameCmd.ExecuteScalar();
+                    if (usernameCount > 0)
+                    {
+                        return Json(new { success = false, message = "Username already exists." });
+                    }
+
+                    // Check for duplicate email
+                    string checkEmailQuery = "SELECT COUNT(*) FROM USERS WHERE Email = @Email";
+                    MySqlCommand checkEmailCmd = new MySqlCommand(checkEmailQuery, conn);
+                    checkEmailCmd.Parameters.AddWithValue("@Email", email);
+                    long emailCount = (long)checkEmailCmd.ExecuteScalar();
+                    if (emailCount > 0)
+                    {
+                        return Json(new { success = false, message = "Email already exists." });
+                    }
+
+                    // Check for duplicate phone number
+                    string checkPhoneNumberQuery = "SELECT COUNT(*) FROM USERS WHERE PhoneNumber = @PhoneNumber";
+                    MySqlCommand checkPhoneNumberCmd = new MySqlCommand(checkPhoneNumberQuery, conn);
+                    checkPhoneNumberCmd.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
+                    long phoneNumberCount = (long)checkPhoneNumberCmd.ExecuteScalar();
+                    if (phoneNumberCount > 0)
+                    {
+                        return Json(new { success = false, message = "Phone number already exists." });
+                    }
+
+                    // Insert new user
+                    string query = "INSERT INTO USERS (Username, PasswordHash, Email, FirstName, MiddleName, LastName, PhoneNumber, Role, CreatedAt) VALUES (@Username, @Password, @Email, @FirstName, @MiddleName, @LastName, @PhoneNumber, 'Homeowner', NOW())";
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@Username", username);
+                    cmd.Parameters.AddWithValue("@Password", hashedPassword);
+                    cmd.Parameters.AddWithValue("@Email", email);
+                    cmd.Parameters.AddWithValue("@FirstName", firstName);
+                    cmd.Parameters.AddWithValue("@MiddleName", middleName);
+                    cmd.Parameters.AddWithValue("@LastName", lastName);
+                    cmd.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
+
+                    cmd.ExecuteNonQuery();
+                }
+
+                return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
             }
-
-            TempData["SuccessMessage"] = "Registration successful. Please log in.";
-            return RedirectToAction("Login");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during registration process for user: {Username}", username);
+                return Json(new { success = false, message = "An error occurred while registering. Please try again." });
+            }
         }
 
         public IActionResult ManageUsers()
@@ -367,5 +407,50 @@ namespace homeowner.Controllers
             TempData["SuccessMessage"] = "You have been logged out.";
             return RedirectToAction("Index", "Home");
         }
+        public IActionResult Profile()
+        {
+            string userId = HttpContext.Session.GetString("UserID");
+            if (string.IsNullOrEmpty(userId))
+            {
+                TempData["ErrorMessage"] = "You must be logged in to view your profile.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            UserModel user = null;
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = "SELECT * FROM USERS WHERE UserID = @UserID";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UserID", userId);
+                var reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    user = new UserModel
+                    {
+                        UserID = reader.GetInt32("UserID"),
+                        Username = reader.GetString("Username"),
+                        Email = reader.GetString("Email"),
+                        FirstName = reader["FirstName"] as string,
+                        MiddleName = reader["MiddleName"] as string,
+                        LastName = reader["LastName"] as string,
+                        PhoneNumber = reader["PhoneNumber"] as string,
+                        Role = reader.GetString("Role"),
+                        CreatedAt = reader.GetDateTime("CreatedAt")
+                    };
+                }
+            }
+
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "User not found.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View(user);
+        }
+
+
     }
 }

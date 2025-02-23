@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace homeowner.Controllers
 {
+    [Route("announcements")]
     public class AnnouncementController : Controller
     {
         private readonly string connectionString = "server=localhost;database=HOMEOWNERS_DB;user=root;password=;";
@@ -16,6 +17,8 @@ namespace homeowner.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
+        [Route("")]
         public IActionResult Index()
         {
             List<AnnouncementModel> announcements = new List<AnnouncementModel>();
@@ -41,10 +44,11 @@ namespace homeowner.Controllers
             }
 
             ViewBag.Role = HttpContext.Session.GetString("Role");
-            return View(announcements);
+            return View("~/Views/Admin_Staff/Index.cshtml", announcements);
         }
 
         [HttpPost]
+        [Route("create")]
         public IActionResult Create(AnnouncementModel announcement)
         {
             string role = HttpContext.Session.GetString("Role");
@@ -71,6 +75,7 @@ namespace homeowner.Controllers
         }
 
         [HttpPost]
+        [Route("edit")]
         public IActionResult Edit(AnnouncementModel announcement)
         {
             string role = HttpContext.Session.GetString("Role");
@@ -95,7 +100,9 @@ namespace homeowner.Controllers
 
             return Json(new { success = true });
         }
+
         [HttpPost]
+        [Route("delete")]
         public IActionResult Delete(int AnnouncementID)
         {
             string role = HttpContext.Session.GetString("Role");

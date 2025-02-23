@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "Fa1Et978Xi0+Gja9izXepwE6Vbaob7UewU+98T44KQY=",
+  "Hash": "N4ADII1NlLeEJ+FyceY0/+X6BcPG2SVhyY781CicUjM=",
   "Source": "homeowner_app",
   "BasePath": "_content/homeowner_app",
   "Mode": "Default",
@@ -73,8 +73,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "7cemnscc12",
-      "Integrity": "FxlAZ1mD8fgZSgPSdmUtZCzp0J7Wubr8LW/P8zG0eXc=",
+      "Fingerprint": "p6owmhlvdh",
+      "Integrity": "j/N4xi/MOUj7cKQ9JbhGWdP6kDxT2/q95Ndzq4sdidY=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\home.css"
@@ -1384,51 +1384,6 @@
   ],
   "Endpoints": [
     {
-      "Route": "css/home.7cemnscc12.css",
-      "AssetFile": "C:\\Users\\admin\\Desktop\\net-mvc-project\\wwwroot\\css\\home.css",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "1742"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"FxlAZ1mD8fgZSgPSdmUtZCzp0J7Wubr8LW/P8zG0eXc=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Fri, 21 Feb 2025 23:14:06 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "7cemnscc12"
-        },
-        {
-          "Name": "label",
-          "Value": "css/home.css"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-FxlAZ1mD8fgZSgPSdmUtZCzp0J7Wubr8LW/P8zG0eXc="
-        }
-      ]
-    },
-    {
       "Route": "css/home.css",
       "AssetFile": "C:\\Users\\admin\\Desktop\\net-mvc-project\\wwwroot\\css\\home.css",
       "Selectors": [],
@@ -1439,7 +1394,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "1742"
+          "Value": "1740"
         },
         {
           "Name": "Content-Type",
@@ -1447,11 +1402,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"FxlAZ1mD8fgZSgPSdmUtZCzp0J7Wubr8LW/P8zG0eXc=\""
+          "Value": "\"j/N4xi/MOUj7cKQ9JbhGWdP6kDxT2/q95Ndzq4sdidY=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Fri, 21 Feb 2025 23:14:06 GMT"
+          "Value": "Sun, 23 Feb 2025 10:33:45 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1461,7 +1416,52 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-FxlAZ1mD8fgZSgPSdmUtZCzp0J7Wubr8LW/P8zG0eXc="
+          "Value": "sha256-j/N4xi/MOUj7cKQ9JbhGWdP6kDxT2/q95Ndzq4sdidY="
+        }
+      ]
+    },
+    {
+      "Route": "css/home.p6owmhlvdh.css",
+      "AssetFile": "C:\\Users\\admin\\Desktop\\net-mvc-project\\wwwroot\\css\\home.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1740"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"j/N4xi/MOUj7cKQ9JbhGWdP6kDxT2/q95Ndzq4sdidY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 23 Feb 2025 10:33:45 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "p6owmhlvdh"
+        },
+        {
+          "Name": "label",
+          "Value": "css/home.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-j/N4xi/MOUj7cKQ9JbhGWdP6kDxT2/q95Ndzq4sdidY="
         }
       ]
     },

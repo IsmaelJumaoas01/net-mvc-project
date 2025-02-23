@@ -30,11 +30,11 @@ namespace homeowner_app
                 defaults: new { controller = "Account", action = "Register" }
             );
 
-            // Add route for Announcements
+            // Add route for Profile Page
             app.MapControllerRoute(
-                name: "Announcements",
-                pattern: "announcements",
-                defaults: new { controller = "Announcement", action = "Index" }
+                name: "Profile",
+                pattern: "profile",
+                defaults: new { controller = "Home", action = "Profile" }
             );
 
             app.Run();
