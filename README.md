@@ -9,8 +9,9 @@ Homeowner_Application (MVC/.NET8 PROJECT)
 | Date       | Version | Changes/Updates |
 |------------|---------|----------------|
 | 2025-02-21 | v1.0.0  | Migrated to this Repo |
-| 2025-02-22 | v1.1.0  | Added the Notification Function but not yet done for Homeowner Side |
-| 2025-02-23 | v1.2.0  | Homeowner UI improvements, Added the Manage Details of the Homeowner,  |
+| 2025-02-22 | v1.0.1  | Added the Notification Function but not yet done for Homeowner Side |
+| 2025-02-23 | v1.0.2 | Homeowner UI improvements, Added the Manage Details of the Homeowner,  |
+| YYYY-MM-DD | v1.0.3  | ===== |
 
 ---
 
