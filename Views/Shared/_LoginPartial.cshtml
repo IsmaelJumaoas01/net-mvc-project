@@ -27,7 +27,7 @@
         $('#loginForm').on('submit', function (e) {
             e.preventDefault();
             $.ajax({
-                url: '@Url.Action("Login", "Account")',
+                url: '@Url.Action("Login", "LoginRegister")',
                 type: 'POST',
                 data: $(this).serialize(),
                 success: function (response) {
@@ -48,7 +48,7 @@
 <style>
     .form-wrapper {
         padding: 40px;
-        background: white; /* Revert to white background */
+        background: white;
         border-radius: 15px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     }
@@ -94,7 +94,6 @@
         background-color: rgba(0, 0, 0, 0.7);
     }
 
-    /* Ensure modal is centered immediately */
     .modal-dialog-centered {
         display: flex;
         align-items: center;
@@ -111,6 +110,6 @@
     }
 
     .modal-content {
-        overflow: hidden; /* Prevent horizontal scroll */
+        overflow: hidden;
     }
 </style>

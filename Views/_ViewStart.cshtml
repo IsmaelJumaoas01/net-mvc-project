@@ -1,3 +1,16 @@
 ﻿@{
     Layout = "_Layout";
 }
+
+@using Microsoft.AspNetCore.Http
+@{
+    // Retrieve the IHttpContextAccessor from the DI container
+    var httpContextAccessor = Context.RequestServices.GetService(typeof(IHttpContextAccessor)) as IHttpContextAccessor;
+    if (httpContextAccessor != null)
+    {
+        var session = httpContextAccessor.HttpContext.Session;
+        ViewBag.IsLoggedIn = session.GetString("UserID") != null;
+        ViewBag.Username = session.GetString("Username") ?? "Guest";
+        ViewBag.Role = session.GetString("Role") ?? "Homeowner";
+    }
+}

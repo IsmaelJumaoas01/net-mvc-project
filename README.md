@@ -10,16 +10,17 @@ Homeowner_Application (MVC/.NET8 PROJECT)
 |------------|---------|----------------|
 | 2025-02-21 | v1.0.0  | Migrated to this Repo |
 | 2025-02-22 | v1.0.1  | Added the Notification Function but not yet done for Homeowner Side |
-| 2025-02-23 | v1.0.2 | Homeowner UI improvements, Added the Manage Details of the Homeowner,  |
-| YYYY-MM-DD | v1.0.3  | ===== |
+| 2025-02-23 | v1.0.2  | Homeowner UI improvements, Added the Manage Details of the Homeowner,  |
+| 2025-02-24 | v1.0.3  | Added a ui For Notification/Announcements/News for homeowner side, added changelog UI, improve user Session, Header set as shared view |
+| 2025-02-24 | v1.0.4  | ===== |
 
 ---
 
-## 🔧 Features & Fixes Needed Before next week (Exteneded til 2025-02-24)
+## 🔧 Features & Fixes Needed Before next week (Extended til 2025-02-24)
 
 | Feature/Fix | Description | Status |
 |-------------|-------------|--------|
-| Notification | Homeowner Notifciation side needed to be improved | 🔄 In Progress |
+| ==== | ==== | 🔄 In Progress |
 | ==== | ===== | ✅ Completed |
 | ==== | ==== | ❌ Pending |
 
@@ -41,4 +42,4 @@ Homeowner_Application (MVC/.NET8 PROJECT)
 
 ---
 
-✍ **Maintained by: Ismael Jose Jumao-as && Paul Patino.
+✍ **Maintained by: Ismael Jose Jumao-as && Paul Christian T. Patiño.

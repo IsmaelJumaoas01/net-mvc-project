@@ -1,9 +1,9 @@
 @model homeowner.Models.UserModel
 
 @{
-    ViewBag.Title = "Profile";
-    bool isLoggedIn = ViewBag.IsLoggedIn ?? false;
-    string username = Model?.Username ?? "Guest";
+    ViewBag.Title = "Homeowner Announcements";
+    bool isLoggedIn = ViewBag.IsLoggedIn;
+    string username = ViewBag.username;
 }
 
 <link rel="stylesheet" href="~/css/home.css" />
@@ -12,67 +12,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
-<!-- Header -->
-<header class="navbar navbar-expand-lg navbar-light">
-    <a class="navbar-brand" asp-controller="Home" asp-action="Index">Subdivision Portal</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-        <ul class="navbar-nav mx-auto">
-            <li class="nav-item">
-                <a class="nav-link" asp-controller="Announcements" asp-action="Index" title="Announcements">
-                    <i class="fas fa-bullhorn"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" asp-controller="News" asp-action="Index" title="News">
-                    <i class="fas fa-newspaper"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" asp-controller="Payments" asp-action="Index" title="Payments">
-                    <i class="fas fa-credit-card"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" asp-controller="FacilityBooking" asp-action="Index" title="Facility Booking">
-                    <i class="fas fa-calendar-alt"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" asp-controller="ServiceRequest" asp-action="Index" title="Service Request">
-                    <i class="fas fa-tools"></i>
-                </a>
-            </li>
-        </ul>
-        <ul class="navbar-nav">
-            @if (isLoggedIn)
-            {
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-user"></i> @username
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" asp-controller="Homeowner" asp-action="Profile">Profile</a>
-                        <a class="dropdown-item" asp-controller="Account" asp-action="Logout">Logout</a>
-                    </div>
-                </li>
-            }
-            else
-            {
-                <li class="nav-item">
-                    <a class="nav-link btn btn-primary text-white" asp-controller="Account" asp-action="Login">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link btn btn-secondary text-white" asp-controller="Account"
-                        asp-action="Register">Register</a>
-                </li>
-            }
-        </ul>
-    </div>
-</header>
+
+<button class="btn btn-secondary" onclick="history.back()">Back</button>
 
 <!-- Profile Section -->
 <section class="profile">

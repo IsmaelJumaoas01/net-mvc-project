@@ -159,3 +159,4 @@ C:\Users\admin\Desktop\net-mvc-project\obj\Debug\net8.0\staticwebassets.pack.jso
 C:\Users\admin\Desktop\net-mvc-project\obj\Debug\net8.0\homeowne.B3383A01.Up2Date
 C:\Users\admin\Desktop\net-mvc-project\obj\Debug\net8.0\homeowner_app.genruntimeconfig.cache
 C:\Users\admin\Desktop\net-mvc-project\obj\Debug\net8.0\ref\homeowner_app.dll
+C:\Users\admin\Desktop\net-mvc-project\bin\Debug\net8.0\Markdig.dll

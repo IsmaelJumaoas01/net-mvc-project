@@ -1,0 +1,166 @@
+@model IEnumerable<homeowner.Models.AnnouncementModel>
+@{
+    ViewBag.Title = "Homeowner Announcements";
+    bool isLoggedIn = ViewBag.IsLoggedIn;
+    string username = ViewBag.username;
+}
+
+<link rel="stylesheet" href="~/css/home.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <button class="btn btn-primary" onclick="history.back()">Back</button>
+
+<!-- Announcements Section -->
+<section class="announcements container">
+    <h2 class="mb-4">Latest Announcements</h2>
+
+    <div class="mb-3 mt-3">
+        <label for="sortSelect">Sort By:</label>
+        <select id="sortSelect" class="form-control d-inline-block w-auto ml-2">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+        </select>
+    </div>
+
+    <div id="announcementContainer" class="announcement-list">
+        @foreach (var announcement in Model)
+        {
+            <div class="announcement card mb-3" data-created-at="@announcement.CreatedAt.ToString("o")"
+                data-title="@announcement.Title" data-content="@announcement.Content"
+                data-date="@announcement.CreatedAt.ToString("MMMM dd, yyyy hh:mm tt")">
+                <div class="card-body" onclick="openAnnouncementModal(this)">
+                    <h3 class="card-title">@announcement.Title</h3>
+                    <div class="announcement-content">
+                        @if (announcement.Content.Length > 150)
+                        {
+                            @(announcement.Content.Substring(0, 150) + "...")
+                        }
+                        else
+                        {
+                            @announcement.Content
+                        }
+                    </div>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            Posted on @announcement.CreatedAt.ToString("MMMM dd, yyyy hh:mm tt")
+                        </small>
+                    </p>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Modal for Viewing Full Announcement -->
+<div class="modal fade" id="announcementModal" tabindex="-1" role="dialog" aria-labelledby="announcementModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="announcementModalLabel">Announcement Title</h5>
+            </div>
+            <div class="modal-body">
+                <p id="announcementContent">Announcement content goes here.</p>
+            </div>
+            <div class="modal-footer">
+                <small id="announcementDate" class="text-muted"></small>
+                <button type="button" class="btn btn-primary"
+                    onclick="$('#announcementModal').modal('hide');">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const sortSelect = document.getElementById("sortSelect");
+        const container = document.getElementById("announcementContainer");
+        const cards = Array.from(container.getElementsByClassName("announcement"));
+
+        function sortAnnouncements(order) {
+            const sorted = cards.sort((a, b) => {
+                const dateA = new Date(a.getAttribute("data-created-at"));
+                const dateB = new Date(b.getAttribute("data-created-at"));
+                return order === "newest" ? dateB - dateA : dateA - dateB;
+            });
+            container.innerHTML = "";
+            sorted.forEach(card => container.appendChild(card));
+        }
+
+        sortSelect.addEventListener("change", function () {
+            sortAnnouncements(this.value);
+        });
+        sortAnnouncements("newest");
+    });
+
+    // Open modal and populate with announcement details
+    function openAnnouncementModal(element) {
+        // The parent element (card) holds our data attributes
+        const card = element.parentElement;
+        const title = card.getAttribute("data-title");
+        const content = card.getAttribute("data-content");
+        const date = card.getAttribute("data-date");
+
+        document.getElementById("announcementModalLabel").innerText = title;
+        document.getElementById("announcementContent").innerText = content;
+        document.getElementById("announcementDate").innerText = date;
+
+        // Show the modal using Bootstrap's jQuery API
+        $('#announcementModal').modal('show');
+    }
+</script>
+
+<style>
+    .announcements {
+        padding: 50px 20px;
+    }
+
+    .announcement-list .announcement {
+        background: #f9f9f9;
+        border: none;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+    }
+
+    .announcement-content {
+        background: #e9ecef;
+        border-left: 4px solid #ced4da;
+        padding: 15px;
+        margin: 15px 0;
+        font-size: 16px;
+        line-height: 1.5;
+    }
+       header.navbar {
+        background-color: #f3f4f6;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    header.navbar .nav-link {
+        color: #333;
+        margin: 0 10px;
+    }
+
+    header.navbar .nav-link:hover {
+        color: #007bff;
+    }
+
+    header.navbar .navbar-brand {
+        color: #007bff;
+    }
+
+    header.navbar .navbar-brand:hover {
+        color: #0056b3;
+    }
+
+    header.navbar .navbar-toggler {
+        border-color: #007bff;
+    }
+
+    header.navbar .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%280, 123, 255, 1%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+    }
+</style>

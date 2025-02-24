@@ -7,7 +7,11 @@ namespace homeowner_app
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddControllersWithViews();
-            builder.Services.AddSession(); // ✅ Add Session Services
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // adjust as needed
+            });
 
             var app = builder.Build();
 

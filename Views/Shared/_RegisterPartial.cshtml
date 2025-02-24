@@ -84,7 +84,7 @@
         $('#registerForm').on('submit', function (e) {
             e.preventDefault();
             $.ajax({
-                url: '@Url.Action("Register", "Account")',
+                url: '@Url.Action("Register", "LoginRegister")',
                 type: 'POST',
                 data: $(this).serialize(),
                 success: function (response) {

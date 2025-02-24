@@ -1,0 +1,106 @@
+@{
+    bool isLoggedIn = ViewBag.IsLoggedIn ?? false;
+    string username = ViewBag.Username ?? "Guest";
+    string role = ViewBag.Role ?? "Homeowner"; // Default to Homeowner
+    string portalTitle = role == "Administrator" ? "Administrator Portal" :
+                         role == "Staff" ? "Staff Portal" : "Subdivision Portal";
+}
+
+<header class="navbar navbar-expand-lg navbar-light">
+    <a class="navbar-brand" asp-controller="Home" asp-action="Index">@portalTitle</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+        @if (isLoggedIn)
+        {
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Announcements" asp-action="Index" title="Announcements">
+                        <i class="fas fa-bullhorn"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="News" asp-action="Index" title="News">
+                        <i class="fas fa-newspaper"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Payments" asp-action="Index" title="Payments">
+                        <i class="fas fa-credit-card"></i>
+                    </a>
+                </li>
+
+                @if (role == "Homeowner")
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="FacilityBooking" asp-action="Index" title="Facility Booking">
+                            <i class="fas fa-calendar-alt"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="ServiceRequest" asp-action="Index" title="Service Request">
+                            <i class="fas fa-tools"></i>
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
+
+        <ul class="navbar-nav">
+            @if (isLoggedIn)
+            {
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        <i class="fas fa-user"></i> @username
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        @if (role == "Homeowner")
+                        {
+                            <li><a class="dropdown-item" asp-controller="Homeowner" asp-action="Profile">Profile</a></li>
+                            <li><a class="dropdown-item" asp-controller="FacilityReservation" asp-action="Book">Book a Facility</a></li>
+                        }
+                        <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout">Logout</a></li>
+                    </ul>
+                </li>
+            }
+            else
+            {
+                <li class="nav-item">
+                    <a class="nav-link btn btn-primary text-white" data-toggle="modal" data-target="#loginModal">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-secondary text-white" data-toggle="modal" data-target="#registerModal">Register</a>
+                </li>
+            }
+        </ul>
+    </div>
+</header>
+
+
+<style>
+      header.navbar {
+        background-color: #f3f4f6;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    header.navbar .nav-link {
+        color: #333;
+        margin: 0 10px;
+    }
+    header.navbar .nav-link:hover {
+        color: #007bff;
+    }
+    header.navbar .navbar-brand {
+        color: #007bff;
+    }
+    header.navbar .navbar-brand:hover {
+        color: #0056b3;
+    }
+    header.navbar .navbar-toggler {
+        border-color: #007bff;
+    }
+    header.navbar .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%280, 123, 255, 1%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+    }
+</style>

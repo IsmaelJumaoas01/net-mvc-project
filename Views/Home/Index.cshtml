@@ -13,66 +13,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
-<!-- Header -->
-<header class="navbar navbar-expand-lg navbar-light">
-    <a class="navbar-brand" asp-controller="Home" asp-action="Index">Subdivision Portal</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-        <ul class="navbar-nav mx-auto">
-            <li class="nav-item">
-                <a class="nav-link" asp-controller="Announcements" asp-action="Index" title="Announcements">
-                    <i class="fas fa-bullhorn"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" asp-controller="News" asp-action="Index" title="News">
-                    <i class="fas fa-newspaper"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" asp-controller="Payments" asp-action="Index" title="Payments">
-                    <i class="fas fa-credit-card"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" asp-controller="FacilityBooking" asp-action="Index" title="Facility Booking">
-                    <i class="fas fa-calendar-alt"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" asp-controller="ServiceRequest" asp-action="Index" title="Service Request">
-                    <i class="fas fa-tools"></i>
-                </a>
-            </li>
-        </ul>
-        <ul class="navbar-nav">
-            @if (isLoggedIn)
-            {
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-user"></i> @username
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" asp-controller="Homeowner" asp-action="Profile">Profile</a>
-                        <a class="dropdown-item" asp-controller="Account" asp-action="Logout">Logout</a>
-                    </div>
-                </li>
-            }
-            else
-            {
-                <li class="nav-item">
-                    <a class="nav-link btn btn-primary text-white" data-toggle="modal" data-target="#loginModal">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link btn btn-secondary text-white" data-toggle="modal" data-target="#registerModal">Register</a>
-                </li>
-            }
-        </ul>
-    </div>
-</header>
+
 
 <!-- Flash Messages -->
 @if (TempData["SuccessMessage"] != null)
@@ -89,29 +30,30 @@
 }
 
 <!-- Hero Section -->
-<div class="hero"
-    style="background-image: url('/images/hero-bg.jpg'); background-size: cover; background-position: center;">
+<div class="hero" style="background-image: url('/images/hero-bg.jpg'); background-size: cover; background-position: center;">
     <div class="overlay">
         <h1>Welcome to Our Subdivision</h1>
         <p>Your community portal for announcements, payments, reservations, and more.</p>
-
-        @if (!isLoggedIn)
-        {
-            <div class="auth-buttons">
+        <div class="hero-buttons">
+            @if (!isLoggedIn)
+            {
                 <a data-toggle="modal" data-target="#loginModal" class="btn btn-primary">Login</a>
                 <a data-toggle="modal" data-target="#registerModal" class="btn btn-secondary">Register</a>
-            </div>
-        }
-        else
-        {
-            <div class="dashboard">
-                <p>Welcome back, @username!</p>
-                <a asp-controller="Dashboard" asp-action="Index" class="btn btn-primary">Go to Dashboard</a>
-                <a asp-controller="Account" asp-action="Logout" class="btn btn-danger">Logout</a>
-            </div>
-        }
+            }
+            else
+            {
+                <div class="dashboard">
+                    <p>Welcome back, @username!</p>
+                    <a class="btn btn-danger" asp-controller="Homeowner" asp-action="Profile">Go to Dashboard</a>
+                    <a asp-controller="Account" asp-action="Logout" class="btn btn-danger">Logout</a>
+                </div>
+            }
+            <!-- Changelog Button: visible for everyone -->
+            <a data-toggle="modal" data-target="#readmeModal" class="btn btn-info ml-2">Changelog</a>
+        </div>
     </div>
 </div>
+
 
 <!-- Announcements Section -->
 <section class="announcements">
@@ -166,6 +108,7 @@
     </div>
 </section>
 
+<!-- Login & Register Modals (if applicable) -->
 <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -186,6 +129,9 @@
     </div>
 </div>
 
+<!-- Include the Readme Modal Partial -->
+@await Html.PartialAsync("_ReadmeModal")
+
 <script>
     function checkLogin() {
         var isLoggedIn = @Html.Raw(isLoggedIn.ToString().ToLower());
@@ -204,28 +150,23 @@
         text-align: center;
         padding: 100px 20px;
     }
-
     .hero .overlay {
         background: rgba(0, 0, 0, 0.5);
         padding: 50px;
     }
-
     .auth-buttons .btn,
     .dashboard .btn {
         margin: 10px;
     }
-
     .features {
         padding: 50px 20px;
         text-align: center;
     }
-
     .feature-list {
         display: flex;
         justify-content: space-around;
         flex-wrap: wrap;
     }
-
     .feature {
         flex: 1 1 200px;
         margin: 20px;
@@ -234,23 +175,19 @@
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-
     .feature i {
         color: #007bff;
         margin-bottom: 10px;
     }
-
     .announcements {
         padding: 50px 20px;
         text-align: center;
     }
-
     .announcement-list {
         display: flex;
         flex-direction: column;
         align-items: center;
     }
-
     .announcement {
         background: #f9f9f9;
         padding: 20px;
@@ -258,35 +195,5 @@
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         width: 80%;
-    }
-
-    header.navbar {
-        background-color: #f3f4f6;
-        border-bottom: 1px solid #e0e0e0;
-    }
-
-    header.navbar .nav-link {
-        color: #333;
-        margin: 0 10px;
-    }
-
-    header.navbar .nav-link:hover {
-        color: #007bff;
-    }
-
-    header.navbar .navbar-brand {
-        color: #007bff;
-    }
-
-    header.navbar .navbar-brand:hover {
-        color: #0056b3;
-    }
-
-    header.navbar .navbar-toggler {
-        border-color: #007bff;
-    }
-
-    header.navbar .navbar-toggler-icon {
-        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%280, 123, 255, 1%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
     }
 </style>

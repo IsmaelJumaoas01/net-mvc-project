@@ -1,0 +1,152 @@
+@model List<homeowner.Models.FacilityReservationModel>
+@{
+    ViewBag.Title = "Facility Reservations Management";
+    // Retrieve role from ViewBag (set in the controller).
+    string role = ViewBag.Role as string ?? "Staff";
+}
+
+
+
+<div class="container mt-4">
+    <h1>Facility Reservations Management</h1>
+
+    @* Section: Manage Facilities (Administrator only) *@
+    @if (role == "Administrator")
+    {
+        <hr />
+        <h2>Manage Facilities</h2>
+        <form id="addFacilityForm" class="form-inline mb-3">
+            <div class="form-group mr-2">
+                <input type="text" class="form-control" id="facilityName" name="facilityName" placeholder="Enter facility name" required />
+            </div>
+            <button type="submit" class="btn btn-primary">Add Facility</button>
+        </form>
+        <ul class="list-group mb-4" id="facilitiesList">
+            @foreach (var facility in ViewBag.FacilityNames as List<homeowner.Models.FacilityModel>)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    @facility.FacilityName
+                    <button class="btn btn-sm btn-danger deleteFacilityBtn" data-facility-id="@facility.FacilityID">Delete</button>
+                </li>
+            }
+        </ul>
+    }
+
+    <hr />
+    @* Section: Reservations *@
+    <h2>Reservations</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Reservation ID</th>
+                <th>User ID</th>
+                <th>Facility Name</th>
+                <th>Reservation Date</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Status</th>
+                @if (role == "Staff" || role == "Administrator")
+                {
+                    <th>Action</th>
+                }
+            </tr>
+        </thead>
+        <tbody id="reservationsTable">
+            @foreach (var res in Model)
+            {
+                <tr data-reservation-id="@res.ReservationID">
+                    <td>@res.ReservationID</td>
+                    <td>@res.UserID</td>
+                    <td>@res.FacilityName</td>
+                    <td>@res.ReservationDate.ToString("yyyy-MM-dd")</td>
+                    <td>@res.StartTime</td>
+                    <td>@res.EndTime</td>
+                    <td class="statusCell">@res.Status</td>
+                    @if (role == "Staff" || role == "Administrator")
+                    {
+                        <td>
+                            <select class="form-control updateStatusSelect">
+                                <option value="Pending" selected="@(res.Status == "Pending")">Pending</option>
+                                <option value="Confirmed" selected="@(res.Status == "Confirmed")">Confirmed</option>
+                                <option value="Cancelled" selected="@(res.Status == "Cancelled")">Cancelled</option>
+                            </select>
+                            <button class="btn btn-sm btn-primary mt-1 updateStatusBtn">Update</button>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Facility addition (Administrator only)
+        $("#addFacilityForm").submit(function (e) {
+            e.preventDefault();
+            var facilityName = $("#facilityName").val();
+            $.ajax({
+                url: '@Url.Action("AddFacility", "FacilityReservation")',
+                type: 'POST',
+                data: { facilityName: facilityName },
+                success: function (response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        });
+
+        // Delete facility (Administrator only)
+        $(".deleteFacilityBtn").click(function () {
+            if (confirm("Are you sure you want to delete this facility?")) {
+                var facilityID = $(this).data("facility-id");
+                $.ajax({
+                    url: '@Url.Action("DeleteFacility", "FacilityReservation")',
+                    type: 'POST',
+                    data: { facilityID: facilityID },
+                    success: function (response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            }
+        });
+
+        // Update reservation status (Staff or Administrator)
+        $(".updateStatusBtn").click(function () {
+            var tr = $(this).closest("tr");
+            var reservationID = tr.data("reservation-id");
+            var newStatus = tr.find(".updateStatusSelect").val();
+            $.ajax({
+                url: '@Url.Action("UpdateReservationStatus", "FacilityReservation")',
+                type: 'POST',
+                data: { reservationID: reservationID, status: newStatus },
+                success: function (response) {
+                    if (response.success) {
+                        tr.find(".statusCell").text(newStatus);
+                        alert("Status updated!");
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+<style>
+    h1, h2 {
+        margin-bottom: 20px;
+    }
+    .list-group-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+</style>

@@ -43,9 +43,22 @@ namespace homeowner.Controllers
                 }
             }
 
-            ViewBag.Role = HttpContext.Session.GetString("Role");
-            return View("~/Views/Admin_Staff/Index.cshtml", announcements);
+            // Get the role from session
+            var role = HttpContext.Session.GetString("Role");
+            ViewBag.Role = role;
+
+            if (role == "Homeowner")
+            {
+                // Return the homeowner view (which is the partial view with full page markup)
+                return View("~/Views/Homeowner/_HomeownerAnnouncements.cshtml", announcements);
+            }
+            else
+            {
+                // Return the admin/staff view as before
+                return View("~/Views/Admin_Staff/Index.cshtml", announcements);
+            }
         }
+
 
         [HttpPost]
         [Route("create")]

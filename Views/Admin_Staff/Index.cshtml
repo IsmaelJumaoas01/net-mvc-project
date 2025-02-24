@@ -2,52 +2,62 @@
 
 @{
     ViewBag.Title = "Announcements";
+    bool isLoggedIn = ViewBag.IsLoggedIn;
+    string username = ViewBag.username;
 }
 <!-- Add these in your _Layout.cshtml or Index.cshtml -->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<h1>Announcements</h1>
 
-@if (ViewBag.Role == "Administrator" || ViewBag.Role == "Staff")
+
+@if (ViewBag.Role == "Homeowner")
 {
-    <button class="btn btn-primary" data-toggle="modal" data-target="#createModal">Create New Announcement</button>
+    @await Html.PartialAsync("_HomeownerAnnouncements")
 }
+else
+{
+    <!-- Original Index View for Admins & Staff -->
+    <h1>Announcements</h1>
+    @if (ViewBag.Role == "Administrator" || ViewBag.Role == "Staff")
+    {
+        <button class="btn btn-primary" data-toggle="modal" data-target="#createModal">Create New Announcement</button>
+    }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Content</th>
-            <th>Created At</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var announcement in Model)
-        {
+    <table class="table">
+        <thead>
             <tr>
-                <td>@announcement.AnnouncementID</td>
-                <td>@announcement.Title</td>
-                <td>@announcement.Content</td>
-                <td>@announcement.CreatedAt</td>
-                <td>
-                    @if (ViewBag.Role == "Administrator" || ViewBag.Role == "Staff")
-                    {
-                        <button class="btn btn-warning"
-                            onclick="showEditModal(@announcement.AnnouncementID, '@announcement.Title', '@announcement.Content')">Edit</button>
-                        <button class="btn btn-danger"
-                            onclick="showDeleteModal(@announcement.AnnouncementID, '@announcement.Title')">Delete</button>
-
-
-                    }
-                </td>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Content</th>
+                <th>Created At</th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var announcement in Model)
+            {
+                <tr>
+                    <td>@announcement.AnnouncementID</td>
+                    <td>@announcement.Title</td>
+                    <td>@announcement.Content</td>
+                    <td>@announcement.CreatedAt</td>
+                    <td>
+                        @if (ViewBag.Role == "Administrator" || ViewBag.Role == "Staff")
+                        {
+                            <button class="btn btn-warning"
+                                onclick="showEditModal(@announcement.AnnouncementID, '@announcement.Title', '@announcement.Content')">Edit</button>
+                            <button class="btn btn-danger"
+                                onclick="showDeleteModal(@announcement.AnnouncementID, '@announcement.Title')">Delete</button>
 
+
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 <!-- Create Modal -->
 <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel"
     aria-hidden="true">
