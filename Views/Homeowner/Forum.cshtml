@@ -1,0 +1,128 @@
+@model List<homeowner.Models.ForumPostModel>
+@{
+    ViewBag.Title = "Forums";
+    var currentUserId = ViewBag.UserID?.ToString() ?? "";
+}
+
+<link rel="stylesheet" href="~/css/home.css" />
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<div class="container mt-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
+        <h1 class="mb-3 mb-md-0">Forums</h1>
+        <button class="btn btn-primary" id="openPostModal">Create New Post</button>
+    </div>
+
+    <div id="postsList">
+        @foreach (var post in Model)
+        {
+            <div class="card mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-0">@post.Title</h5>
+                        <small class="text-muted">Posted on @post.CreatedAt.ToString("yyyy-MM-dd hh:mm tt")</small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">@post.Content</p>
+                    @if (post.Image != null && post.Image.Length > 0)
+                    {
+                        <img src="data:image/png;base64,@Convert.ToBase64String(post.Image)" class="img-fluid mt-2"
+                            alt="Post Image" style="max-width: 100%; height: auto;">
+                    }
+                    <br>
+                    <!-- Detail Button -->
+                    <a asp-controller="Forum" asp-action="Details" asp-route-id="@post.PostID"
+                        class="btn btn-primary mt-2">View Details</a>
+                </div>
+            </div>
+        }
+
+        }
+        }
+        else
+        {
+        <p>No posts available.</p>
+        }
+    </div>
+</div>
+
+<!-- Create Post Modal -->
+<div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="postModalLabel">Create Post</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="postForm" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="postTitle" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="postTitle" name="Title" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="postContent" class="form-label">Content</label>
+                        <textarea class="form-control" id="postContent" name="Content" rows="4" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="postImage" class="form-label">Upload Image</label>
+                        <input type="file" class="form-control" id="postImage" name="imageFile">
+                        <img id="imagePreview" class="img-fluid mt-2"
+                            style="display: none; max-width: 100%; height: auto;">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#openPostModal").click(function () {
+            $("#postForm")[0].reset();
+            $("#imagePreview").hide();
+            $("#postModal").modal("show");
+        });
+
+        $("#postImage").change(function () {
+            var input = this;
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $("#imagePreview").attr("src", e.target.result).show();
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+
+        $("#postForm").submit(function (event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+
+            $.ajax({
+                type: "POST",
+                url: "/Forum/CreatePost",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function () {
+                    alert("Post created successfully!");
+                    location.reload();
+                },
+                error: function () {
+                    alert("Error creating post.");
+                }
+            });
+
+            $("#postModal").modal("hide");
+        });
+    });
+</script>

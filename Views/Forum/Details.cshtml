@@ -1,0 +1,33 @@
+@model homeowner.Models.ForumPostModel
+
+<div class="container mt-4">
+    <h2>@Model.Title</h2>
+    <p><strong>Posted on:</strong> @Model.CreatedAt.ToString("MMMM dd, yyyy hh:mm tt")</p>
+    <p>@Model.Content</p>
+
+    @if (Model.Image != null && Model.Image.Length > 0)
+    {
+        <img src="data:image/png;base64,@Convert.ToBase64String(Model.Image)" class="img-fluid mt-2" alt="Post Image" style="max-width: 100%; height: auto;">
+    }
+
+    <hr>
+    <h4>Comments</h4>
+    @if (ViewBag.Comments != null && ViewBag.Comments.Count > 0)
+    {
+        @foreach (var comment in ViewBag.Comments)
+        {
+            <div class="card mb-2">
+                <div class="card-body">
+                    <p>@comment.Content</p>
+                    <small class="text-muted">Posted on @comment.CreatedAt.ToString("yyyy-MM-dd hh:mm tt")</small>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No comments yet.</p>
+    }
+
+    <a href="@Url.Action("Index", "Forum")" class="btn btn-secondary mt-3">Back to Forum</a>
+</div>
