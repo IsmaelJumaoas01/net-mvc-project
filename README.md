@@ -12,7 +12,9 @@ Homeowner_Application (MVC/.NET8 PROJECT)
 | 2025-02-22 | v1.0.1  | Added the Notification Function but not yet done for Homeowner Side |
 | 2025-02-23 | v1.0.2  | Homeowner UI improvements, Added the Manage Details of the Homeowner,  |
 | 2025-02-24 | v1.0.3  | Added a ui For Notification/Announcements/News for homeowner side, added changelog UI, improve user Session, Header set as shared view |
-| 2025-02-24 | v1.0.4  | ===== |
+| 2025-02-26 | v1.0.5  | Added forum controller, functionality on homeowner side but not yet complete |
+| YYYY-MM-DD | v1.0.4  | ===== |
+| YYYY-MM-DD | v1.0.4  | ===== |
 
 ---
 
@@ -20,7 +22,7 @@ Homeowner_Application (MVC/.NET8 PROJECT)
 
 | Feature/Fix | Description | Status |
 |-------------|-------------|--------|
-| ==== | ==== | 🔄 In Progress |
+| Forum | to be completed function | 🔄 In Progress |
 | ==== | ===== | ✅ Completed |
 | ==== | ==== | ❌ Pending |
 
