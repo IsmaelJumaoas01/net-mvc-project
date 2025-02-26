@@ -203,5 +203,80 @@ namespace homeowner.Controllers
             return View("~/Views/Homeowner/BookFacility.cshtml");
         }
 
+
+        [HttpPost]
+        public IActionResult Book(int facilityID, DateTime reservationDate, TimeSpan startTime, TimeSpan endTime)
+        {
+            // Ensure only Homeowners can book
+            string role = HttpContext.Session.GetString("Role") ?? "Homeowner";
+            if (role != "Homeowner")
+            {
+                return Json(new { success = false, message = "Unauthorized" });
+            }
+
+            // Get the logged-in user's ID from session.
+            string userIdStr = HttpContext.Session.GetString("UserID");
+            if (string.IsNullOrEmpty(userIdStr))
+            {
+                return Json(new { success = false, message = "User not logged in" });
+            }
+            int userId = int.Parse(userIdStr);
+
+            DateTime currentDate = DateTime.Now.Date; // Get today's date without the time
+            TimeSpan currentTime = DateTime.Now.TimeOfDay; // Get the current time of the day
+
+            // Prevent booking past times on the current day
+            if (reservationDate.Date == currentDate && startTime < currentTime)
+            {
+                return Json(new { success = false, message = "Cannot book a past time slot on the current day." });
+            }
+
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+
+                // Check if the user has already booked the same facility within the given time range.
+                string checkOverlapQuery = @"
+            SELECT COUNT(*) FROM facility_reservations 
+            WHERE UserID = @UserID 
+            AND FacilityID = @FacilityID 
+            AND ReservationDate = @ReservationDate 
+            AND (
+                (@StartTime BETWEEN StartTime AND EndTime) 
+                OR (@EndTime BETWEEN StartTime AND EndTime) 
+                OR (StartTime BETWEEN @StartTime AND @EndTime)
+                OR (EndTime BETWEEN @StartTime AND @EndTime)
+            )";
+
+                MySqlCommand checkCmd = new MySqlCommand(checkOverlapQuery, conn);
+                checkCmd.Parameters.AddWithValue("@UserID", userId);
+                checkCmd.Parameters.AddWithValue("@FacilityID", facilityID);
+                checkCmd.Parameters.AddWithValue("@ReservationDate", reservationDate);
+                checkCmd.Parameters.AddWithValue("@StartTime", startTime);
+                checkCmd.Parameters.AddWithValue("@EndTime", endTime);
+
+                int existingReservations = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+                if (existingReservations > 0)
+                {
+                    return Json(new { success = false, message = "You have already booked this facility during the selected time slot." });
+                }
+
+                // If no conflicts, proceed with booking.
+                string sql = "INSERT INTO facility_reservations (UserID, FacilityID, ReservationDate, StartTime, EndTime, Status) " +
+                             "VALUES (@UserID, @FacilityID, @ReservationDate, @StartTime, @EndTime, 'Pending')";
+                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@UserID", userId);
+                cmd.Parameters.AddWithValue("@FacilityID", facilityID);
+                cmd.Parameters.AddWithValue("@ReservationDate", reservationDate);
+                cmd.Parameters.AddWithValue("@StartTime", startTime);
+                cmd.Parameters.AddWithValue("@EndTime", endTime);
+                cmd.ExecuteNonQuery();
+            }
+
+            return Json(new { success = true, message = "Reservation booked successfully!" });
+        }
+
+
     }
 }

@@ -1,10 +1,8 @@
 @{
     ViewBag.Title = "Book a Facility";
-    // Load the facilities from ViewBag.
     var facilities = ViewBag.Facilities as List<homeowner.Models.FacilityModel>;
-    // Load the current user's reservations.
     var reservations = ViewBag.UserReservations as List<homeowner.Models.FacilityReservationModel>;
-    // Define allowed times: starting at 07:30 until 22:00 in 30-minute increments.
+
     TimeSpan minTime = new TimeSpan(7, 30, 0);
     TimeSpan maxTime = new TimeSpan(22, 0, 0);
     var timeOptions = new List<string>();
@@ -12,21 +10,18 @@
     {
         timeOptions.Add(t.ToString(@"hh\:mm"));
     }
-    // Set today's date in "yyyy-MM-dd" format.
     var today = DateTime.Now.ToString("yyyy-MM-dd");
 }
 
+<div class="container-fluid mt-4 px-3">
+    <h1 class="text-center">Book a Facility</h1>
 
-
-<div class="container mt-4">
-    <h1>Book a Facility</h1>
-    <!-- Error message placeholder -->
-    <div id="errorMsg" class="alert alert-danger" style="display:none;"></div>
+    <div id="errorMsg" class="alert alert-danger d-none"></div>
     
     <form id="bookFacilityForm" class="mt-4">
-        <div class="form-group">
-            <label for="facilitySelect">Select Facility</label>
-            <select id="facilitySelect" name="facilityID" class="form-control" required>
+        <div class="mb-3">
+            <label for="facilitySelect" class="form-label">Select Facility</label>
+            <select id="facilitySelect" name="facilityID" class="form-select" required>
                 <option value="">-- Select Facility --</option>
                 @foreach(var facility in facilities)
                 {
@@ -34,103 +29,113 @@
                 }
             </select>
         </div>
-        <div class="form-group">
-            <label for="reservationDate">Reservation Date</label>
+
+        <div class="mb-3">
+            <label for="reservationDate" class="form-label">Reservation Date</label>
             <input type="date" id="reservationDate" name="reservationDate" class="form-control" required min="@today" />
         </div>
-        <div class="form-group">
-            <label for="startTime">Start Time</label>
-            <select id="startTime" name="startTime" class="form-control" required>
-                <option value="">-- Select Start Time --</option>
-                @foreach(var time in timeOptions)
-                {
-                    <option value="@time">@time</option>
-                }
-            </select>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="startTime" class="form-label">Start Time</label>
+                <select id="startTime" name="startTime" class="form-select" required>
+                    <option value="">-- Select Start Time --</option>
+                    @foreach(var time in timeOptions)
+                    {
+                        <option value="@time">@time</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="endTime" class="form-label">End Time</label>
+                <select id="endTime" name="endTime" class="form-select" required>
+                    <option value="">-- Select End Time --</option>
+                    @foreach(var time in timeOptions)
+                    {
+                        <option value="@time">@time</option>
+                    }
+                </select>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="endTime">End Time</label>
-            <select id="endTime" name="endTime" class="form-control" required>
-                <option value="">-- Select End Time --</option>
-                @foreach(var time in timeOptions)
-                {
-                    <option value="@time">@time</option>
-                }
-            </select>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary w-100">Book Facility</button>
         </div>
-        <button type="submit" class="btn btn-primary">Book Facility</button>
     </form>
 
     <hr />
-    <h2>Your Recent Reservations</h2>
-    <div class="form-group">
-        <label for="statusFilter">Filter by status:</label>
-        <select id="statusFilter" class="form-control" style="width:200px;">
+
+    <h2 class="text-center mt-4">Your Recent Reservations</h2>
+
+    <div class="mb-3 text-center">
+        <label for="statusFilter" class="form-label">Filter by Status:</label>
+        <select id="statusFilter" class="form-select w-50 mx-auto">
             <option value="All">All</option>
             <option value="Pending">Pending</option>
             <option value="Confirmed">Confirmed</option>
             <option value="Cancelled">Cancelled</option>
         </select>
     </div>
-    <table class="table table-bordered" id="reservationsTable">
-    <thead>
-        <tr>
-            <th>Reservation ID</th>
-            <th>Facility Name</th>
-            <th>Date</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach(var res in reservations)
-        {
-            <tr data-status="@res.Status">
-                <td>@res.ReservationID</td>
-                <td>@res.FacilityName</td>
-                <td>@res.ReservationDate.ToString("yyyy-MM-dd")</td>
-                <td>@DateTime.Today.Add(res.StartTime).ToString("hh:mm tt")</td>
-                <td>@DateTime.Today.Add(res.EndTime).ToString("hh:mm tt")</td>
-                <td>@res.Status</td>
-            </tr>
-        }
-    </tbody>
-</table>
 
+    <div class="table-responsive">
+        <table class="table table-bordered text-center" id="reservationsTable">
+            <thead class="table-dark">
+                <tr>
+                    <th>Reservation ID</th>
+                    <th>Facility Name</th>
+                    <th>Date</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var res in reservations)
+                {
+                    <tr data-status="@res.Status">
+                        <td>@res.ReservationID</td>
+                        <td>@res.FacilityName</td>
+                        <td>@res.ReservationDate.ToString("yyyy-MM-dd")</td>
+                        <td>@res.StartTime</td>
+                        <td>@res.EndTime</td>
+                        <td>@res.Status</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <script>
     $(document).ready(function(){
-        // Form submission with validations.
         $("#bookFacilityForm").submit(function(e){
             e.preventDefault();
             $("#errorMsg").hide();
-            
+
             var facilityID = $("#facilitySelect").val();
             var reservationDate = $("#reservationDate").val();
             var startTime = $("#startTime").val();
             var endTime = $("#endTime").val();
 
             if (!facilityID || !reservationDate || !startTime || !endTime) {
-                $("#errorMsg").text("Please complete all fields.").show();
+                $("#errorMsg").text("Please complete all fields.").removeClass("d-none").show();
                 return;
             }
 
-            // Validate that the end time is after the start time.
             var startParts = startTime.split(":");
             var endParts = endTime.split(":");
             var startDate = new Date(0, 0, 0, parseInt(startParts[0]), parseInt(startParts[1]));
             var endDate = new Date(0, 0, 0, parseInt(endParts[0]), parseInt(endParts[1]));
+
             if (endDate <= startDate) {
-                $("#errorMsg").text("End time must be later than start time.").show();
+                $("#errorMsg").text("End time must be later than start time.").removeClass("d-none").show();
                 return;
             }
 
-            // Validate that the reservation date is today or in the future.
             var today = new Date().toISOString().split("T")[0];
             if (reservationDate < today) {
-                $("#errorMsg").text("Reservation date must be today or in the future.").show();
+                $("#errorMsg").text("Reservation date must be today or in the future.").removeClass("d-none").show();
                 return;
             }
 
@@ -142,15 +147,14 @@
                     if(response.success){
                         alert(response.message);
                         $("#bookFacilityForm")[0].reset();
-                        location.reload(); // Refresh reservations list.
+                        location.reload();
                     } else {
-                        $("#errorMsg").text(response.message).show();
+                        $("#errorMsg").text(response.message).removeClass("d-none").show();
                     }
                 }
             });
         });
 
-        // Filter recent reservations by status.
         $("#statusFilter").change(function(){
             var filter = $(this).val();
             $("#reservationsTable tbody tr").each(function(){
@@ -166,8 +170,21 @@
 </script>
 
 <style>
-
     h1, h2 {
-        margin-bottom: 20px;
+        font-size: 1.5rem;
+    }
+
+
+        .form-select, .form-control {
+            font-size: 1rem;
+            padding: 10px;
+        }
+        .btn {
+            font-size: 1.1rem;
+            padding: 10px;
+        }
+        .table {
+            font-size: 0.9rem;
+        }
     }
 </style>
