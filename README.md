@@ -23,7 +23,7 @@ Homeowner_Application (MVC/.NET8 PROJECT)
 
 | Feature/Fix | Description | Status |
 |-------------|-------------|--------|
-| Forum | to be completed function | 🔄 In Progress |
+| ==== | ==== | 🔄 In Progress |
 | ==== | ===== | ✅ Completed |
 | ==== | ==== | ❌ Pending |
 
