@@ -1,33 +1,163 @@
 @model homeowner.Models.ForumPostModel
-
 <div class="container mt-4">
-    <h2>@Model.Title</h2>
-    <p><strong>Posted on:</strong> @Model.CreatedAt.ToString("MMMM dd, yyyy hh:mm tt")</p>
-    <p>@Model.Content</p>
-
-    @if (Model.Image != null && Model.Image.Length > 0)
-    {
-        <img src="data:image/png;base64,@Convert.ToBase64String(Model.Image)" class="img-fluid mt-2" alt="Post Image" style="max-width: 100%; height: auto;">
-    }
+    <div class="card p-4 shadow-sm">
+        <h2 class="text-primary">@Model.Title</h2>
+        <p class="text-muted"><strong>Posted on:</strong> @Model.CreatedAt.ToString("MMMM dd, yyyy hh:mm tt")</p>
+        <div class="mb-3">
+            <p class="lead">@Model.Content</p>
+            @if (Model.Image != null && Model.Image.Length > 0)
+            {
+                <img src="data:image/png;base64,@Convert.ToBase64String(Model.Image)" class="img-fluid rounded" alt="Post Image" style="max-width: 100%; height: auto;">
+            }
+        </div>
+    </div>
 
     <hr>
-    <h4>Comments</h4>
+    <h4 class="mt-4">Comments</h4>
+    <div class="card p-3 mb-3 shadow-sm">
+        <h5 class="text-secondary">Leave a Comment</h5>
+        <form id="commentForm">
+            <input type="hidden" name="PostID" value="@Model.PostID">
+            <textarea name="Content" class="form-control" rows="3" placeholder="Write your comment here..." required></textarea>
+            <input type="file" name="imageFile" class="form-control mt-2">
+            <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
+        </form>
+    </div>
+
     @if (ViewBag.Comments != null && ViewBag.Comments.Count > 0)
     {
         @foreach (var comment in ViewBag.Comments)
         {
-            <div class="card mb-2">
+            <div class="card mb-3 shadow-sm" id="comment-@comment.CommentID">
                 <div class="card-body">
-                    <p>@comment.Content</p>
+                    <p class="comment-text font-weight-bold">@comment.Content</p>
+                    <textarea class="form-control edit-textarea d-none">@comment.Content</textarea>
+                    @if (comment.Image != null && comment.Image.Length > 0)
+                    {
+                        <img src="data:image/png;base64,@Convert.ToBase64String(comment.Image)" class="img-fluid mt-2 rounded" alt="Comment Image" style="max-width: 100%; height: auto;">
+                    }
                     <small class="text-muted">Posted on @comment.CreatedAt.ToString("yyyy-MM-dd hh:mm tt")</small>
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-outline-success vote-btn" data-id="@comment.CommentID" data-type="comment" data-vote="1">⬆️ (@comment.Upvotes)</button>
+                        <button class="btn btn-sm btn-outline-danger vote-btn" data-id="@comment.CommentID" data-type="comment" data-vote="-1">⬇️ (@comment.Downvotes)</button>
+                        @if (Context.Session.GetString("UserID") == comment.UserID.ToString())
+                        {
+                            <button class="btn btn-sm btn-warning edit-btn" data-id="@comment.CommentID">✏️ Edit</button>
+                            <button class="btn btn-sm btn-primary save-btn d-none" data-id="@comment.CommentID">💾 Save</button>
+                            <button class="btn btn-sm btn-secondary cancel-btn d-none" data-id="@comment.CommentID">❌ Cancel</button>
+                            <button class="btn btn-sm btn-danger delete-btn" data-id="@comment.CommentID">🗑️ Delete</button>
+                        }
+                    </div>
                 </div>
             </div>
         }
     }
     else
     {
-        <p>No comments yet.</p>
+        <p class="text-muted">No comments yet.</p>
     }
-
     <a href="@Url.Action("Index", "Forum")" class="btn btn-secondary mt-3">Back to Forum</a>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $(".vote-btn").click(function () {
+            var commentID = $(this).data("id");
+            var voteValue = $(this).data("vote");
+            var type = $(this).data("type");
+
+            $.post("/Forum/VoteComment", { commentID: commentID, voteValue: voteValue }, function (data) {
+                if (data.success) {
+                    location.reload(); // Refresh page to show updated vote count
+                } else {
+                    alert(data.message);
+                }
+            });
+        });
+
+        $(".delete-btn").click(function () {
+            var commentID = $(this).data("id");
+            if (confirm("Are you sure you want to delete this comment?")) {
+                $.post("/Forum/DeleteComment", { id: commentID }, function (data) {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                });
+            }
+        });
+
+        $(".edit-btn").click(function () {
+            var commentID = $(this).data("id");
+            var commentCard = $("#comment-" + commentID);
+            var commentText = commentCard.find(".comment-text");
+            var editTextarea = commentCard.find(".edit-textarea");
+
+            // Show the textarea and buttons, hide original text
+            commentText.addClass("d-none");
+            editTextarea.removeClass("d-none");
+            commentCard.find(".save-btn, .cancel-btn").removeClass("d-none");
+            $(this).addClass("d-none");
+        });
+
+        $(".cancel-btn").click(function () {
+            var commentID = $(this).data("id");
+            var commentCard = $("#comment-" + commentID);
+            var commentText = commentCard.find(".comment-text");
+            var editTextarea = commentCard.find(".edit-textarea");
+
+            // Restore original text, hide textarea and buttons
+            editTextarea.addClass("d-none");
+            commentText.removeClass("d-none");
+            commentCard.find(".edit-btn").removeClass("d-none");
+            commentCard.find(".save-btn, .cancel-btn").addClass("d-none");
+        });
+
+        $(".save-btn").click(function () {
+            var commentID = $(this).data("id");
+            var commentCard = $("#comment-" + commentID);
+            var newContent = commentCard.find(".edit-textarea").val();
+
+            if (newContent.trim() === "") {
+                alert("Comment cannot be empty.");
+                return;
+            }
+
+            $.post("/Forum/EditComment", { CommentID: commentID, Content: newContent }, function (data) {
+                if (data.success) {
+                    // Update comment text and revert UI
+                    commentCard.find(".comment-text").text(newContent).removeClass("d-none");
+                    commentCard.find(".edit-textarea").addClass("d-none");
+                    commentCard.find(".edit-btn").removeClass("d-none");
+                    commentCard.find(".save-btn, .cancel-btn").addClass("d-none");
+                } else {
+                    alert(data.message);
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        $("#commentForm").submit(function (e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: "/Forum/AddComment",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    if (data.success) {
+                        location.reload(); // Refresh to show new comment
+                    } else {
+                        alert(data.message);
+                    }
+                }
+            });
+        });
+    });
+</script>

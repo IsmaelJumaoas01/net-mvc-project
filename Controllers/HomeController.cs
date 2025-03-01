@@ -56,7 +56,7 @@ namespace homeowner.Controllers
         {
             return View();
         }
-        
+
         public IActionResult AdminDashboard()
         {
             return View();
@@ -105,5 +105,9 @@ namespace homeowner.Controllers
 
             return View(user);
         }
+
+     
+
+
     }
 }

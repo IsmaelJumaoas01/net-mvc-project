@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace homeowner_app
 {
     public class Program
@@ -18,9 +20,34 @@ namespace homeowner_app
             app.UseStaticFiles();
             app.UseRouting();
 
+            app.UseSession(); // ✅ Enable Session Middleware (before authentication)
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseSession(); // ✅ Enable Session Middleware
+
+            // Middleware to check login status
+            app.Use(async (context, next) =>
+{
+    var path = context.Request.Path.Value?.ToLower();
+
+    // Allow access to login, register, static files, and home page
+    if (path == "/" || path.StartsWith("/login") || path.StartsWith("/register") || path.StartsWith("/css") || path.StartsWith("/js") || path.StartsWith("/images"))
+    {
+        await next();
+        return;
+    }
+
+    // Check if session contains UserID
+    if (context.Session.GetString("UserID") == null)
+    {
+        // Store the last attempted route
+        context.Session.SetString("LastAttemptedRoute", path);
+        context.Response.Redirect("/");
+        return;
+    }
+
+    await next();
+});
+
 
             // Configure endpoints
             app.MapControllerRoute(

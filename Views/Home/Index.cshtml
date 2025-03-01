@@ -15,7 +15,7 @@
 
 
 
-<!-- Flash Messages -->
+
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="alert alert-success" role="alert">
@@ -30,7 +30,8 @@
 }
 
 <!-- Hero Section -->
-<div class="hero" style="background-image: url('/images/hero-bg.jpg'); background-size: cover; background-position: center;">
+<div class="hero"
+    style="background-image: url('/images/hero-bg.jpg'); background-size: cover; background-position: center;">
     <div class="overlay">
         <h1>Welcome to Our Subdivision</h1>
         <p>Your community portal for announcements, payments, reservations, and more.</p>
@@ -91,25 +92,29 @@
             <i class="fas fa-credit-card fa-3x"></i>
             <h3>Online Payments</h3>
             <p>Pay your dues and fees securely through our portal.</p>
-            <a href="@Url.Action("Index", "Payments")" class="btn btn-primary" onclick="return checkLogin()">Make a Payment</a>
+            <a href="@Url.Action("Index", "Payments")" class="btn btn-primary" onclick="return checkLogin()">Make a
+                Payment</a>
         </div>
         <div class="feature">
             <i class="fas fa-calendar-alt fa-3x"></i>
             <h3>Facility Booking</h3>
             <p>Reserve function halls, sports courts, and other amenities.</p>
-            <a href="@Url.Action("Index", "FacilityBooking")" class="btn btn-primary" onclick="return checkLogin()">Book a Facility</a>
+            <a href="@Url.Action("Index", "FacilityBooking")" class="btn btn-primary" onclick="return checkLogin()">Book
+                a Facility</a>
         </div>
         <div class="feature">
             <i class="fas fa-tools fa-3x"></i>
             <h3>Service Requests</h3>
             <p>Request maintenance, security assistance, and other services.</p>
-            <a href="@Url.Action("Index", "ServiceRequest")" class="btn btn-primary" onclick="return checkLogin()">Request a Service</a>
+            <a href="@Url.Action("Index", "ServiceRequest")" class="btn btn-primary"
+                onclick="return checkLogin()">Request a Service</a>
         </div>
     </div>
 </section>
 
 <!-- Login & Register Modals (if applicable) -->
-<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-body p-0">
@@ -119,7 +124,8 @@
     </div>
 </div>
 
-<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-body p-0">
@@ -129,10 +135,21 @@
     </div>
 </div>
 
+<p>@TempData["ShowLoginRequiredModal"]</p>
+
+
 <!-- Include the Readme Modal Partial -->
 @await Html.PartialAsync("_ReadmeModal")
 
 <script>
+
+    $(document).ready(function () {
+    var showModal = '@(TempData["ShowLoginRequiredModal"]?.ToString().ToLower() ?? "false")';
+    if (showModal === 'true') {
+        $('#loginRequiredModal').modal('show');
+    }
+});
+
     function checkLogin() {
         var isLoggedIn = @Html.Raw(isLoggedIn.ToString().ToLower());
         if (!isLoggedIn) {
@@ -150,23 +167,28 @@
         text-align: center;
         padding: 100px 20px;
     }
+
     .hero .overlay {
         background: rgba(0, 0, 0, 0.5);
         padding: 50px;
     }
+
     .auth-buttons .btn,
     .dashboard .btn {
         margin: 10px;
     }
+
     .features {
         padding: 50px 20px;
         text-align: center;
     }
+
     .feature-list {
         display: flex;
         justify-content: space-around;
         flex-wrap: wrap;
     }
+
     .feature {
         flex: 1 1 200px;
         margin: 20px;
@@ -175,19 +197,23 @@
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
+
     .feature i {
         color: #007bff;
         margin-bottom: 10px;
     }
+
     .announcements {
         padding: 50px 20px;
         text-align: center;
     }
+
     .announcement-list {
         display: flex;
         flex-direction: column;
         align-items: center;
     }
+
     .announcement {
         background: #f9f9f9;
         padding: 20px;

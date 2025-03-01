@@ -11,5 +11,9 @@ namespace homeowner.Models
         public DateTime CreatedAt { get; set; }
         // Optional image stored as BLOB.
         public byte[] Image { get; set; }
+
+        public int Upvotes {get; set;}
+
+        public int Downvotes {get; set;}
     }
 }

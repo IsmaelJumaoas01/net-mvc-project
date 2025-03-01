@@ -13,6 +13,7 @@ Homeowner_Application (MVC/.NET8 PROJECT)
 | 2025-02-23 | v1.0.2  | Homeowner UI improvements, Added the Manage Details of the Homeowner,  |
 | 2025-02-24 | v1.0.3  | Added a ui For Notification/Announcements/News for homeowner side, added changelog UI, improve user Session, Header set as shared view |
 | 2025-02-26 | v1.0.5  | Added forum controller, functionality on homeowner side but not yet complete |
+| 2025-03-01 | v1.0.6  | Forums - comment, upvotes and downvotes functions working (@homeownerside) #OPTIONAL need a moderation function|
 | YYYY-MM-DD | v1.0.4  | ===== |
 | YYYY-MM-DD | v1.0.4  | ===== |
 
