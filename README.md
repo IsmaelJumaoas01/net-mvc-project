@@ -1,6 +1,6 @@
 # Project Title
 
-Homeowner_Application (MVC/.NET8 PROJECT)
+Homeowner Application (MVC/.NET8 PROJECT)
 
 ---
 
@@ -14,6 +14,8 @@ Homeowner_Application (MVC/.NET8 PROJECT)
 | 2025-02-24 | v1.0.3  | Added a ui For Notification/Announcements/News for homeowner side, added changelog UI, improve user Session, Header set as shared view |
 | 2025-02-26 | v1.0.5  | Added forum controller, functionality on homeowner side but not yet complete |
 | 2025-03-01 | v1.0.6  | Forums - comment, upvotes and downvotes functions working (@homeownerside) #OPTIONAL need a moderation function|
+| 2025-03-02 | v1.0.7  | Added Service Request. But no moderation side yet|
+| YYYY-MM-DD | v1.0.4  | ===== |
 | YYYY-MM-DD | v1.0.4  | ===== |
 | YYYY-MM-DD | v1.0.4  | ===== |
 
@@ -41,7 +43,7 @@ Homeowner_Application (MVC/.NET8 PROJECT)
 
 ## 📜 Notes
 
-- Please do Additional notes, considerations, or reminders for the project.
+- Please do add notes guys tnx
 
 ---
 

@@ -1,0 +1,183 @@
+@{
+    ViewBag.Title = "Request a Service";
+    var serviceRequests = ViewBag.ServiceRequests as List<homeowner.Models.ServiceRequestModel>;
+    var reservations = ViewBag.UserReservations as List<homeowner.Models.FacilityReservationModel>;
+
+    TimeSpan minTime = new TimeSpan(7, 30, 0);
+    TimeSpan maxTime = new TimeSpan(22, 0, 0);
+    var timeOptions = new List<string>();
+    for (TimeSpan t = minTime; t <= maxTime; t = t.Add(TimeSpan.FromMinutes(30)))
+    {
+        timeOptions.Add(t.ToString(@"hh\:mm"));
+    }
+    var today = DateTime.Now.ToString("yyyy-MM-dd");
+}
+
+<div class="container-fluid mt-4 px-3">
+    <h1 class="text-center">Request a Service</h1>
+
+    <div id="errorMsg" class="alert alert-danger d-none"></div>
+
+    <form id="requestServiceForm" class="mt-4">
+        <div class="mb-3">
+            <label for="serviceSelect" class="form-label">Select Service</label>
+            <select id="serviceSelect" name="serviceID" class="form-select" required>
+                <option value="">-- Select Service --</option>
+                @foreach (var service in ViewBag.ServiceTypes as List<homeowner.Models.ServiceTypeModel>)
+                {
+                    <option value="@service.ServiceTypeID">@service.ServiceTypeName</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" name="description" class="form-control" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="reservationDate" class="form-label">Service Date</label>
+            <input type="date" id="reservationDate" name="reservationDate" class="form-control" required min="@today" />
+        </div>
+
+        <div class="mb-3">
+            <label for="reservationTime" class="form-label">Service Time</label>
+            <select id="reservationTime" name="reservationTime" class="form-select" required>
+                <option value="">-- Select Time --</option>
+                @foreach (var time in timeOptions)
+                {
+                    <option value="@time">@time</option>
+                }
+            </select>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary w-100">Request Service</button>
+        </div>
+    </form>
+
+    <hr />
+
+    <h2 class="text-center mt-4">Your Recent Service Requests</h2>
+
+    <div class="mb-3 text-center">
+        <label for="statusFilter" class="form-label">Filter by Status:</label>
+        <select id="statusFilter" class="form-select w-50 mx-auto">
+            <option value="All">All</option>
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Rejected">Rejected</option>
+        </select>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered text-center" id="requestsTable">
+            <thead class="table-dark">
+                <tr>
+                    <th>Request ID</th>
+                    <th>Service Name</th>
+                    <th>Description</th>
+                    <th>Service Date Created</th>
+                    <th>Service Date Requested</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var req in serviceRequests)
+                {
+                    <tr data-status="@req.Status">
+                        <td>@req.RequestID</td>
+                        <td>@req.ServiceTypeName</td>
+                        <td>@req.Description</td>
+                        <td>@req.RequestDate.ToString("yyyy-MM-dd")</td>
+                        <td>@req.ScheduledDate?.ToString("yyyy-MM-dd hh:mm tt")</td>
+                        <td>@req.Status</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#requestServiceForm").submit(function (e) {
+            e.preventDefault();
+            $("#errorMsg").hide();
+
+            var serviceID = $("#serviceSelect").val();
+            var description = $("#description").val();
+            var reservationDate = $("#reservationDate").val();
+            var reservationTime = $("#reservationTime").val();
+
+            console.log("Submitting service request with details:", {
+                serviceID: serviceID,
+                description: description,
+                reservationDate: reservationDate,
+                reservationTime: reservationTime
+            });
+
+            if (!serviceID || !description || !reservationDate || !reservationTime) {
+                $("#errorMsg").text("Please complete all fields.").removeClass("d-none").show();
+                return;
+            }
+
+            var scheduledDateTime = reservationDate + " " + reservationTime;
+
+            $.ajax({
+                url: '@Url.Action("RequestService", "ServiceRequests")',
+                type: 'POST',
+                data: { serviceTypeID: serviceID, description: description, scheduledDateTime: scheduledDateTime },
+                success: function (response) {
+                    console.log("Response from server:", response);
+                    if (response.success) {
+                        alert(response.message);
+                        $("#requestServiceForm")[0].reset();
+                        location.reload();
+                    } else {
+                        $("#errorMsg").text(response.message).removeClass("d-none").show();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error occurred while submitting service request:", status, error);
+                    $("#errorMsg").text("An error occurred while submitting the service request.").removeClass("d-none").show();
+                }
+            });
+        });
+
+        $("#statusFilter").change(function () {
+            var filter = $(this).val();
+            $("#requestsTable tbody tr").each(function () {
+                var status = $(this).data("status");
+                if (filter === "All" || status === filter) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    });
+</script>
+
+<style>
+    h1,
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    .form-select,
+    .form-control {
+        font-size: 1rem;
+        padding: 10px;
+    }
+
+    .btn {
+        font-size: 1.1rem;
+        padding: 10px;
+    }
+
+    .table {
+        font-size: 0.9rem;
+    }
+</style>

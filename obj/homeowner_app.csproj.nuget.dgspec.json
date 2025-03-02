@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\admin\\Desktop\\net-mvc-project\\homeowner_app.csproj": {}
+    "X:\\vscode projects\\net-mvc-project\\homeowner_app.csproj": {}
   },
   "projects": {
-    "C:\\Users\\admin\\Desktop\\net-mvc-project\\homeowner_app.csproj": {
+    "X:\\vscode projects\\net-mvc-project\\homeowner_app.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\admin\\Desktop\\net-mvc-project\\homeowner_app.csproj",
+        "projectUniqueName": "X:\\vscode projects\\net-mvc-project\\homeowner_app.csproj",
         "projectName": "homeowner_app",
-        "projectPath": "C:\\Users\\admin\\Desktop\\net-mvc-project\\homeowner_app.csproj",
+        "projectPath": "X:\\vscode projects\\net-mvc-project\\homeowner_app.csproj",
         "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\admin\\Desktop\\net-mvc-project\\obj\\",
+        "outputPath": "X:\\vscode projects\\net-mvc-project\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

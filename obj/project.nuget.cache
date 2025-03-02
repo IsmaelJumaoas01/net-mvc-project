@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "haUcczzMo68=",
+  "dgSpecHash": "AYgC1cIDXoo=",
   "success": true,
-  "projectFilePath": "C:\\Users\\admin\\Desktop\\net-mvc-project\\homeowner_app.csproj",
+  "projectFilePath": "X:\\vscode projects\\net-mvc-project\\homeowner_app.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\admin\\.nuget\\packages\\bouncycastle.cryptography\\2.3.1\\bouncycastle.cryptography.2.3.1.nupkg.sha512",
     "C:\\Users\\admin\\.nuget\\packages\\google.protobuf\\3.26.1\\google.protobuf.3.26.1.nupkg.sha512",

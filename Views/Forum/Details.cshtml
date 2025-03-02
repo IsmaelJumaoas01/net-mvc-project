@@ -1,4 +1,6 @@
 @model homeowner.Models.ForumPostModel
+<a href="@Url.Action("Index", "Forum")" class="btn btn-secondary mt-3">Back to Forum</a>
+
 <div class="container mt-4">
     <div class="card p-4 shadow-sm">
         <h2 class="text-primary">@Model.Title</h2>
@@ -7,8 +9,42 @@
             <p class="lead">@Model.Content</p>
             @if (Model.Image != null && Model.Image.Length > 0)
             {
-                <img src="data:image/png;base64,@Convert.ToBase64String(Model.Image)" class="img-fluid rounded" alt="Post Image" style="max-width: 100%; height: auto;">
+                <img src="data:image/png;base64,@Convert.ToBase64String(Model.Image)" class="img-fluid rounded"
+                    alt="Post Image" style="max-width: 100%; height: auto;">
             }
+            <div class="d-flex align-items-center">
+                <button class="btn btn-outline-success vote-btn" data-id="@Model.PostID" data-type="post"
+                    data-vote="1">⬆️ (@Model.Upvotes)</button>
+                <button class="btn btn-outline-danger vote-btn" data-id="@Model.PostID" data-type="post"
+                    data-vote="-1">⬇️ (@Model.Downvotes)</button>
+            </div>
+
+            @if (Context.Session.GetString("UserID") == Model.UserID.ToString())
+            {
+                <button class="btn btn-warning edit-post-btn">✏️ Edit Post</button>
+                <button class="btn btn-primary save-post-btn d-none">💾 Save</button>
+                <button class="btn btn-secondary cancel-post-btn d-none">❌ Cancel</button>
+            }
+
+            <div class="post-edit-container d-none">
+                <form id="editPostForm">
+                    <input type="hidden" name="PostID" value="@Model.PostID">
+                    <input type="text" name="Title" class="form-control mt-2" value="@Model.Title">
+                    <textarea name="Content" class="form-control mt-2">@Model.Content</textarea>
+                    <input type="file" name="imageFile" class="form-control mt-2">
+
+                    @if (Model.Image != null && Model.Image.Length > 0)
+                    {
+                        <div class="mt-2">
+                            <label>
+                                <input type="checkbox" name="RemoveImage" value="true"> Remove Image
+                            </label>
+                        </div>
+                    }
+                </form>
+            </div>
+
+
         </div>
     </div>
 
@@ -18,7 +54,8 @@
         <h5 class="text-secondary">Leave a Comment</h5>
         <form id="commentForm">
             <input type="hidden" name="PostID" value="@Model.PostID">
-            <textarea name="Content" class="form-control" rows="3" placeholder="Write your comment here..." required></textarea>
+            <textarea name="Content" class="form-control" rows="3" placeholder="Write your comment here..."
+                required></textarea>
             <input type="file" name="imageFile" class="form-control mt-2">
             <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
         </form>
@@ -34,17 +71,21 @@
                     <textarea class="form-control edit-textarea d-none">@comment.Content</textarea>
                     @if (comment.Image != null && comment.Image.Length > 0)
                     {
-                        <img src="data:image/png;base64,@Convert.ToBase64String(comment.Image)" class="img-fluid mt-2 rounded" alt="Comment Image" style="max-width: 100%; height: auto;">
+                        <img src="data:image/png;base64,@Convert.ToBase64String(comment.Image)" class="img-fluid mt-2 rounded"
+                            alt="Comment Image" style="max-width: 100%; height: auto;">
                     }
                     <small class="text-muted">Posted on @comment.CreatedAt.ToString("yyyy-MM-dd hh:mm tt")</small>
                     <div class="mt-2">
-                        <button class="btn btn-sm btn-outline-success vote-btn" data-id="@comment.CommentID" data-type="comment" data-vote="1">⬆️ (@comment.Upvotes)</button>
-                        <button class="btn btn-sm btn-outline-danger vote-btn" data-id="@comment.CommentID" data-type="comment" data-vote="-1">⬇️ (@comment.Downvotes)</button>
+                        <button class="btn btn-sm btn-outline-success vote-btn" data-id="@comment.CommentID" data-type="comment"
+                            data-vote="1">⬆️ (@comment.Upvotes)</button>
+                        <button class="btn btn-sm btn-outline-danger vote-btn" data-id="@comment.CommentID" data-type="comment"
+                            data-vote="-1">⬇️ (@comment.Downvotes)</button>
                         @if (Context.Session.GetString("UserID") == comment.UserID.ToString())
                         {
                             <button class="btn btn-sm btn-warning edit-btn" data-id="@comment.CommentID">✏️ Edit</button>
                             <button class="btn btn-sm btn-primary save-btn d-none" data-id="@comment.CommentID">💾 Save</button>
-                            <button class="btn btn-sm btn-secondary cancel-btn d-none" data-id="@comment.CommentID">❌ Cancel</button>
+                            <button class="btn btn-sm btn-secondary cancel-btn d-none" data-id="@comment.CommentID">❌
+                                Cancel</button>
                             <button class="btn btn-sm btn-danger delete-btn" data-id="@comment.CommentID">🗑️ Delete</button>
                         }
                     </div>
@@ -56,7 +97,6 @@
     {
         <p class="text-muted">No comments yet.</p>
     }
-    <a href="@Url.Action("Index", "Forum")" class="btn btn-secondary mt-3">Back to Forum</a>
 </div>
 
 <script>
@@ -160,4 +200,57 @@
             });
         });
     });
+
+    $(document).ready(function () {
+        $(".vote-btn").click(function () {
+            var itemID = $(this).data("id");
+            var voteValue = $(this).data("vote");
+            var type = $(this).data("type");
+
+            var url = type === "post" ? "/Forum/VotePost" : "/Forum/VoteComment";
+
+            $.post(url, { postID: itemID, voteValue: voteValue }, function (data) {
+                if (data.success) {
+                    location.reload(); // Refresh to update vote count
+                } else {
+                    alert(data.message);
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        $(".edit-post-btn").click(function () {
+            $(".post-edit-container").removeClass("d-none");
+            $(".edit-post-btn").addClass("d-none");
+            $(".save-post-btn, .cancel-post-btn").removeClass("d-none");
+        });
+
+        $(".cancel-post-btn").click(function () {
+            $(".post-edit-container").addClass("d-none");
+            $(".edit-post-btn").removeClass("d-none");
+            $(".save-post-btn, .cancel-post-btn").addClass("d-none");
+        });
+
+        $(".save-post-btn").click(function () {
+            var formData = new FormData($("#editPostForm")[0]);
+
+            formData.append("RemoveImage", $("input[name='RemoveImage']").is(":checked"));
+
+            $.ajax({
+                url: "/Forum/EditPost",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    alert(data.message);
+                    if (data.success) {
+                        location.reload();
+                    }
+                }
+            });
+        });
+    });
+
 </script>
