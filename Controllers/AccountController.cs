@@ -258,9 +258,14 @@ namespace homeowner.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
+            Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+            Response.Headers["Pragma"] = "no-cache";
+            Response.Headers["Expires"] = "0";
+
             TempData["SuccessMessage"] = "You have been logged out.";
             return RedirectToAction("Index", "Home");
         }
+
         public IActionResult Profile()
         {
             string userId = HttpContext.Session.GetString("UserID");

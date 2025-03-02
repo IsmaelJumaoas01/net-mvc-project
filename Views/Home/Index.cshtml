@@ -144,11 +144,11 @@
 <script>
 
     $(document).ready(function () {
-    var showModal = '@(TempData["ShowLoginRequiredModal"]?.ToString().ToLower() ?? "false")';
-    if (showModal === 'true') {
-        $('#loginRequiredModal').modal('show');
-    }
-});
+        var showModal = '@(TempData["ShowLoginRequiredModal"]?.ToString().ToLower() ?? "false")';
+        if (showModal === 'true') {
+            $('#loginRequiredModal').modal('show');
+        }
+    });
 
     function checkLogin() {
         var isLoggedIn = @Html.Raw(isLoggedIn.ToString().ToLower());
@@ -223,3 +223,13 @@
         width: 80%;
     }
 </style>
+
+<script>
+
+    (function () {
+        window.history.pushState(null, "", window.location.href);
+        window.onpopstate = function () {
+            window.history.pushState(null, "", window.location.href);
+        };
+    })();
+</script>
