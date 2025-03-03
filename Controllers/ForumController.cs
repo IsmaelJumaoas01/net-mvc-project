@@ -352,61 +352,67 @@ namespace homeowner.Controllers
 
 
         [HttpPost]
-        public IActionResult DeletePostImage(int postId)
+        public IActionResult DeletePostImage([FromForm] int postId)
         {
+            Console.WriteLine($"Received postId={postId}");
+
             string currentUserId = HttpContext.Session.GetString("UserID");
             if (string.IsNullOrEmpty(currentUserId) || !int.TryParse(currentUserId, out int userId))
             {
+                Console.WriteLine("Unauthorized access attempt - No valid UserID in session.");
                 return Json(new { success = false, message = "Unauthorized access" });
             }
 
-            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            Console.WriteLine($"DeletePostImage called with postId={postId} by userId={userId}");
+
+            try
             {
-                try
+                using (MySqlConnection conn = new MySqlConnection(connectionString))
                 {
                     conn.Open();
 
-                    // Check if post exists & belongs to the user
+                    // Check if the post exists and belongs to the user
                     string sqlCheck = "SELECT UserID FROM forum_posts WHERE PostID = @PostID";
-                    using (MySqlCommand cmdCheck = new MySqlCommand(sqlCheck, conn))
+                    MySqlCommand cmdCheck = new MySqlCommand(sqlCheck, conn);
+                    cmdCheck.Parameters.AddWithValue("@PostID", postId);
+                    object result = cmdCheck.ExecuteScalar();
+
+                    if (result == null)
                     {
-                        cmdCheck.Parameters.AddWithValue("@PostID", postId);
-                        object ownerObj = cmdCheck.ExecuteScalar();
-
-                        if (ownerObj == null)
-                        {
-                            return Json(new { success = false, message = "Post not found." });
-                        }
-
-                        int ownerID = Convert.ToInt32(ownerObj);
-                        if (ownerID != userId)
-                        {
-                            return Json(new { success = false, message = "You can only modify your own posts." });
-                        }
+                        Console.WriteLine("Post not found.");
+                        return Json(new { success = false, message = "Post not found." });
                     }
 
-                    // Update the Image field to NULL
+                    int postUserId = Convert.ToInt32(result);
+                    if (postUserId != userId)
+                    {
+                        Console.WriteLine("Unauthorized attempt to delete image.");
+                        return Json(new { success = false, message = "Unauthorized" });
+                    }
+
+                    // Delete the image
                     string sql = "UPDATE forum_posts SET Image = NULL WHERE PostID = @PostID AND UserID = @UserID";
-                    using (MySqlCommand cmd = new MySqlCommand(sql, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@PostID", postId);
-                        cmd.Parameters.AddWithValue("@UserID", userId);
+                    MySqlCommand cmd = new MySqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@PostID", postId);
+                    cmd.Parameters.AddWithValue("@UserID", userId);
 
-                        int rowsAffected = cmd.ExecuteNonQuery();
-                        if (rowsAffected > 0)
-                        {
-                            return Json(new { success = true, message = "Image deleted successfully!" });
-                        }
-                        else
-                        {
-                            return Json(new { success = false, message = "Image deletion failed." });
-                        }
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+                        Console.WriteLine("Image deleted successfully.");
+                        return Json(new { success = true, message = "Image deleted successfully" });
+                    }
+                    else
+                    {
+                        Console.WriteLine("Failed to delete image.");
+                        return Json(new { success = false, message = "Failed to delete image" });
                     }
                 }
-                catch (Exception ex)
-                {
-                    return Json(new { success = false, message = $"Error: {ex.Message}" });
-                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while deleting the image: {ex.Message}");
+                return Json(new { success = false, message = "An error occurred while deleting the image: " + ex.Message });
             }
         }
 
