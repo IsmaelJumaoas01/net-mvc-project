@@ -182,5 +182,145 @@ namespace homeowner.Controllers
                 return Json(new { success = false, message = "An error occurred while submitting the service request." });
             }
         }
+        public IActionResult ManageRequests()
+        {
+            string role = HttpContext.Session.GetString("Role") ?? "Staff";
+            if (role != "Administrator" && role != "Staff") return RedirectToAction("Index", "Home");
+
+            List<ServiceRequestModel> pendingRequests = new List<ServiceRequestModel>();
+            List<ServiceRequestModel> inProgressRequests = new List<ServiceRequestModel>();
+            List<ServiceRequestModel> historyRequests = new List<ServiceRequestModel>();
+
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+                string sql = "SELECT sr.*, st.ServiceTypeName FROM service_requests sr " +
+                             "JOIN service_types st ON sr.ServiceTypeID = st.ServiceTypeID ORDER BY sr.RequestDate DESC";
+                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    var request = new ServiceRequestModel
+                    {
+                        RequestID = reader.GetInt32("RequestID"),
+                        UserID = reader.GetInt32("UserID"),
+                        ServiceTypeID = reader.GetInt32("ServiceTypeID"),
+                        ServiceTypeName = reader.GetString("ServiceTypeName"),
+                        Description = reader.GetString("Description"),
+                        Status = reader.GetString("Status"),
+                        RequestDate = reader.GetDateTime("RequestDate"),
+                        ScheduledDate = reader.IsDBNull(reader.GetOrdinal("ServiceSchedule")) ? (DateTime?)null : reader.GetDateTime("ServiceSchedule")
+                    };
+
+                    if (request.Status == "Pending")
+                    {
+                        pendingRequests.Add(request);
+                    }
+                    else if (request.Status == "In Progress")
+                    {
+                        inProgressRequests.Add(request);
+                    }
+                    else if (request.Status == "Resolved" || request.Status == "Rejected")
+                    {
+                        historyRequests.Add(request);
+                    }
+                }
+                reader.Close();
+            }
+
+            ViewBag.PendingRequests = pendingRequests;
+            ViewBag.InProgressRequests = inProgressRequests;
+            ViewBag.HistoryRequests = historyRequests;
+
+            return View("~/Views/Admin_Staff/ManageServiceRequest.cshtml");
+        }
+
+        [HttpPost]
+        public IActionResult UpdateRequestStatus(int requestId, string status)
+        {
+            string role = HttpContext.Session.GetString("Role") ?? "Staff";
+            if (role != "Administrator" && role != "Staff") return Json(new { success = false, message = "Unauthorized access." });
+
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(connectionString))
+                {
+                    conn.Open();
+                    string sql = "UPDATE service_requests SET Status = @Status WHERE RequestID = @RequestID";
+                    MySqlCommand cmd = new MySqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@Status", status);
+                    cmd.Parameters.AddWithValue("@RequestID", requestId);
+                    cmd.ExecuteNonQuery();
+                }
+                return Json(new { success = true, message = "Service request status updated successfully!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating service request status");
+                return Json(new { success = false, message = "Error updating service request." });
+            }
+        }
+        // Fetch pending requests only
+        public IActionResult PendingRequests()
+        {
+            List<ServiceRequestModel> pendingRequests = new List<ServiceRequestModel>();
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+                string sql = "SELECT sr.*, st.ServiceTypeName FROM service_requests sr " +
+                             "JOIN service_types st ON sr.ServiceTypeID = st.ServiceTypeID WHERE sr.Status = 'Pending'";
+                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    pendingRequests.Add(new ServiceRequestModel
+                    {
+                        RequestID = reader.GetInt32("RequestID"),
+                        UserID = reader.GetInt32("UserID"),
+                        ServiceTypeID = reader.GetInt32("ServiceTypeID"),
+                        ServiceTypeName = reader.GetString("ServiceTypeName"),
+                        Description = reader.GetString("Description"),
+                        Status = reader.GetString("Status"),
+                        RequestDate = reader.GetDateTime("RequestDate"),
+                        ScheduledDate = reader.IsDBNull(reader.GetOrdinal("ServiceSchedule")) ? (DateTime?)null : reader.GetDateTime("ServiceSchedule")
+                    });
+                }
+                reader.Close();
+            }
+            ViewBag.PendingRequests = pendingRequests;
+            return View("~/Views/Admin/PendingRequests.cshtml");
+        }
+
+        // View request history
+        public IActionResult RequestHistory()
+        {
+            List<ServiceRequestModel> history = new List<ServiceRequestModel>();
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+                string sql = "SELECT sr.*, st.ServiceTypeName FROM service_requests sr " +
+                             "JOIN service_types st ON sr.ServiceTypeID = st.ServiceTypeID " +
+                             "WHERE sr.Status IN ('Resolved', 'Rejected') ORDER BY sr.RequestDate DESC";
+                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    history.Add(new ServiceRequestModel
+                    {
+                        RequestID = reader.GetInt32("RequestID"),
+                        UserID = reader.GetInt32("UserID"),
+                        ServiceTypeID = reader.GetInt32("ServiceTypeID"),
+                        ServiceTypeName = reader.GetString("ServiceTypeName"),
+                        Description = reader.GetString("Description"),
+                        Status = reader.GetString("Status"),
+                        RequestDate = reader.GetDateTime("RequestDate"),
+                        ScheduledDate = reader.IsDBNull(reader.GetOrdinal("ServiceSchedule")) ? (DateTime?)null : reader.GetDateTime("ServiceSchedule")
+                    });
+                }
+                reader.Close();
+            }
+            ViewBag.HistoryRequests = history;
+            return View("~/Views/Admin/RequestHistory.cshtml");
+        }
     }
 }

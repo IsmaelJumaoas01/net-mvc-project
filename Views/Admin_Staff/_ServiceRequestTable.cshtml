@@ -1,0 +1,48 @@
+@model List<homeowner.Models.ServiceRequestModel>
+
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Request ID</th>
+            <th>User ID</th>
+            <th>Service Type</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Request Date</th>
+            <th>Scheduled Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var request in Model)
+            {
+                <tr>
+                    <td>@request.RequestID</td>
+                    <td>@request.UserID</td>
+                    <td>@request.ServiceTypeName</td>
+                    <td>@request.Description</td>
+                    <td>@request.Status</td>
+                    <td>@request.RequestDate.ToString("yyyy-MM-dd")</td>
+                    <td>@request.ScheduledDate?.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <select class="form-select status-select" data-request-id="@request.RequestID">
+                            <option value="Pending" selected="@(request.Status == "Pending")">Pending</option>
+                            <option value="In Progress" selected="@(request.Status == "In Progress")">In Progress</option>
+                            <option value="Resolved" selected="@(request.Status == "Resolved")">Resolved</option>
+                            <option value="Rejected" selected="@(request.Status == "Rejected")">Rejected</option>
+                        </select>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr class="no-requests-message">
+                <td colspan="8" class="text-center">No service requests available.</td>
+            </tr>
+        }
+
+    </tbody>
+</table>

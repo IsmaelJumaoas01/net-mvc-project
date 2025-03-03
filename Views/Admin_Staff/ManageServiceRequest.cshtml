@@ -1,0 +1,103 @@
+@model List<homeowner.Models.ServiceRequestModel>
+@{
+    ViewBag.Title = "Manage Service Requests";
+    var pendingRequests = ViewBag.PendingRequests as List<homeowner.Models.ServiceRequestModel>;
+    var inProgressRequests = ViewBag.InProgressRequests as List<homeowner.Models.ServiceRequestModel>;
+    var historyRequests = ViewBag.HistoryRequests as List<homeowner.Models.ServiceRequestModel>;
+}
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+
+<div class="container mt-4">
+    <h1>Manage Service Requests</h1>
+    <ul class="nav nav-tabs" id="serviceRequestTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="pending-requests-tab" data-toggle="tab" href="#pending-requests" role="tab"
+                aria-controls="pending-requests" aria-selected="true">Pending Requests</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="in-progress-requests-tab" data-toggle="tab" href="#in-progress-requests" role="tab"
+                aria-controls="in-progress-requests" aria-selected="false">In Progress Requests</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="request-history-tab" data-toggle="tab" href="#request-history" role="tab"
+                aria-controls="request-history" aria-selected="false">Request History</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="serviceRequestTabsContent">
+        <div class="tab-pane fade show active" id="pending-requests" role="tabpanel"
+            aria-labelledby="pending-requests-tab">
+            @Html.Partial("~/Views/Admin_Staff/_ServiceRequestTable.cshtml", pendingRequests)
+        </div>
+        <div class="tab-pane fade" id="in-progress-requests" role="tabpanel" aria-labelledby="in-progress-requests-tab">
+            @Html.Partial("~/Views/Admin_Staff/_ServiceRequestTable.cshtml", inProgressRequests)
+        </div>
+        <div class="tab-pane fade" id="request-history" role="tabpanel" aria-labelledby="request-history-tab">
+            @Html.Partial("~/Views/Admin_Staff/_ServiceRequestTable.cshtml", historyRequests)
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".status-select").change(function () {
+            var $select = $(this);
+            var requestId = $select.data("request-id");
+            var status = $select.val();
+            var $row = $select.closest("tr");
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("UpdateRequestStatus", "ServiceRequests")",
+                data: { requestId: requestId, status: status },
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+
+                        // Remove "No service requests available." message if present
+                        $(".no-requests-message").remove();
+
+                        // Move row to the correct tab if necessary
+                        if (status === "Resolved" || status === "Rejected") {
+                            $("#request-history tbody").append($row);
+                        } else if (status === "Pending") {
+                            $("#pending-requests tbody").append($row);
+                        } else if (status === "In Progress") {
+                            $("#in-progress-requests tbody").append($row);
+                        }
+                    } else {
+                        alert("Failed to update status.");
+                    }
+                },
+                error: function () {
+                    alert("An error occurred while updating the status.");
+                }
+            });
+        });
+
+        $(".update-schedule").click(function () {
+            var requestId = $(this).data("request-id");
+            var date = $(".scheduled-date[data-request-id='" + requestId + "']").val();
+            var time = $(".scheduled-time[data-request-id='" + requestId + "']").val();
+            var scheduledDateTime = date + " " + time;
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("UpdateScheduledDate", "ServiceRequests")",
+                data: { requestId: requestId, scheduledDateTime: scheduledDateTime },
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function () {
+                    alert("An error occurred while updating the scheduled date.");
+                }
+            });
+        });
+    });
+</script>

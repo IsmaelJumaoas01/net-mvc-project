@@ -1,84 +1,108 @@
 @model List<homeowner.Models.FacilityReservationModel>
 @{
     ViewBag.Title = "Facility Reservations Management";
-    // Retrieve role from ViewBag (set in the controller).
     string role = ViewBag.Role as string ?? "Staff";
 }
 
-
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 
 <div class="container mt-4">
-    <h1>Facility Reservations Management</h1>
+    <h1 class="mb-4">Facility Reservations Management</h1>
 
-    @* Section: Manage Facilities (Administrator only) *@
     @if (role == "Administrator")
     {
-        <hr />
-        <h2>Manage Facilities</h2>
-        <form id="addFacilityForm" class="form-inline mb-3">
-            <div class="form-group mr-2">
-                <input type="text" class="form-control" id="facilityName" name="facilityName" placeholder="Enter facility name" required />
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2 class="h5 mb-0">Manage Facilities</h2>
             </div>
-            <button type="submit" class="btn btn-primary">Add Facility</button>
-        </form>
-        <ul class="list-group mb-4" id="facilitiesList">
-            @foreach (var facility in ViewBag.FacilityNames as List<homeowner.Models.FacilityModel>)
-            {
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    @facility.FacilityName
-                    <button class="btn btn-sm btn-danger deleteFacilityBtn" data-facility-id="@facility.FacilityID">Delete</button>
-                </li>
-            }
-        </ul>
+            <div class="card-body">
+                <form id="addFacilityForm" class="form-inline mb-3">
+                    <div class="form-group mr-2">
+                        <input type="text" class="form-control" id="facilityName" name="facilityName"
+                            placeholder="Enter facility name" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Facility</button>
+                </form>
+                <ul class="list-group mb-4" id="facilitiesList">
+                    @foreach (var facility in ViewBag.FacilityNames as List<homeowner.Models.FacilityModel>)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @facility.FacilityName
+                            <button class="btn btn-sm btn-danger deleteFacilityBtn" data-facility-id="@facility.FacilityID"><i
+                                    class="fas fa-trash-alt"></i></button>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
     }
 
-    <hr />
-    @* Section: Reservations *@
-    <h2>Reservations</h2>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Reservation ID</th>
-                <th>User ID</th>
-                <th>Facility Name</th>
-                <th>Reservation Date</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Status</th>
-                @if (role == "Staff" || role == "Administrator")
-                {
-                    <th>Action</th>
-                }
-            </tr>
-        </thead>
-        <tbody id="reservationsTable">
-            @foreach (var res in Model)
-            {
-                <tr data-reservation-id="@res.ReservationID">
-                    <td>@res.ReservationID</td>
-                    <td>@res.UserID</td>
-                    <td>@res.FacilityName</td>
-                    <td>@res.ReservationDate.ToString("yyyy-MM-dd")</td>
-                    <td>@res.StartTime</td>
-                    <td>@res.EndTime</td>
-                    <td class="statusCell">@res.Status</td>
-                    @if (role == "Staff" || role == "Administrator")
-                    {
-                        <td>
-                            <select class="form-control updateStatusSelect">
-                                <option value="Pending" selected="@(res.Status == "Pending")">Pending</option>
-                                <option value="Confirmed" selected="@(res.Status == "Confirmed")">Confirmed</option>
-                                <option value="Cancelled" selected="@(res.Status == "Cancelled")">Cancelled</option>
-                            </select>
-                            <button class="btn btn-sm btn-primary mt-1 updateStatusBtn">Update</button>
-                        </td>
-                    }
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="card">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Reservations</h2>
+        </div>
+        <div class="card-body">
+            <div class="form-inline mb-3">
+                <label for="statusFilter" class="mr-2">Filter by Status:</label>
+                <select id="statusFilter" class="form-control">
+                    <option value="All">All</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Reservation ID</th>
+                            <th>User ID</th>
+                            <th>Facility Name</th>
+                            <th>Reservation Date</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Status</th>
+                            @if (role == "Staff" || role == "Administrator")
+                            {
+                                <th>Action</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody id="reservationsTable">
+                        @foreach (var res in Model)
+                        {
+                            <tr data-reservation-id="@res.ReservationID" data-status="@res.Status">
+                                <td>@res.ReservationID</td>
+                                <td>@res.UserID</td>
+                                <td>@res.FacilityName</td>
+                                <td>@res.ReservationDate.ToString("yyyy-MM-dd")</td>
+                                <td>@res.StartTime</td>
+                                <td>@res.EndTime</td>
+                                <td class="statusCell">@res.Status</td>
+                                @if (role == "Staff" || role == "Administrator")
+                                {
+                                    <td>
+                                        <select class="form-control updateStatusSelect">
+                                            <option value="Pending" selected="@(res.Status == "Pending")">Pending</option>
+                                            <option value="Confirmed" selected="@(res.Status == "Confirmed")">Confirmed</option>
+                                            <option value="Cancelled" selected="@(res.Status == "Cancelled")">Cancelled</option>
+                                        </select>
+                                        <button class="btn btn-sm btn-primary mt-1 updateStatusBtn">Update</button>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
     $(document).ready(function () {
         // Facility addition (Administrator only)
@@ -137,16 +161,56 @@
                 }
             });
         });
+
+        // Filter reservations by status
+        $("#statusFilter").change(function () {
+            var selectedStatus = $(this).val();
+            if (selectedStatus === "All") {
+                $("#reservationsTable tr").show();
+            } else {
+                $("#reservationsTable tr").each(function () {
+                    var status = $(this).data("status");
+                    if (status === selectedStatus) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            }
+        });
     });
 </script>
 
 <style>
-    h1, h2 {
+    h1,
+    h2 {
         margin-bottom: 20px;
     }
+
     .list-group-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .card {
+        margin-bottom: 20px;
+    }
+
+    .card-header {
+        background-color: #f8f9fa;
+    }
+
+    .form-inline {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .form-inline .form-group {
+        margin-bottom: 10px;
     }
 </style>

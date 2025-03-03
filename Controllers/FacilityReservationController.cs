@@ -12,11 +12,9 @@ namespace homeowner.Controllers
 
         public IActionResult Index()
         {
-            // Get role from session; default to "Staff" if not set.
             string role = HttpContext.Session.GetString("Role") ?? "Staff";
             ViewBag.Role = role;
 
-            // If admin, load facilities list and store in ViewBag.
             if (role == "Administrator")
             {
                 List<FacilityModel> facilities = new List<FacilityModel>();
@@ -39,15 +37,14 @@ namespace homeowner.Controllers
                 ViewBag.FacilityNames = facilities;
             }
 
-            // Load facility reservations and join to get facility name.
             List<FacilityReservationModel> reservations = new List<FacilityReservationModel>();
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
                 conn.Open();
                 string sql = @"SELECT r.*, f.FacilityName 
-                               FROM facility_reservations r 
-                               LEFT JOIN facilities f ON r.FacilityID = f.FacilityID 
-                               ORDER BY r.ReservationDate DESC, r.StartTime ASC";
+                       FROM facility_reservations r 
+                       LEFT JOIN facilities f ON r.FacilityID = f.FacilityID 
+                       ORDER BY r.ReservationDate DESC, r.StartTime ASC";
                 MySqlCommand cmd = new MySqlCommand(sql, conn);
                 var reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -61,15 +58,12 @@ namespace homeowner.Controllers
                         StartTime = reader.GetTimeSpan("StartTime"),
                         EndTime = reader.GetTimeSpan("EndTime"),
                         Status = reader.GetString("Status"),
-                        FacilityName = reader.IsDBNull(reader.GetOrdinal("FacilityName"))
-                                        ? ""
-                                        : reader.GetString("FacilityName")
+                        FacilityName = reader.IsDBNull(reader.GetOrdinal("FacilityName")) ? "" : reader.GetString("FacilityName")
                     });
                 }
                 reader.Close();
             }
 
-            // Return the view located at /Views/Admin_Staff/Facility.cshtml with the reservations list as the model.
             return View("~/Views/Admin_Staff/Facility.cshtml", reservations);
         }
 
