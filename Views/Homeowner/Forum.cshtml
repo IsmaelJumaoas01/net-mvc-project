@@ -6,7 +6,10 @@
 }
 
 <link rel="stylesheet" href="~/css/home.css" />
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+
+<link rel="stylesheet" href="~/css/homeowner_forum.css" />
+
+
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
@@ -66,12 +69,14 @@
                             class="btn btn-primary mt-2">View Details</a>
 
                         <div class="edit-delete-buttons" style="display: none;">
-                            <button class="btn btn-warning mt-2 edit-post-btn" data-id="@post.PostID" data-title="@post.Title"
+                            <button class="edit-post-btn modern-btn edit-btn" data-id="@post.PostID" data-title="@post.Title"
                                 data-content="@post.Content" data-image="@Convert.ToBase64String(post.Image ?? new byte[0])">
-                                Edit
+                                ✏️ Edit
                             </button>
 
-                            <button class="btn btn-danger mt-2 delete-post-btn" data-id="@post.PostID">Delete</button>
+                            <button class="delete-post-btn modern-btn delete-btn" data-id="@post.PostID">
+                                🗑️ Delete
+                            </button>
                         </div>
 
 
@@ -131,7 +136,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="editPostForm">
+                <form id="editPostForm" enctype="multipart/form-data">
                     <input type="hidden" id="editPostID" name="PostID">
 
                     <div class="mb-3">
@@ -146,16 +151,14 @@
 
                     <div class="mb-3">
                         <label class="form-label">Current Image</label>
-                        <img id="editImagePreview" class="img-fluid mt-2"
-                            style="display: none; max-width: 100%; height: auto;">
-                        <button type="button" class="btn btn-danger mt-2" id="deleteImageBtn" style="display: none;">
-                            Delete Image
-                        </button>
-
-
+                        <img id="editImagePreview" class="img-fluid mt-2" style="display: none; max-width: 100%; height: auto;">
+                        <button type="button" class="btn btn-danger mt-2" id="deleteImageBtn" style="display: none;">Delete Image</button>
                     </div>
 
-
+                    <div class="mb-3">
+                        <label for="editPostImage" class="form-label">Upload New Image</label>
+                        <input type="file" class="form-control" id="editPostImage" name="imageFile">
+                    </div>
 
                     <button type="submit" class="btn btn-primary w-100">Save Changes</button>
                 </form>
@@ -163,7 +166,6 @@
         </div>
     </div>
 </div>
-
 
 <script>
 

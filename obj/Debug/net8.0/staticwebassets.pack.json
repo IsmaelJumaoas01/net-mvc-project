@@ -9,6 +9,10 @@
       "PackagePath": "staticwebassets\\css\\home.css"
     },
     {
+      "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\homeowner_forum.css",
+      "PackagePath": "staticwebassets\\css\\homeowner_forum.css"
+    },
+    {
       "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\register.css",
       "PackagePath": "staticwebassets\\css\\register.css"
     },

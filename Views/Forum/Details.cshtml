@@ -1,32 +1,52 @@
 @model homeowner.Models.ForumPostModel
+@{
+    ViewBag.Title = "Post Details";
+    var currentUserId = ViewBag.UserID?.ToString();
+}
+
+<link rel="stylesheet" href="~/css/home.css" />
+<link rel="stylesheet" href="~/css/homeowner_forum.css" />
+
 <a href="@Url.Action("Index", "Forum")" class="btn btn-secondary mt-3">Back to Forum</a>
 
 <div class="container mt-4">
-    <div class="card p-4 shadow-sm">
-        <h2 class="text-primary">@Model.Title</h2>
-        <p class="text-muted"><strong>Posted on:</strong> @Model.CreatedAt.ToString("MMMM dd, yyyy hh:mm tt")</p>
-        <div class="mb-3">
-            <p class="lead">@Model.Content</p>
+    <div class="card mb-3 post-card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="card-title mb-0">@Model.Title</h5>
+                <small class="text-muted">
+                    <strong>@Model.Username</strong> • Posted on @Model.CreatedAt.ToString("yyyy-MM-dd hh:mm tt")
+                </small>
+            </div>
+        </div>
+        <div class="card-body">
+            <p class="card-text">@Model.Content</p>
+
             @if (Model.Image != null && Model.Image.Length > 0)
             {
-                <img src="data:image/png;base64,@Convert.ToBase64String(Model.Image)" class="img-fluid rounded"
-                    alt="Post Image" style="max-width: 100%; height: auto;">
+                <img src="data:image/png;base64,@Convert.ToBase64String(Model.Image)" class="img-fluid mt-2 rounded" alt="Post Image" style="max-width: 100%; height: auto;">
             }
-            <div class="d-flex align-items-center">
-                <button class="btn btn-outline-success vote-btn" data-id="@Model.PostID" data-type="post"
-                    data-vote="1">⬆️ (@Model.Upvotes)</button>
-                <button class="btn btn-outline-danger vote-btn" data-id="@Model.PostID" data-type="post"
-                    data-vote="-1">⬇️ (@Model.Downvotes)</button>
-            </div>
 
+            <div class="d-flex align-items-center mt-2">
+                <button class="btn btn-sm btn-outline-success upvote-btn upvote-post-btn" data-id="@Model.PostID">
+                    👍 <span class="upvote-count">@Model.Upvotes</span>
+                </button>
+                <button class="btn btn-sm btn-outline-danger downvote-btn downvote-post-btn ms-2" data-id="@Model.PostID">
+                    👎 <span class="downvote-count">@Model.Downvotes</span>
+                </button>
+            </div>
+            
             @if (Context.Session.GetString("UserID") == Model.UserID.ToString())
             {
-                <button class="btn btn-warning edit-post-btn">✏️ Edit Post</button>
+                <div class="edit-delete-buttons mt-2">
+                    <button class="edit-post-btn modern-btn edit-btn" data-id="@Model.PostID" data-title="@Model.Title" data-content="@Model.Content" data-image="@Convert.ToBase64String(Model.Image ?? new byte[0])">
+                        ✏️ Edit
+                    </button>
+                </div>
                 <button class="btn btn-primary save-post-btn d-none">💾 Save</button>
                 <button class="btn btn-secondary cancel-post-btn d-none">❌ Cancel</button>
             }
-
-            <div class="post-edit-container d-none">
+                <div class="post-edit-container d-none">
                 <form id="editPostForm">
                     <input type="hidden" name="PostID" value="@Model.PostID">
                     <input type="text" name="Title" class="form-control mt-2" value="@Model.Title">
@@ -37,14 +57,13 @@
                     {
                         <div class="mt-2">
                             <label>
-                                <input type="checkbox" name="RemoveImage" value="true"> Remove Image
+                        <button type="button" class="btn btn-danger mt-2" id="deleteImageBtn">Delete Image</button>
                             </label>
                         </div>
                     }
                 </form>
+            
             </div>
-
-
         </div>
     </div>
 
@@ -54,8 +73,7 @@
         <h5 class="text-secondary">Leave a Comment</h5>
         <form id="commentForm">
             <input type="hidden" name="PostID" value="@Model.PostID">
-            <textarea name="Content" class="form-control" rows="3" placeholder="Write your comment here..."
-                required></textarea>
+            <textarea name="Content" class="form-control" rows="3" placeholder="Write your comment here..." required></textarea>
             <input type="file" name="imageFile" class="form-control mt-2">
             <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
         </form>
@@ -65,28 +83,28 @@
     {
         @foreach (var comment in ViewBag.Comments)
         {
-            <div class="card mb-3 shadow-sm" id="comment-@comment.CommentID">
+            <div class="card mb-3 post-card" id="comment-@comment.CommentID">
                 <div class="card-body">
                     <p class="comment-text font-weight-bold">@comment.Content</p>
                     <textarea class="form-control edit-textarea d-none">@comment.Content</textarea>
                     @if (comment.Image != null && comment.Image.Length > 0)
                     {
-                        <img src="data:image/png;base64,@Convert.ToBase64String(comment.Image)" class="img-fluid mt-2 rounded"
-                            alt="Comment Image" style="max-width: 100%; height: auto;">
+                        <img src="data:image/png;base64,@Convert.ToBase64String(comment.Image)" class="img-fluid mt-2 rounded" alt="Comment Image" style="max-width: 100%; height: auto;">
                     }
                     <small class="text-muted">Posted on @comment.CreatedAt.ToString("yyyy-MM-dd hh:mm tt")</small>
-                    <div class="mt-2">
-                        <button class="btn btn-sm btn-outline-success vote-btn" data-id="@comment.CommentID" data-type="comment"
-                            data-vote="1">⬆️ (@comment.Upvotes)</button>
-                        <button class="btn btn-sm btn-outline-danger vote-btn" data-id="@comment.CommentID" data-type="comment"
-                            data-vote="-1">⬇️ (@comment.Downvotes)</button>
+                    <div class="mt-2 d-flex align-items-center">
+                        <button class="btn btn-sm btn-outline-success upvote-btn upvote-comment-btn" data-id="@comment.CommentID">
+                            👍 <span class="upvote-count">@comment.Upvotes</span>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger downvote-btn downvote-comment-btn ms-2" data-id="@comment.CommentID">
+                            👎 <span class="downvote-count">@comment.Downvotes</span>
+                        </button>
                         @if (Context.Session.GetString("UserID") == comment.UserID.ToString())
                         {
-                            <button class="btn btn-sm btn-warning edit-btn" data-id="@comment.CommentID">✏️ Edit</button>
-                            <button class="btn btn-sm btn-primary save-btn d-none" data-id="@comment.CommentID">💾 Save</button>
-                            <button class="btn btn-sm btn-secondary cancel-btn d-none" data-id="@comment.CommentID">❌
-                                Cancel</button>
-                            <button class="btn btn-sm btn-danger delete-btn" data-id="@comment.CommentID">🗑️ Delete</button>
+                            <button class="btn btn-sm btn-warning edit-btn ms-2" data-id="@comment.CommentID">✏️ Edit</button>
+                            <button class="btn btn-sm btn-primary save-btn d-none ms-2" data-id="@comment.CommentID">💾 Save</button>
+                            <button class="btn btn-sm btn-secondary cancel-btn d-none ms-2" data-id="@comment.CommentID">❌ Cancel</button>
+                            <button class="btn btn-sm btn-danger delete-btn ms-2" data-id="@comment.CommentID">🗑️ Delete</button>
                         }
                     </div>
                 </div>
@@ -99,12 +117,26 @@
     }
 </div>
 
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
-    $(document).ready(function () {
-        $(".vote-btn").click(function () {
+      $(document).ready(function () {
+        $(".upvote-post-btn, .downvote-post-btn").click(function () {
+            var postID = $(this).data("id");
+            var voteValue = $(this).hasClass("upvote-post-btn") ? 1 : -1;
+
+            $.post("/Forum/VotePost", { postID: postID, voteValue: voteValue }, function (data) {
+                if (data.success) {
+                    location.reload(); // Refresh page to show updated vote count
+                } else {
+                    alert(data.message);
+                }
+            });
+        });
+
+        $(".upvote-comment-btn, .downvote-comment-btn").click(function () {
             var commentID = $(this).data("id");
-            var voteValue = $(this).data("vote");
-            var type = $(this).data("type");
+            var voteValue = $(this).hasClass("upvote-comment-btn") ? 1 : -1;
 
             $.post("/Forum/VoteComment", { commentID: commentID, voteValue: voteValue }, function (data) {
                 if (data.success) {
@@ -176,9 +208,7 @@
                 }
             });
         });
-    });
 
-    $(document).ready(function () {
         $("#commentForm").submit(function (e) {
             e.preventDefault();
 
@@ -199,27 +229,7 @@
                 }
             });
         });
-    });
 
-    $(document).ready(function () {
-        $(".vote-btn").click(function () {
-            var itemID = $(this).data("id");
-            var voteValue = $(this).data("vote");
-            var type = $(this).data("type");
-
-            var url = type === "post" ? "/Forum/VotePost" : "/Forum/VoteComment";
-
-            $.post(url, { postID: itemID, voteValue: voteValue }, function (data) {
-                if (data.success) {
-                    location.reload(); // Refresh to update vote count
-                } else {
-                    alert(data.message);
-                }
-            });
-        });
-    });
-
-    $(document).ready(function () {
         $(".edit-post-btn").click(function () {
             $(".post-edit-container").removeClass("d-none");
             $(".edit-post-btn").addClass("d-none");
@@ -251,6 +261,30 @@
                 }
             });
         });
+
+        $("#deleteImageBtn").click(function () {
+            var postID = $("input[name='PostID']").val(); // Get PostID from the hidden input
+
+            if (confirm("Are you sure you want to delete this image?")) {
+                $.ajax({
+                    url: "/Forum/DeletePostImage",
+                    type: "POST", // Change to DELETE if necessary
+                    data: { PostID: postID },
+                    success: function (data) {
+                        if (data.success) {
+                            alert("Image deleted successfully.");
+                            location.reload(); // Refresh to reflect the change
+                        } else {
+                            alert(data.message);
+                        }
+                    },
+                    error: function () {
+                        alert("An error occurred while deleting the image.");
+                    }
+                });
+            }
+        });
     });
+
 
 </script>

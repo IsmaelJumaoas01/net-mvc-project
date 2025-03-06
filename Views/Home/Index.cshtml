@@ -18,13 +18,14 @@
 
 @if (TempData["SuccessMessage"] != null)
 {
-    <div class="alert alert-success" role="alert">
+    <div id="successAlert" class="custom-alert success">
         @TempData["SuccessMessage"]
     </div>
 }
+
 @if (TempData["ErrorMessage"] != null)
 {
-    <div class="alert alert-danger" role="alert">
+    <div id="errorAlert" class="custom-alert error">
         @TempData["ErrorMessage"]
     </div>
 }
@@ -46,7 +47,6 @@
                 <div class="dashboard">
                     <p>Welcome back, @username!</p>
                     <a class="btn btn-danger" asp-controller="Homeowner" asp-action="Profile">Go to Dashboard</a>
-                    <a asp-controller="Account" asp-action="Logout" class="btn btn-danger">Logout</a>
                 </div>
             }
             <!-- Changelog Button: visible for everyone -->
@@ -161,67 +161,136 @@
 </script>
 
 <style>
-    .hero {
-        position: relative;
-        color: white;
-        text-align: center;
-        padding: 100px 20px;
-    }
+   body {
+  
+    color: #ffffff; /* White text for readability */
+}
 
-    .hero .overlay {
-        background: rgba(0, 0, 0, 0.5);
-        padding: 50px;
-    }
+.navbar {
+    background: #121212; /* Slightly lighter black for navbar */
+}
 
-    .auth-buttons .btn,
-    .dashboard .btn {
-        margin: 10px;
-    }
+.hero {
+    position: relative;
+    color: white;
+    text-align: center;
+    padding: 100px 20px;
+}
 
-    .features {
-        padding: 50px 20px;
-        text-align: center;
-    }
+.hero .overlay {
+    background: rgba(43, 49, 55, 0.8); /* Dark gray with transparency */
+    padding: 50px;
+}
 
-    .feature-list {
-        display: flex;
-        justify-content: space-around;
-        flex-wrap: wrap;
-    }
+.auth-buttons .btn,
+.dashboard .btn {
+    margin: 10px;
+}
 
-    .feature {
-        flex: 1 1 200px;
-        margin: 20px;
-        padding: 20px;
-        background: #f9f9f9;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
+.features {
+    padding: 50px 20px;
+    text-align: center;
+    background: #1a1a1a; /* Dark gray for features section */
+}
 
-    .feature i {
-        color: #007bff;
-        margin-bottom: 10px;
-    }
+.feature-list {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
 
-    .announcements {
-        padding: 50px 20px;
-        text-align: center;
-    }
+.feature {
+    flex: 1 1 200px;
+    margin: 20px;
+    padding: 20px;
+    background: #252525; /* Slightly lighter gray for contrast */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
 
-    .announcement-list {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+.feature i {
+    color: #007bff;
+    margin-bottom: 10px;
+}
 
-    .announcement {
-        background: #f9f9f9;
-        padding: 20px;
-        margin: 10px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        width: 80%;
-    }
+.announcements {
+    padding: 50px 20px;
+    text-align: center;
+    background: #1e1e1e; /* Dark gray */
+}
+
+.announcement-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.announcement {
+    background: #2c2c2c; /* Slightly lighter than section */
+    padding: 20px;
+    margin: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    width: 80%;
+}
+
+.modal-content {
+    background: #222831; /* Dark Blue-Gray for modals */
+}
+
+.btn-primary {
+    background: #007bff;
+    border-color: #007bff;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-danger {
+    background: #dc3545;
+    border-color: #dc3545;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #1a1a1a; /* Dark gray for blending */
+    color: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th {
+    background-color: #2b2b2b; /* Slightly lighter dark gray */
+    color: white;
+    padding: 10px;
+    text-align: left;
+}
+
+tr {
+    background-color: #1f1f1f; /* Blended dark gray */
+    color: white; /* Keep text readable */
+    transition: background 0.3s;
+}
+
+tr:nth-child(even) {
+    background-color: #292929; /* Slightly lighter gray for alternating rows */
+}
+
+tr:hover {
+    background-color: #333; /* Highlight effect on hover */
+}
+
+td {
+    padding: 10px;
+    border: 1px solid #444;
+}
+
+small, p small {
+    color: #a0a0a0; /* Light gray for timestamps and small text */
+}
+
 </style>
 
 <script>

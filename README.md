@@ -16,8 +16,10 @@ Homeowner Application (MVC/.NET8 PROJECT)
 | 2025-03-01 | v1.0.6  | Forums - comment, upvotes and downvotes functions working (@homeownerside) #OPTIONAL need a moderation function|
 | 2025-03-02 | v1.0.7  | Added Service Request. But no moderation side yet|
 | 2025-03-04 | v1.0.8  | Added Admin/Staff Side for Service Request  |
+| 2025-03-06 | v1.0.9  | Changed entire layout design, theme and etc. Not yet done, improved ui/ux forums|
 | YYYY-MM-DD | v1.0.4  | ===== |
 | YYYY-MM-DD | v1.0.4  | ===== |
+
 
 ---
 
@@ -47,4 +49,4 @@ Homeowner Application (MVC/.NET8 PROJECT)
 
 ---
 
-✍ **Maintained by: Ismael Jose Jumao-as && Paul Christian T. Patiño.
+✍ **Maintained by: ayaya_07.

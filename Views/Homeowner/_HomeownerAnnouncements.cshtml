@@ -115,52 +115,136 @@
 </script>
 
 <style>
-    .announcements {
-        padding: 50px 20px;
-    }
 
-    .announcement-list .announcement {
-        background: #f9f9f9;
-        border: none;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        cursor: pointer;
-    }
+/* Global Styles */
+body {
+    background-color: #121212;
+    color: #ffffff;
+    font-family: "Poppins", sans-serif;
+}
 
-    .announcement-content {
-        background: #e9ecef;
-        border-left: 4px solid #ced4da;
-        padding: 15px;
-        margin: 15px 0;
-        font-size: 16px;
-        line-height: 1.5;
-    }
-       header.navbar {
-        background-color: #f3f4f6;
-        border-bottom: 1px solid #e0e0e0;
-    }
+/* Announcements Section */
+.announcements {
+    padding: 60px 20px;
+    text-align: center;
+    background: #1e1e1e;
+}
 
-    header.navbar .nav-link {
-        color: #333;
-        margin: 0 10px;
-    }
+.announcements h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: white;
+}
 
-    header.navbar .nav-link:hover {
-        color: #007bff;
-    }
+/* Sorting Dropdown */
+.sort-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
 
-    header.navbar .navbar-brand {
-        color: #007bff;
-    }
+#sortSelect {
+    background: #292929;
+    color: white;
+    border: 1px solid #444;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
-    header.navbar .navbar-brand:hover {
-        color: #0056b3;
-    }
+/* Announcement Cards */
+.announcement-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    justify-content: center;
+    max-width: 1000px;
+    margin: auto;
+}
 
-    header.navbar .navbar-toggler {
-        border-color: #007bff;
-    }
+.announcement {
+    background: #242424;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
+}
 
-    header.navbar .navbar-toggler-icon {
-        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%280, 123, 255, 1%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
-    }
+.announcement:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 8px 20px rgba(0, 188, 212, 0.3);
+}
+
+.announcement .card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+}
+
+.announcement-content {
+    color: #e0e0e0;
+    margin-top: 10px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.announcement p {
+    margin-top: 15px;
+    font-size: 0.85rem;
+    color: #bbb;
+}
+
+/* Modal Styles */
+.modal-content {
+    background: #222831;
+    border-radius: 12px;
+    color: white;
+    padding: 20px;
+}
+
+.modal-header {
+    border-bottom: 1px solid #444;
+    background: #1a1a1a;
+    border-radius: 12px 12px 0 0;
+}
+
+.modal-title {
+    font-weight: bold;
+    color: white;
+}
+
+.modal-footer {
+    border-top: 1px solid #444;
+}
+
+/* Buttons */
+.btn-primary {
+    background: #00bcd4;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+    background: #008ba3;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+}
+
+.btn-danger {
+    background: #dc3545;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+}
+
 </style>

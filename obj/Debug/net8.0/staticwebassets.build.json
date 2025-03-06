@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "9tzC4XBuCMOT6WP8VblUjd5OXdxJFYspW2SlE1lz1/k=",
+  "Hash": "aX8iuXNr2P6vjwQM4Ga+OF772JbYIijA1aHwpTry0oQ=",
   "Source": "homeowner_app",
   "BasePath": "_content/homeowner_app",
   "Mode": "Default",
@@ -73,11 +73,32 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "p6owmhlvdh",
-      "Integrity": "j/N4xi/MOUj7cKQ9JbhGWdP6kDxT2/q95Ndzq4sdidY=",
+      "Fingerprint": "eb9hk8wtya",
+      "Integrity": "lsJ0+v56tkyMkc8En55+hL51B4xhcKDL/E3oiVy1RfE=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\home.css"
+    },
+    {
+      "Identity": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\homeowner_forum.css",
+      "SourceId": "homeowner_app",
+      "SourceType": "Discovered",
+      "ContentRoot": "X:\\vscode projects\\net-mvc-project\\wwwroot\\",
+      "BasePath": "_content/homeowner_app",
+      "RelativePath": "css/homeowner_forum#[.{fingerprint}]?.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "f5eoj0gmh1",
+      "Integrity": "XS84K+frWZy8xwdj+c1JCIqyAqidjwKtcLDzm+Rk1KU=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\homeowner_forum.css"
     },
     {
       "Identity": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\register.css",
@@ -1394,7 +1415,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "1740"
+          "Value": "3297"
         },
         {
           "Name": "Content-Type",
@@ -1402,11 +1423,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"j/N4xi/MOUj7cKQ9JbhGWdP6kDxT2/q95Ndzq4sdidY=\""
+          "Value": "\"lsJ0+v56tkyMkc8En55+hL51B4xhcKDL/E3oiVy1RfE=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 02 Mar 2025 00:33:25 GMT"
+          "Value": "Thu, 06 Mar 2025 03:38:55 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1416,12 +1437,12 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-j/N4xi/MOUj7cKQ9JbhGWdP6kDxT2/q95Ndzq4sdidY="
+          "Value": "sha256-lsJ0+v56tkyMkc8En55+hL51B4xhcKDL/E3oiVy1RfE="
         }
       ]
     },
     {
-      "Route": "css/home.p6owmhlvdh.css",
+      "Route": "css/home.eb9hk8wtya.css",
       "AssetFile": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\home.css",
       "Selectors": [],
       "ResponseHeaders": [
@@ -1431,7 +1452,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "1740"
+          "Value": "3297"
         },
         {
           "Name": "Content-Type",
@@ -1439,11 +1460,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"j/N4xi/MOUj7cKQ9JbhGWdP6kDxT2/q95Ndzq4sdidY=\""
+          "Value": "\"lsJ0+v56tkyMkc8En55+hL51B4xhcKDL/E3oiVy1RfE=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 02 Mar 2025 00:33:25 GMT"
+          "Value": "Thu, 06 Mar 2025 03:38:55 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1453,7 +1474,7 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "p6owmhlvdh"
+          "Value": "eb9hk8wtya"
         },
         {
           "Name": "label",
@@ -1461,7 +1482,89 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-j/N4xi/MOUj7cKQ9JbhGWdP6kDxT2/q95Ndzq4sdidY="
+          "Value": "sha256-lsJ0+v56tkyMkc8En55+hL51B4xhcKDL/E3oiVy1RfE="
+        }
+      ]
+    },
+    {
+      "Route": "css/homeowner_forum.css",
+      "AssetFile": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\homeowner_forum.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2587"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"XS84K+frWZy8xwdj+c1JCIqyAqidjwKtcLDzm+Rk1KU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 06 Mar 2025 02:29:23 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-XS84K+frWZy8xwdj+c1JCIqyAqidjwKtcLDzm+Rk1KU="
+        }
+      ]
+    },
+    {
+      "Route": "css/homeowner_forum.f5eoj0gmh1.css",
+      "AssetFile": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\homeowner_forum.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2587"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"XS84K+frWZy8xwdj+c1JCIqyAqidjwKtcLDzm+Rk1KU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 06 Mar 2025 02:29:23 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "f5eoj0gmh1"
+        },
+        {
+          "Name": "label",
+          "Value": "css/homeowner_forum.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-XS84K+frWZy8xwdj+c1JCIqyAqidjwKtcLDzm+Rk1KU="
         }
       ]
     },
@@ -1570,7 +1673,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 02 Mar 2025 00:33:25 GMT"
+          "Value": "Thu, 06 Mar 2025 01:29:51 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1615,7 +1718,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 02 Mar 2025 00:33:25 GMT"
+          "Value": "Thu, 06 Mar 2025 01:29:51 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1652,7 +1755,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 02 Mar 2025 00:33:25 GMT"
+          "Value": "Thu, 06 Mar 2025 01:31:06 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1689,7 +1792,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 02 Mar 2025 00:33:25 GMT"
+          "Value": "Thu, 06 Mar 2025 01:31:06 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1816,7 +1919,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 02 Mar 2025 00:33:25 GMT"
+          "Value": "Thu, 06 Mar 2025 01:35:34 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1853,7 +1956,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 02 Mar 2025 00:33:25 GMT"
+          "Value": "Thu, 06 Mar 2025 01:35:34 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1898,7 +2001,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 02 Mar 2025 00:33:25 GMT"
+          "Value": "Thu, 06 Mar 2025 01:35:34 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1943,7 +2046,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 02 Mar 2025 00:33:25 GMT"
+          "Value": "Thu, 06 Mar 2025 01:35:34 GMT"
         },
         {
           "Name": "Cache-Control",
