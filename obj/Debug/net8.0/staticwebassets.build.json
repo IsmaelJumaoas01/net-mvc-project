@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "5jpsE8P+2kGDpr2zCU9tAjqonK6jMWgNvECaCJ4YT/I=",
+  "Hash": "r8tU7ndeinLazBHp6joqaY9Q3t8uLldOOxpMcqxHY0U=",
   "Source": "homeowner_app",
   "BasePath": "_content/homeowner_app",
   "Mode": "Default",
@@ -101,27 +101,6 @@
       "OriginalItemSpec": "wwwroot\\css\\homeowner_forum.css"
     },
     {
-      "Identity": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\register.css",
-      "SourceId": "homeowner_app",
-      "SourceType": "Discovered",
-      "ContentRoot": "X:\\vscode projects\\net-mvc-project\\wwwroot\\",
-      "BasePath": "_content/homeowner_app",
-      "RelativePath": "css/register#[.{fingerprint}]?.css",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "Fingerprint": "5ksa06936m",
-      "Integrity": "Fdc3ZO+H4uI2oTvGpYLaACdUr55wjBpSieYKKRV+4fg=",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\css\\register.css"
-    },
-    {
       "Identity": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\site.css",
       "SourceId": "homeowner_app",
       "SourceType": "Discovered",
@@ -183,6 +162,48 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "X:\\vscode projects\\net-mvc-project\\wwwroot\\images\\basketball_court.jpg",
+      "SourceId": "homeowner_app",
+      "SourceType": "Discovered",
+      "ContentRoot": "X:\\vscode projects\\net-mvc-project\\wwwroot\\",
+      "BasePath": "_content/homeowner_app",
+      "RelativePath": "images/basketball_court#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "bjmb9fopho",
+      "Integrity": "KbRioDdZDxK0XMPy3uix8vTCMuvIATvBtK+4C88/IWM=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\basketball_court.jpg"
+    },
+    {
+      "Identity": "X:\\vscode projects\\net-mvc-project\\wwwroot\\images\\swimming_pool.jpg",
+      "SourceId": "homeowner_app",
+      "SourceType": "Discovered",
+      "ContentRoot": "X:\\vscode projects\\net-mvc-project\\wwwroot\\",
+      "BasePath": "_content/homeowner_app",
+      "RelativePath": "images/swimming_pool#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "agt53b9cjd",
+      "Integrity": "WqMv14T4UPE8XoRrhEedEVYwrIHdt0DTEMtQdByexLk=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\swimming_pool.jpg"
     },
     {
       "Identity": "X:\\vscode projects\\net-mvc-project\\wwwroot\\js\\site.js",
@@ -1569,88 +1590,6 @@
       ]
     },
     {
-      "Route": "css/register.5ksa06936m.css",
-      "AssetFile": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\register.css",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "904"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"Fdc3ZO+H4uI2oTvGpYLaACdUr55wjBpSieYKKRV+4fg=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Sun, 02 Mar 2025 00:33:25 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "5ksa06936m"
-        },
-        {
-          "Name": "label",
-          "Value": "css/register.css"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-Fdc3ZO+H4uI2oTvGpYLaACdUr55wjBpSieYKKRV+4fg="
-        }
-      ]
-    },
-    {
-      "Route": "css/register.css",
-      "AssetFile": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\register.css",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "904"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"Fdc3ZO+H4uI2oTvGpYLaACdUr55wjBpSieYKKRV+4fg=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Sun, 02 Mar 2025 00:33:25 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "no-cache"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "integrity",
-          "Value": "sha256-Fdc3ZO+H4uI2oTvGpYLaACdUr55wjBpSieYKKRV+4fg="
-        }
-      ]
-    },
-    {
       "Route": "css/site.35ey7myx1r.css",
       "AssetFile": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\site.css",
       "Selectors": [],
@@ -2057,6 +1996,170 @@
         {
           "Name": "integrity",
           "Value": "sha256-y4gneDpv5i7CS6ytHoziIni36I/W2Len+pgkK79JVPU="
+        }
+      ]
+    },
+    {
+      "Route": "images/basketball_court.bjmb9fopho.jpg",
+      "AssetFile": "X:\\vscode projects\\net-mvc-project\\wwwroot\\images\\basketball_court.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3709660"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"KbRioDdZDxK0XMPy3uix8vTCMuvIATvBtK+4C88/IWM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 07 Mar 2025 01:17:03 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "bjmb9fopho"
+        },
+        {
+          "Name": "label",
+          "Value": "images/basketball_court.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-KbRioDdZDxK0XMPy3uix8vTCMuvIATvBtK+4C88/IWM="
+        }
+      ]
+    },
+    {
+      "Route": "images/basketball_court.jpg",
+      "AssetFile": "X:\\vscode projects\\net-mvc-project\\wwwroot\\images\\basketball_court.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3709660"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"KbRioDdZDxK0XMPy3uix8vTCMuvIATvBtK+4C88/IWM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 07 Mar 2025 01:17:03 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-KbRioDdZDxK0XMPy3uix8vTCMuvIATvBtK+4C88/IWM="
+        }
+      ]
+    },
+    {
+      "Route": "images/swimming_pool.agt53b9cjd.jpg",
+      "AssetFile": "X:\\vscode projects\\net-mvc-project\\wwwroot\\images\\swimming_pool.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1711125"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"WqMv14T4UPE8XoRrhEedEVYwrIHdt0DTEMtQdByexLk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 07 Mar 2025 01:09:53 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "agt53b9cjd"
+        },
+        {
+          "Name": "label",
+          "Value": "images/swimming_pool.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-WqMv14T4UPE8XoRrhEedEVYwrIHdt0DTEMtQdByexLk="
+        }
+      ]
+    },
+    {
+      "Route": "images/swimming_pool.jpg",
+      "AssetFile": "X:\\vscode projects\\net-mvc-project\\wwwroot\\images\\swimming_pool.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1711125"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"WqMv14T4UPE8XoRrhEedEVYwrIHdt0DTEMtQdByexLk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 07 Mar 2025 01:09:53 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-WqMv14T4UPE8XoRrhEedEVYwrIHdt0DTEMtQdByexLk="
         }
       ]
     },

@@ -50,3 +50,20 @@ Homeowner Application (MVC/.NET8 PROJECT)
 ---
 
 ✍ **Maintained by: ayaya_07.
+*open terminal on desktop
+
+*git clone (repo link)
+
+*open xampp, turn on first two, open admin mysql
+
+*create database "homeowners_db"
+
+*press homeowners_db left side menu
+
+*open import on top part
+
+*import file homeowners_db.sql from net-mvc-project/database_backups/homeowners_db.sql
+
+*open terminal of the cloned project folder
+
+*dotnet watch run

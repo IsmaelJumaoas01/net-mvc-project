@@ -201,26 +201,40 @@ namespace homeowner.Controllers
         [HttpPost]
         public IActionResult Book(int facilityID, DateTime reservationDate, TimeSpan startTime, TimeSpan endTime)
         {
-            // Ensure only Homeowners can book
             string role = HttpContext.Session.GetString("Role") ?? "Homeowner";
             if (role != "Homeowner")
             {
-                return Json(new { success = false, message = "Unauthorized" });
+                return Json(new { success = false, message = "Unauthorized. Only homeowners can make reservations." });
             }
 
-            // Get the logged-in user's ID from session.
             string userIdStr = HttpContext.Session.GetString("UserID");
             if (string.IsNullOrEmpty(userIdStr))
             {
-                return Json(new { success = false, message = "User not logged in" });
+                return Json(new { success = false, message = "User not logged in. Please log in to book a facility." });
             }
+
             int userId = int.Parse(userIdStr);
 
-            DateTime currentDate = DateTime.Now.Date; // Get today's date without the time
-            TimeSpan currentTime = DateTime.Now.TimeOfDay; // Get the current time of the day
+            // Validate required fields
+            if (facilityID == 0 || reservationDate == default || startTime == default || endTime == default)
+            {
+                return Json(new { success = false, message = "Please complete all required fields." });
+            }
 
-            // Prevent booking past times on the current day
-            if (reservationDate.Date == currentDate && startTime < currentTime)
+            // Validate date and time
+            DateTime today = DateTime.Today;
+            if (reservationDate.Date < today)
+            {
+                return Json(new { success = false, message = "Reservation date must be today or in the future." });
+            }
+
+            if (endTime <= startTime)
+            {
+                return Json(new { success = false, message = "End time must be later than start time." });
+            }
+
+            TimeSpan currentTime = DateTime.Now.TimeOfDay;
+            if (reservationDate.Date == today && startTime < currentTime)
             {
                 return Json(new { success = false, message = "Cannot book a past time slot on the current day." });
             }
@@ -231,16 +245,16 @@ namespace homeowner.Controllers
 
                 // Check if the user has already booked the same facility within the given time range.
                 string checkOverlapQuery = @"
-            SELECT COUNT(*) FROM facility_reservations 
-            WHERE UserID = @UserID 
-            AND FacilityID = @FacilityID 
-            AND ReservationDate = @ReservationDate 
-            AND (
-                (@StartTime BETWEEN StartTime AND EndTime) 
-                OR (@EndTime BETWEEN StartTime AND EndTime) 
-                OR (StartTime BETWEEN @StartTime AND @EndTime)
-                OR (EndTime BETWEEN @StartTime AND @EndTime)
-            )";
+        SELECT COUNT(*) FROM facility_reservations 
+        WHERE UserID = @UserID 
+        AND FacilityID = @FacilityID 
+        AND ReservationDate = @ReservationDate 
+        AND (
+            (@StartTime BETWEEN StartTime AND EndTime) 
+            OR (@EndTime BETWEEN StartTime AND EndTime) 
+            OR (StartTime BETWEEN @StartTime AND @EndTime)
+            OR (EndTime BETWEEN @StartTime AND @EndTime)
+        )";
 
                 MySqlCommand checkCmd = new MySqlCommand(checkOverlapQuery, conn);
                 checkCmd.Parameters.AddWithValue("@UserID", userId);
@@ -253,10 +267,12 @@ namespace homeowner.Controllers
 
                 if (existingReservations > 0)
                 {
+                                        TempData["ErrorMessage"] = "You have already booked this facility during the selected time slot.";
+
                     return Json(new { success = false, message = "You have already booked this facility during the selected time slot." });
                 }
 
-                // If no conflicts, proceed with booking.
+                // Proceed with booking
                 string sql = "INSERT INTO facility_reservations (UserID, FacilityID, ReservationDate, StartTime, EndTime, Status) " +
                              "VALUES (@UserID, @FacilityID, @ReservationDate, @StartTime, @EndTime, 'Pending')";
                 MySqlCommand cmd = new MySqlCommand(sql, conn);
@@ -265,12 +281,21 @@ namespace homeowner.Controllers
                 cmd.Parameters.AddWithValue("@ReservationDate", reservationDate);
                 cmd.Parameters.AddWithValue("@StartTime", startTime);
                 cmd.Parameters.AddWithValue("@EndTime", endTime);
-                cmd.ExecuteNonQuery();
+
+                int result = cmd.ExecuteNonQuery();
+                if (result > 0)
+                {
+                     TempData["SuccessMessage"] = "Facility booked successfully. Waiting for approval.";
+                    return Json(new { success = true, message = "Facility booked successfully. Waiting for approval." });
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "An error occurred while booking. Please try again.";
+
+                    return Json(new { success = false, message = "An error occurred while booking. Please try again." });
+                }
             }
-
-            return Json(new { success = true, message = "Reservation booked successfully!" });
         }
-
-
     }
+
 }

@@ -4,83 +4,144 @@
     ViewBag.Title = "Register Homeowner";
 }
 
-<div class="modal-header">
-    <h5 class="modal-title">Register Homeowner</h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
-<div class="modal-body">
-    <div id="registerError" class="alert alert-danger" role="alert" style="display:none;"></div>
+<div class="form-container">
+    <div id="registerError" class="custom-alert-register error" style="display:none;"></div>
 
-    <form id="registerForm" method="POST">
-        <div class="form-group">
-            <label asp-for="Username"></label>
-            <input asp-for="Username" class="form-control form-control-sm" required />
-            <span asp-validation-for="Username" class="error"></span>
+    <div class="form-wrapper">
+        <h2 class="form-title">Register Homeowner</h2>
+
+        <div class="step-indicators">
+            <span class="step-indicator step-indicator-active">1</span>
+            <span class="step-indicator">2</span>
+            <span class="step-indicator">3</span>
         </div>
 
-        <div class="form-group">
-            <label for="Password">Password</label>
-            <div class="input-group input-group-sm">
-                <input name="password" type="password" class="form-control form-control-sm" required />
-                <div class="input-group-append">
-                    <button class="btn toggle-password" type="button">
-                        <i class="fas fa-eye-slash"></i>
-                    </button>
+        <form id="registerForm" method="POST">
+            <!-- Step 1: Personal Information -->
+            <div class="form-step form-step-active">
+                <div class="form-group">
+                    <label asp-for="FirstName">First Name</label>
+                    <input asp-for="FirstName" class="form-control" required />
+                    <span asp-validation-for="FirstName" class="error"></span>
                 </div>
-            </div>
-            <span asp-validation-for="PasswordHash" class="error"></span>
-        </div>
 
-        <div class="form-group">
-            <label for="ConfirmPassword">Confirm Password</label>
-            <div class="input-group input-group-sm">
-                <input name="confirmPassword" type="password" class="form-control form-control-sm" required />
-                <div class="input-group-append">
-                    <button class="btn toggle-password" type="button">
-                        <i class="fas fa-eye-slash"></i>
-                    </button>
+                <div class="form-group">
+                    <label asp-for="MiddleName">Middle Name</label>
+                    <input asp-for="MiddleName" class="form-control" />
+                    <span asp-validation-for="MiddleName" class="error"></span>
                 </div>
+
+                <div class="form-group">
+                    <label asp-for="LastName">Last Name</label>
+                    <input asp-for="LastName" class="form-control" required />
+                    <span asp-validation-for="LastName" class="error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Email">Email</label>
+                    <input asp-for="Email" class="form-control" required />
+                    <span asp-validation-for="Email" class="error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="PhoneNumber">Phone Number</label>
+                    <input asp-for="PhoneNumber" class="form-control" required />
+                    <span asp-validation-for="PhoneNumber" class="error"></span>
+                </div>
+
+                <button type="button" class="btn-next">Next</button>
             </div>
-        </div>
 
-        <div class="form-group">
-            <label asp-for="Email"></label>
-            <input asp-for="Email" class="form-control form-control-sm" required />
-            <span asp-validation-for="Email" class="error"></span>
-        </div>
+            <!-- Step 2: Account Information -->
+            <div class="form-step">
+                <div class="form-group">
+                    <label asp-for="Username">Username</label>
+                    <input asp-for="Username" class="form-control" required />
+                    <span asp-validation-for="Username" class="error"></span>
+                </div>
 
-        <div class="form-group">
-            <label asp-for="FirstName"></label>
-            <input asp-for="FirstName" class="form-control form-control-sm" />
-            <span asp-validation-for="FirstName" class="error"></span>
-        </div>
+                <div class="form-group">
+                    <label for="Password">Password</label>
+                    <div class="input-group">
+                        <input name="password" type="password" class="form-control" required />
+                        <div class="input-group-append">
+                            <button class="btn toggle-password" type="button">
+                                <i class="fas fa-eye-slash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <span asp-validation-for="PasswordHash" class="error"></span>
+                </div>
 
-        <div class="form-group">
-            <label asp-for="MiddleName"></label>
-            <input asp-for="MiddleName" class="form-control form-control-sm" />
-            <span asp-validation-for="MiddleName" class="error"></span>
-        </div>
+                <div class="form-group">
+                    <label for="ConfirmPassword">Confirm Password</label>
+                    <div class="input-group">
+                        <input name="confirmPassword" type="password" class="form-control" required />
+                        <div class="input-group-append">
+                            <button class="btn toggle-password" type="button">
+                                <i class="fas fa-eye-slash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="form-group">
-            <label asp-for="LastName"></label>
-            <input asp-for="LastName" class="form-control form-control-sm" />
-            <span asp-validation-for="LastName" class="error"></span>
-        </div>
+                <button type="button" class="btn-prev">Previous</button>
+                <button type="button" class="btn-next">Next</button>
+            </div>
 
-        <div class="form-group">
-            <label asp-for="PhoneNumber"></label>
-            <input asp-for="PhoneNumber" class="form-control form-control-sm" />
-            <span asp-validation-for="PhoneNumber" class="error"></span>
-        </div>
+            <!-- Step 3: Terms of Service -->
+            <div class="form-step">
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="acceptTerms" required />
+                        I accept the <a href="#">Terms of Service</a>
+                    </label>
+                </div>
 
-        <button type="submit" class="btn btn-primary btn-block btn-sm">Register Homeowner</button>
-    </form>
+                <button type="button" class="btn-prev">Previous</button>
+                <button type="submit" class="btn-register" disabled>Register</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script>
     $(document).ready(function () {
+        var currentStep = 0;
+        var steps = $(".form-step");
+        var stepIndicators = $(".step-indicator");
+
+        $(".btn-next").click(function () {
+            if (validateStep(currentStep)) {
+                steps.eq(currentStep).removeClass("form-step-active");
+                stepIndicators.eq(currentStep).removeClass("step-indicator-active");
+                currentStep++;
+                steps.eq(currentStep).addClass("form-step-active");
+                stepIndicators.eq(currentStep).addClass("step-indicator-active");
+            }
+        });
+
+        $(".btn-prev").click(function () {
+            steps.eq(currentStep).removeClass("form-step-active");
+            stepIndicators.eq(currentStep).removeClass("step-indicator-active");
+            currentStep--;
+            steps.eq(currentStep).addClass("form-step-active");
+            stepIndicators.eq(currentStep).addClass("step-indicator-active");
+        });
+
+        function validateStep(step) {
+            var valid = true;
+            steps.eq(step).find("input").each(function () {
+                if (!this.checkValidity()) {
+                    $(this).addClass("is-invalid");
+                    valid = false;
+                } else {
+                    $(this).removeClass("is-invalid");
+                }
+            });
+            return valid;
+        }
+
         $('#registerForm').on('submit', function (e) {
             e.preventDefault();
             $.ajax({
@@ -111,50 +172,137 @@
                 icon.removeClass('fa-eye').addClass('fa-eye-slash');
             }
         });
+
+        $('#acceptTerms').on('change', function () {
+            $('.btn-register').prop('disabled', !this.checked);
+        });
     });
 </script>
 
 <style>
-    .modal-header {
-        border-bottom: none;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+/* Background & Centering */
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #000; /* Black background */
+}
 
-    .modal-title {
-        font-size: 1.25rem;
-        font-weight: bold;
-    }
+/* Form Card */
+.form-wrapper {
+    width: 350px;
+    padding: 30px;
+    background: #121212; /* Dark gray */
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+    text-align: center;
+    color: #fff; /* White text */
+}
 
-    .form-group {
-        margin-bottom: 10px;
-    }
+/* Title */
+.form-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #ddd;
+}
 
-    .form-control-sm {
-        font-size: 0.875rem;
-        padding: 0.25rem 0.5rem;
-    }
+/* Step Indicators */
+.step-indicators {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
 
-    .btn-sm {
-        font-size: 0.875rem;
-        padding: 0.25rem 0.5rem;
-    }
+.step-indicator {
+    width: 30px;
+    height: 30px;
+    background: #444;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 5px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
 
-    .close {
-        font-size: 1.5rem;
-        cursor: pointer;
-    }
+.step-indicator-active {
+    background: #007bff;
+}
 
-    .toggle-password {
-        border: none;
-        background: none;
-        padding: 0;
-        color: #6c757d;
-        cursor: pointer;
-    }
+/* Input Fields */
+.form-control {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    border: 1px solid #444;
+    background: #222;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #fff;
+}
 
-    .toggle-password i {
-        font-size: 1rem;
-    }
+.form-control::placeholder {
+    color: #aaa;
+}
+
+/* Button */
+.btn-next, .btn-prev, .btn-register {
+    width: 100%;
+    background: #007bff;
+    color: white;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 20px;
+}
+
+.btn-next:hover, .btn-prev:hover, .btn-register:hover {
+    background: #0056b3;
+}
+
+/* Error Message */
+.custom-alert-register {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(220, 53, 69, 0.9);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: bold;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+    display: none;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Form Steps */
+.form-step {
+    display: none;
+}
+
+.form-step-active {
+    display: block;
+}
+
+/* Toggle Password */
+.toggle-password {
+    border: none;
+    background: none;
+    padding: 0;
+    color: #6c757d;
+    cursor: pointer;
+}
+
+.toggle-password i {
+    font-size: 1rem;
+}
 </style>

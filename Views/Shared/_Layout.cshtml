@@ -55,8 +55,22 @@
    
 
 
+
         <main role="main" class="pb-3">
             @await Html.PartialAsync("_Header")
+            @if (TempData["SuccessMessage"] != null)
+{
+    <div id="successAlert" class="custom-alert success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div id="errorAlert" class="custom-alert error">
+        @TempData["ErrorMessage"]
+    </div>
+}
 
             
 
@@ -90,4 +104,7 @@
     document.getElementById('confirmLogout').addEventListener('click', function() {
         window.location.href = '@Url.Action("Logout", "Account")';
     });
+
+    
 </script>
+

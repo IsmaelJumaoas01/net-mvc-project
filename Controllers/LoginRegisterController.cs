@@ -4,6 +4,7 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using homeowner.Models;
 
@@ -57,14 +58,17 @@ namespace homeowner.Controllers
                             string role = reader["Role"].ToString();
                             if (role == "Staff")
                             {
+                                TempData["SuccessMessage"] = "Login successful. Welcome back! Our dear Staff~.";
                                 return Json(new { success = true, redirectUrl = Url.Action("StaffDashboard", "Home") });
                             }
                             else if (role == "Administrator")
                             {
+                                TempData["SuccessMessage"] = "Login successful. Welcome back! Admin~.";
                                 return Json(new { success = true, redirectUrl = Url.Action("AdminDashboard", "Home") });
                             }
                             else
                             {
+                                TempData["SuccessMessage"] = "Login successful. Welcome back! Our dear User~.";
                                 return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
                             }
                         }
@@ -104,6 +108,11 @@ namespace homeowner.Controllers
             if (password != confirmPassword)
             {
                 return Json(new { success = false, message = "Passwords do not match." });
+            }
+
+            if (!IsValidEmail(email))
+            {
+                return Json(new { success = false, message = "Invalid email format." });
             }
 
             string hashedPassword = HashPassword(password);
@@ -156,9 +165,15 @@ namespace homeowner.Controllers
                     cmd.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
 
                     cmd.ExecuteNonQuery();
-                }
 
-                return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
+                    // Automatically log in the user after registration
+                    HttpContext.Session.SetString("UserID", cmd.LastInsertedId.ToString());
+                    HttpContext.Session.SetString("Username", username);
+                    HttpContext.Session.SetString("Role", "Homeowner");
+
+                    TempData["SuccessMessage"] = "User registered successfully. Welcome!";
+                    return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
+                }
             }
             catch (Exception ex)
             {
@@ -189,6 +204,24 @@ namespace homeowner.Controllers
         private bool VerifyPassword(string inputPassword, string storedHashedPassword)
         {
             return HashPassword(inputPassword) == storedHashedPassword;
+        }
+
+        private bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return false;
+            }
+
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

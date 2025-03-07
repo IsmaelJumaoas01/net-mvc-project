@@ -13,10 +13,6 @@
       "PackagePath": "staticwebassets\\css\\homeowner_forum.css"
     },
     {
-      "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\register.css",
-      "PackagePath": "staticwebassets\\css\\register.css"
-    },
-    {
       "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },
@@ -27,6 +23,14 @@
     {
       "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\favicon.ico",
       "PackagePath": "staticwebassets\\favicon.ico"
+    },
+    {
+      "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\images\\basketball_court.jpg",
+      "PackagePath": "staticwebassets\\images\\basketball_court.jpg"
+    },
+    {
+      "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\images\\swimming_pool.jpg",
+      "PackagePath": "staticwebassets\\images\\swimming_pool.jpg"
     },
     {
       "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\js\\site.js",
