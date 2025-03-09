@@ -13,95 +13,476 @@
     var today = DateTime.Now.ToString("yyyy-MM-dd");
 }
 
-<div class="container-fluid mt-4 px-3">
-    <h1 class="text-center">Request a Service</h1>
+<head>
+    <link rel="stylesheet" href="~/css/home.css" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+</head>
 
-    <div id="errorMsg" class="alert alert-danger d-none"></div>
-
-    <form id="requestServiceForm" class="mt-4">
-        <div class="mb-3">
-            <label for="serviceSelect" class="form-label">Select Service</label>
-            <select id="serviceSelect" name="serviceID" class="form-select" required>
-                <option value="">-- Select Service --</option>
-                @foreach (var service in ViewBag.ServiceTypes as List<homeowner.Models.ServiceTypeModel>)
-                {
-                    <option value="@service.ServiceTypeID">@service.ServiceTypeName</option>
-                }
-            </select>
-        </div>
-
-        <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
-            <textarea id="description" name="description" class="form-control" required></textarea>
-        </div>
-
-        <div class="mb-3">
-            <label for="reservationDate" class="form-label">Service Date</label>
-            <input type="date" id="reservationDate" name="reservationDate" class="form-control" required min="@today" />
-        </div>
-
-        <div class="mb-3">
-            <label for="reservationTime" class="form-label">Service Time</label>
-            <select id="reservationTime" name="reservationTime" class="form-select" required>
-                <option value="">-- Select Time --</option>
-                @foreach (var time in timeOptions)
-                {
-                    <option value="@time">@time</option>
-                }
-            </select>
-        </div>
-
-        <div class="text-center">
-            <button type="submit" class="btn btn-primary w-100">Request Service</button>
-        </div>
-    </form>
-
-    <hr />
-
-    <h2 class="text-center mt-4">Your Recent Service Requests</h2>
-
-    <div class="mb-3 text-center">
-        <label for="statusFilter" class="form-label">Filter by Status:</label>
-        <select id="statusFilter" class="form-select w-50 mx-auto">
-            <option value="All">All</option>
-            <option value="Pending">Pending</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Resolved">Resolved</option>
-            <option value="Rejected">Rejected</option>
-        </select>
+<div class="container mt-4">
+    <div class="page-header" data-aos="fade-down">
+        <h1 class="text-center">Request a Service</h1>
+        <p class="text-center text-muted">Submit your service requests for maintenance and assistance</p>
     </div>
 
-    <div class="table-responsive">
-        <table class="table table-bordered text-center" id="requestsTable">
-            <thead class="table-dark">
-                <tr>
-                    <th>Request ID</th>
-                    <th>Service Name</th>
-                    <th>Description</th>
-                    <th>Service Date Created</th>
-                    <th>Service Date Requested</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var req in serviceRequests)
-                {
-                    <tr data-status="@req.Status">
-                        <td>@req.RequestID</td>
-                        <td>@req.ServiceTypeName</td>
-                        <td>@req.Description</td>
-                        <td>@req.RequestDate.ToString("yyyy-MM-dd")</td>
-                        <td>@req.ScheduledDate?.ToString("yyyy-MM-dd hh:mm tt")</td>
-                        <td>@req.Status</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+    <div id="errorMsg" class="alert alert-danger d-none" data-aos="fade-up"></div>
+
+    <div class="row">
+        <div class="col-md-6" data-aos="fade-right">
+            <div class="request-form-container">
+                <h2 class="form-title">Submit New Request</h2>
+                <form id="requestServiceForm" class="mt-4">
+                    <div class="mb-4">
+                        <label for="serviceSelect" class="form-label">
+                            <i class="fas fa-tools"></i> Select Service
+                        </label>
+                        <select id="serviceSelect" name="serviceID" class="form-select custom-input" required>
+                            <option value="">-- Select Service --</option>
+                            @foreach (var service in ViewBag.ServiceTypes as List<homeowner.Models.ServiceTypeModel>)
+                            {
+                                <option value="@service.ServiceTypeID">@service.ServiceTypeName</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="description" class="form-label">
+                            <i class="fas fa-comment-alt"></i> Description
+                        </label>
+                        <textarea id="description" name="description" class="form-control custom-input" rows="4" required></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="reservationDate" class="form-label">
+                            <i class="fas fa-calendar"></i> Service Date
+                        </label>
+                        <input type="date" id="reservationDate" name="reservationDate" class="form-control custom-input" required min="@today" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="reservationTime" class="form-label">
+                            <i class="fas fa-clock"></i> Service Time
+                        </label>
+                        <select id="reservationTime" name="reservationTime" class="form-select custom-input" required>
+                            <option value="">-- Select Time --</option>
+                            @foreach (var time in timeOptions)
+                            {
+                                <option value="@time">@time</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary submit-btn">
+                            <i class="fas fa-paper-plane"></i> Submit Request
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-6" data-aos="fade-left">
+            <div class="requests-history-container">
+                <h2 class="history-title">Your Service Requests</h2>
+                <div class="filter-container mb-4">
+                    <label for="statusFilter" class="form-label">
+                        <i class="fas fa-filter"></i> Filter by Status:
+                    </label>
+                    <select id="statusFilter" class="form-select custom-input">
+                        <option value="All">All</option>
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Resolved">Resolved</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
+
+                <div class="requests-list">
+                    @foreach (var req in serviceRequests)
+                    {
+                        <div class="request-card @req.Status.ToLower()" data-status="@req.Status" data-aos="fade-up">
+                            <div class="request-header">
+                                <div class="request-icon">
+                                    <i class="fas @(req.Status == "Pending" ? "fa-clock" : 
+                                                 req.Status == "In Progress" ? "fa-cogs" : 
+                                                 req.Status == "Resolved" ? "fa-check-circle" : "fa-times-circle")"></i>
+                                </div>
+                                <div class="request-title">
+                                    <h5>@req.ServiceTypeName</h5>
+                                    <span class="request-id">#@req.RequestID</span>
+                                </div>
+                            </div>
+                            <div class="request-body">
+                                <p class="request-description">@req.Description</p>
+                                <div class="request-details">
+                                    <div class="detail-item">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>@req.RequestDate.ToString("MMM dd, yyyy")</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <i class="fas fa-clock"></i>
+                                        <span>@req.ScheduledDate?.ToString("hh:mm tt")</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="request-footer">
+                                <span class="status-badge @req.Status.ToLower()">@req.Status</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
+<style>
+    body {
+        background-color: #0a0a0a;
+        color: #ffffff;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .container {
+        background-color: #151515;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .page-header {
+        margin-bottom: 3rem;
+    }
+
+    .page-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: linear-gradient(45deg, #00bcd4, #2196f3);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .request-form-container, .requests-history-container {
+        background: #1a1a1a;
+        padding: 2rem;
+        border-radius: 15px;
+        height: 100%;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-title, .history-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        color: #fff;
+    }
+
+    .form-label {
+        color: #fff;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .form-label i {
+        margin-right: 0.5rem;
+        color: #00bcd4;
+    }
+
+    .custom-input {
+        background: #2a2a2a;
+        border: 2px solid #444;
+        color: #fff;
+        padding: 1rem;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        width: 100%;
+        font-size: 1rem;
+    }
+
+    .custom-input:focus {
+        background: #2a2a2a;
+        border-color: #00bcd4;
+        box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.2);
+        outline: none;
+        color: #fff;
+    }
+
+    .custom-input:hover {
+        background: #2a2a2a;
+        color: #fff;
+    }
+
+    .custom-input::placeholder {
+        color: #888;
+    }
+
+    textarea.custom-input {
+        min-height: 120px;
+        resize: vertical;
+        background: #2a2a2a;
+        color: #fff;
+    }
+
+    textarea.custom-input:focus {
+        background: #2a2a2a;
+        color: #fff;
+    }
+
+    textarea.custom-input:hover {
+        background: #2a2a2a;
+        color: #fff;
+    }
+
+    .submit-btn {
+        background: linear-gradient(45deg, #00bcd4, #2196f3);
+        border: none;
+        padding: 1rem 2.5rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        color: white;
+        font-size: 1.1rem;
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
+    }
+
+    .submit-btn i {
+        margin-right: 0.5rem;
+    }
+
+    .request-card {
+        background: #222;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+        border: 1px solid #333;
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .request-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .request-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #333;
+    }
+
+    .request-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-right: 1rem;
+        color: white;
+    }
+
+    .request-card.pending .request-icon {
+        background: linear-gradient(45deg, #FFC107, #FF9800);
+        box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+    }
+
+    .request-card.in-progress {
+        background: #222;
+        border: 1px solid #333;
+    }
+
+    .request-card.in-progress .request-icon {
+        background: linear-gradient(45deg, #2196f3, #00bcd4);
+        box-shadow: 0 0 20px rgba(33, 150, 243, 0.3);
+    }
+
+    .request-card.in-progress .request-title h5 {
+        color: #fff;
+    }
+
+    .request-card.in-progress .request-description {
+        color: #ddd;
+    }
+
+    .request-card.in-progress .detail-item {
+        color: #bbb;
+    }
+
+    .request-card.in-progress .status-badge {
+        background: linear-gradient(45deg, #2196f3, #00bcd4);
+    }
+
+    .request-title {
+        flex: 1;
+    }
+
+    .request-title h5 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    .request-id {
+        color: #888;
+        font-size: 0.9rem;
+        display: block;
+        margin-top: 0.2rem;
+    }
+
+    .request-body {
+        padding: 1rem 0;
+    }
+
+    .request-description {
+        color: #ddd;
+        margin-bottom: 1rem;
+        line-height: 1.6;
+        font-size: 1rem;
+    }
+
+    .request-details {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #bbb;
+        font-size: 0.95rem;
+    }
+
+    .detail-item i {
+        color: #00bcd4;
+    }
+
+    .request-footer {
+        padding-top: 1rem;
+        border-top: 1px solid #333;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: white;
+    }
+
+    .status-badge.pending {
+        background: linear-gradient(45deg, #FFC107, #FF9800);
+    }
+
+    .status-badge.in-progress {
+        background: linear-gradient(45deg, #2196f3, #00bcd4);
+    }
+
+    .status-badge.resolved {
+        background: linear-gradient(45deg, #4CAF50, #8BC34A);
+    }
+
+    .status-badge.rejected {
+        background: linear-gradient(45deg, #f44336, #e91e63);
+    }
+
+    .alert-danger {
+        background: linear-gradient(45deg, #f44336, #e91e63);
+        border: none;
+        color: white;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        font-weight: 500;
+    }
+
+    /* Form field specific styles */
+    select.custom-input {
+        background: #2a2a2a;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    select.custom-input option {
+        background: #2a2a2a;
+        color: #fff;
+        padding: 0.5rem;
+    }
+
+    select.custom-input:hover {
+        background: #2a2a2a;
+        color: #fff;
+    }
+
+    input[type="date"].custom-input {
+        background: #2a2a2a;
+        color: #fff;
+    }
+
+    input[type="date"].custom-input:hover {
+        background: #2a2a2a;
+        color: #fff;
+    }
+
+    input[type="date"].custom-input::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        opacity: 0.5;
+    }
+
+    /* Toast styles */
+    .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        color: white;
+        font-weight: 500;
+        transform: translateX(120%);
+        transition: transform 0.3s ease;
+        z-index: 9999;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .toast.show {
+        transform: translateX(0);
+    }
+
+    .toast.success {
+        background: linear-gradient(45deg, #4CAF50, #8BC34A);
+    }
+
+    .toast.error {
+        background: linear-gradient(45deg, #f44336, #e91e63);
+    }
+</style>
+
 <script>
     $(document).ready(function () {
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
         $("#requestServiceForm").submit(function (e) {
             e.preventDefault();
             $("#errorMsg").hide();
@@ -110,13 +491,6 @@
             var description = $("#description").val();
             var reservationDate = $("#reservationDate").val();
             var reservationTime = $("#reservationTime").val();
-
-            console.log("Submitting service request with details:", {
-                serviceID: serviceID,
-                description: description,
-                reservationDate: reservationDate,
-                reservationTime: reservationTime
-            });
 
             if (!serviceID || !description || !reservationDate || !reservationTime) {
                 $("#errorMsg").text("Please complete all fields.").removeClass("d-none").show();
@@ -130,17 +504,15 @@
                 type: 'POST',
                 data: { serviceTypeID: serviceID, description: description, scheduledDateTime: scheduledDateTime },
                 success: function (response) {
-                    console.log("Response from server:", response);
                     if (response.success) {
-                        alert(response.message);
+                        showToast(response.message, "success");
                         $("#requestServiceForm")[0].reset();
-                        location.reload();
+                        setTimeout(() => location.reload(), 2000);
                     } else {
                         $("#errorMsg").text(response.message).removeClass("d-none").show();
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.error("Error occurred while submitting service request:", status, error);
                     $("#errorMsg").text("An error occurred while submitting the service request.").removeClass("d-none").show();
                 }
             });
@@ -148,7 +520,7 @@
 
         $("#statusFilter").change(function () {
             var filter = $(this).val();
-            $("#requestsTable tbody tr").each(function () {
+            $(".request-card").each(function () {
                 var status = $(this).data("status");
                 if (filter === "All" || status === filter) {
                     $(this).show();
@@ -157,102 +529,44 @@
                 }
             });
         });
+
+        // Toast notification function
+        function showToast(message, type) {
+            const toast = $('<div>').addClass('toast ' + type).text(message);
+            $('body').append(toast);
+            setTimeout(() => toast.addClass('show'), 100);
+            setTimeout(() => {
+                toast.removeClass('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Add toast styles
+        $('<style>')
+            .text(`
+                .toast {
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 1rem 2rem;
+                    border-radius: 10px;
+                    color: white;
+                    font-weight: 500;
+                    transform: translateX(120%);
+                    transition: transform 0.3s ease;
+                    z-index: 9999;
+                }
+                .toast.show {
+                    transform: translateX(0);
+                }
+                .toast.success {
+                    background: linear-gradient(45deg, #4CAF50, #8BC34A);
+                }
+                .toast.error {
+                    background: linear-gradient(45deg, #f44336, #e91e63);
+                }
+            `)
+            .appendTo('head');
     });
 </script>
-
-<style>
-body {
-    background-color: #0d0d0d;
-    color: #f5f5f5;
-    font-family: 'Poppins', sans-serif;
-    line-height: 1.6;
-}
-
-h1, h2 {
-    font-size: 1.8rem;
-    font-weight: 600;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.container-fluid {
-    background-color: #181818;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0px 4px 15px rgba(255, 255, 255, 0.1);
-}
-
-.form-label {
-    color: #f5f5f5;
-    font-weight: 500;
-}
-
-.form-control, .form-select {
-    background-color: #222;
-    color: #fff;
-    border: 1px solid #333;
-    padding: 10px;
-    border-radius: 8px;
-    transition: 0.3s ease-in-out;
-}
-
-.form-control:focus, .form-select:focus {
-    background-color: #292929;
-    border-color: #007bff;
-    box-shadow: 0px 0px 6px rgba(0, 123, 255, 0.5);
-}
-
-.btn-primary {
-    background-color: #007bff;
-    border: none;
-    padding: 12px;
-    font-weight: 500;
-    border-radius: 8px;
-    transition: background 0.3s ease;
-}
-
-.btn-primary:hover {
-    background-color: #0056b3;
-}
-
-.table {
-    color: #fff;
-    background-color: #1e1e1e;
-    border-collapse: collapse;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.table th, .table td {
-    padding: 12px;
-    border: none;
-}
-
-.table th {
-    background-color: #333;
-    font-weight: 600;
-}
-
-.table td {
-    background-color: #252525;
-}
-
-.alert-danger {
-    background-color: #b32d3a;
-    color: #fff;
-    padding: 12px;
-    border-radius: 8px;
-    text-align: center;
-    font-weight: 500;
-}
-
-#statusFilter {
-    background-color: #222;
-    color: #fff;
-    border-radius: 8px;
-    border: 1px solid #333;
-    padding: 8px;
-}
-
-</style>
 z   

@@ -1,0 +1,464 @@
+@model List<homeowner.Models.PollModel>
+@{
+    ViewData["Title"] = "Polls & Surveys";
+    bool isAdmin = ViewBag.IsAdmin;
+    bool isStaff = ViewBag.IsStaff;
+}
+
+<div class="poll-management">
+    <div class="dashboard-header">
+        <h1>Polls & Surveys</h1>
+        @if (isAdmin || isStaff)
+        {
+            <div class="header-actions">
+                <button class="btn btn-primary" data-toggle="modal" data-target="#createPollModal">
+                    <i class="fas fa-plus"></i> Create New Poll
+                </button>
+            </div>
+        }
+    </div>
+
+    <div class="polls-grid">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var poll in Model)
+            {
+                <div class="poll-card" data-poll-id="@poll.PollID">
+                    <div class="poll-header">
+                        <h3>@poll.Title</h3>
+                        <div class="poll-meta">
+                            <span><i class="fas fa-calendar"></i> @poll.StartDate.ToString("MMM dd, yyyy")</span>
+                            <span><i class="fas fa-users"></i> @poll.ResponseCount votes</span>
+                        </div>
+                    </div>
+                    <div class="poll-body">
+                        <p class="poll-description">@poll.Description</p>
+                        <div class="poll-options">
+                            @foreach (var option in poll.Options)
+                            {
+                                <div class="poll-option">
+                                    <button class="vote-btn" data-option-id="@option.OptionID">
+                                        <span class="option-text">@option.OptionText</span>
+                                        <div class="vote-progress" style="width: @(poll.ResponseCount > 0 ? (option.VoteCount * 100 / poll.ResponseCount) : 0)%"></div>
+                                        <span class="vote-count">@option.VoteCount votes</span>
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    @if (isAdmin || isStaff)
+                    {
+                        <div class="poll-actions">
+                            <button class="btn btn-danger delete-poll" data-poll-id="@poll.PollID">
+                                <i class="fas fa-trash"></i> Delete Poll
+                            </button>
+                        </div>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="fas fa-poll"></i>
+                <p>No polls available</p>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Create Poll Modal -->
+@if (isAdmin || isStaff)
+{
+    <div class="modal fade" id="createPollModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Poll</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="createPollForm">
+                        <div class="form-group">
+                            <label>Poll Title</label>
+                            <input type="text" class="form-control" name="Title" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea class="form-control" name="Description" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Options</label>
+                            <div id="optionsContainer">
+                                <div class="option-input">
+                                    <input type="text" class="form-control" name="options[]" required>
+                                    <button type="button" class="btn btn-icon remove-option">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="option-input">
+                                    <input type="text" class="form-control" name="options[]" required>
+                                    <button type="button" class="btn btn-icon remove-option">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-secondary mt-2" id="addOption">
+                                <i class="fas fa-plus"></i> Add Option
+                            </button>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check"></i> Create Poll
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Styles {
+    <style>
+        /* Dashboard Layout */
+        .poll-management {
+            padding: 2rem;
+            background: #1a1a1a;
+            min-height: 100vh;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-header h1 {
+            color: #fff;
+            font-size: 2rem;
+            margin: 0;
+            background: linear-gradient(45deg, #00bcd4, #2196f3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Polls Grid */
+        .polls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .poll-card {
+            background: #222;
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .poll-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .poll-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .poll-header h3 {
+            color: #fff;
+            font-size: 1.5rem;
+            margin: 0 0 1rem 0;
+        }
+
+        .poll-meta {
+            display: flex;
+            gap: 1rem;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .poll-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .poll-meta i {
+            color: #00bcd4;
+        }
+
+        .poll-description {
+            color: #bbb;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        /* Poll Options */
+        .poll-options {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .poll-option {
+            position: relative;
+        }
+
+        .vote-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .vote-btn:hover {
+            background: #333;
+            transform: translateX(5px);
+        }
+
+        .vote-progress {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            background: rgba(0, 188, 212, 0.1);
+            transition: width 0.3s ease;
+            z-index: 1;
+        }
+
+        .option-text {
+            position: relative;
+            z-index: 2;
+        }
+
+        .vote-count {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+            font-size: 0.9rem;
+            z-index: 2;
+        }
+
+        /* Poll Actions */
+        .poll-actions {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            background: #2a2a2a;
+            color: #fff;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #333;
+        }
+
+        .modal-header .close {
+            color: #fff;
+        }
+
+        .form-control {
+            background: #333;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 8px;
+        }
+
+        .form-control:focus {
+            background: #333;
+            border-color: #00bcd4;
+            box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.25);
+            color: #fff;
+        }
+
+        /* Option Inputs */
+        .option-input {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-icon {
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: #444;
+            border: none;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .btn-icon:hover {
+            background: #f44336;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: #222;
+            border-radius: 15px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            z-index: 9999;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+        }
+
+        .toast.error {
+            background: linear-gradient(45deg, #f44336, #e91e63);
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Add option
+            $('#addOption').click(function() {
+                const optionInput = `
+                    <div class="option-input">
+                        <input type="text" class="form-control" name="options[]" required>
+                        <button type="button" class="btn btn-icon remove-option">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>`;
+                $('#optionsContainer').append(optionInput);
+            });
+
+            // Remove option
+            $(document).on('click', '.remove-option', function() {
+                if ($('.option-input').length > 2) {
+                    $(this).closest('.option-input').remove();
+                } else {
+                    showToast('At least two options are required', 'error');
+                }
+            });
+
+            // Create poll
+            $('#createPollForm').submit(function(e) {
+                e.preventDefault();
+                const options = [];
+                $('input[name="options[]"]').each(function() {
+                    options.push($(this).val());
+                });
+
+                $.ajax({
+                    url: '@Url.Action("Create", "Poll")',
+                    type: 'POST',
+                    data: {
+                        Title: $('input[name="Title"]').val(),
+                        Description: $('textarea[name="Description"]').val(),
+                        options: options
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            showToast('Poll created successfully!', 'success');
+                            setTimeout(() => location.reload(), 1000);
+                        } else {
+                            showToast(response.message, 'error');
+                        }
+                    }
+                });
+            });
+
+            // Vote
+            $('.vote-btn').click(function() {
+                const optionId = $(this).data('option-id');
+                const pollId = $(this).closest('.poll-card').data('poll-id');
+
+                $.ajax({
+                    url: '@Url.Action("Vote", "Poll")',
+                    type: 'POST',
+                    data: { pollId: pollId, optionId: optionId },
+                    success: function(response) {
+                        if (response.success) {
+                            showToast('Vote recorded successfully!', 'success');
+                            setTimeout(() => location.reload(), 1000);
+                        } else {
+                            showToast(response.message, 'error');
+                        }
+                    }
+                });
+            });
+
+            // Delete poll
+            $('.delete-poll').click(function() {
+                const pollId = $(this).data('poll-id');
+                if (confirm('Are you sure you want to delete this poll?')) {
+                    $.ajax({
+                        url: '@Url.Action("DeletePoll", "Poll")',
+                        type: 'POST',
+                        data: { pollId: pollId },
+                        success: function(response) {
+                            if (response.success) {
+                                showToast('Poll deleted successfully!', 'success');
+                                setTimeout(() => location.reload(), 1000);
+                            } else {
+                                showToast(response.message, 'error');
+                            }
+                        }
+                    });
+                }
+            });
+
+            // Toast notification function
+            function showToast(message, type) {
+                const toast = $('<div>').addClass('toast ' + type).text(message);
+                $('body').append(toast);
+                setTimeout(() => toast.addClass('show'), 100);
+                setTimeout(() => {
+                    toast.removeClass('show');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+        });
+    </script>
+} 

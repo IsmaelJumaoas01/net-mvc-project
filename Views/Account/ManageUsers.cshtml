@@ -4,117 +4,132 @@
     ViewBag.Title = "Manage Users";
 }
 
-<h1>Manage Users</h1>
-
-<!-- Greeting -->
-<p>Welcome, @Context.Session.GetString("Username")!</p>
-
-<!-- Flash Messages -->
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success" role="alert">
-        @TempData["SuccessMessage"]
+<div class="user-management">
+    <div class="dashboard-header">
+        <h1>User Management</h1>
+        <div class="header-actions">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search users...">
+            </div>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#addUserModal">
+                <i class="fas fa-user-plus"></i> Add New User
+            </button>
+        </div>
     </div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger" role="alert">
-        @TempData["ErrorMessage"]
+
+    <div class="users-section">
+        <div class="section-header">
+            <h2><i class="fas fa-users"></i> Users</h2>
+            <div class="filter-controls">
+                <select id="roleFilter" class="form-control">
+                    <option value="All">All Roles</option>
+                    <option value="Administrator">Administrator</option>
+                    <option value="Staff">Staff</option>
+                    <option value="Homeowner">Homeowner</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="user-grid">
+            @foreach (var user in Model.Users)
+            {
+                <div class="user-card" data-role="@user.Role">
+                    <div class="user-header">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-info">
+                            <h3>@user.Username</h3>
+                            <span class="role-badge @user.Role.ToLower()">@user.Role</span>
+                        </div>
+                        <div class="user-actions">
+                            <button class="btn btn-icon edit-user" data-user-id="@user.UserID">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-icon delete-user" data-user-id="@user.UserID">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="user-details">
+                        <div class="detail-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>@user.Email</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-phone"></i>
+                            <span>@(string.IsNullOrEmpty(user.PhoneNumber) ? "Not provided" : user.PhoneNumber)</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-user-circle"></i>
+                            <span>@($"{user.FirstName} {user.LastName}")</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>Joined @user.CreatedAt.ToString("MMM dd, yyyy")</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
     </div>
-}
-
-<!-- Add User Button -->
-<button class="btn btn-primary" onclick="showAddUserModal()">Add User</button>
-<a asp-controller="Account" asp-action="Logout" class="btn btn-secondary">Logout</a>
-<button class="btn btn-secondary" onclick="history.back()">Back</button>
-
-<!-- User Management Table -->
-<h2>Users</h2>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Username</th>
-            <th>Email</th>
-            <th>First Name</th>
-            <th>Middle Name</th>
-            <th>Last Name</th>
-            <th>Phone Number</th>
-            <th>Role</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var user in Model.Users)
-        {
-            <tr>
-                <td>@user.Username</td>
-                <td>@user.Email</td>
-                <td>@user.FirstName</td>
-                <td>@user.MiddleName</td>
-                <td>@user.LastName</td>
-                <td>@user.PhoneNumber</td>
-                <td>@user.Role</td>
-                <td>
-                    <button class="btn btn-primary" onclick="showEditModal(@user.UserID)">Edit</button>
-                    <a asp-action="DeleteUser" asp-route-id="@user.UserID" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+</div>
 
 <!-- Add User Modal -->
-<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="addUserModal" tabindex="-1">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addUserModalLabel">Add User</h5>
-                <button type="button" class="close" onclick="closeModal('#addUserModal')" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <h5 class="modal-title">Add New User</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="addUserForm" asp-action="AddUser" method="post">
+                <form id="addUserForm">
                     <div class="form-group">
-                        <label asp-for="AddUser.Username"></label>
-                        <input asp-for="AddUser.Username" class="form-control" name="Username" />
+                        <label>Username</label>
+                        <input type="text" class="form-control" name="Username" required>
                     </div>
                     <div class="form-group">
-                        <label asp-for="AddUser.PasswordHash"></label>
-                        <input asp-for="AddUser.PasswordHash" class="form-control" type="password" name="PasswordHash" />
+                        <label>Email</label>
+                        <input type="email" class="form-control" name="Email" required>
                     </div>
                     <div class="form-group">
-                        <label asp-for="AddUser.Email"></label>
-                        <input asp-for="AddUser.Email" class="form-control" name="Email" />
+                        <label>Password</label>
+                        <div class="password-input">
+                            <input type="password" class="form-control" name="Password" required>
+                            <button type="button" class="toggle-password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>First Name</label>
+                            <input type="text" class="form-control" name="FirstName">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Last Name</label>
+                            <input type="text" class="form-control" name="LastName">
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label asp-for="AddUser.FirstName"></label>
-                        <input asp-for="AddUser.FirstName" class="form-control" name="FirstName" />
+                        <label>Phone Number</label>
+                        <input type="tel" class="form-control" name="PhoneNumber">
                     </div>
                     <div class="form-group">
-                        <label asp-for="AddUser.MiddleName"></label>
-                        <input asp-for="AddUser.MiddleName" class="form-control" name="MiddleName" />
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="AddUser.LastName"></label>
-                        <input asp-for="AddUser.LastName" class="form-control" name="LastName" />
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="AddUser.PhoneNumber"></label>
-                        <input asp-for="AddUser.PhoneNumber" class="form-control" name="PhoneNumber" />
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="AddUser.Role"></label>
-                        <select asp-for="AddUser.Role" class="form-control" name="Role">
+                        <label>Role</label>
+                        <select class="form-control" name="Role" required>
                             <option value="Homeowner">Homeowner</option>
-                            @if (Context.Session.GetString("Role") == "Administrator")
-                            {
-                                <option value="Staff">Staff</option>
-                                <option value="Administrator">Administrator</option>
-                            }
+                            <option value="Staff">Staff</option>
+                            <option value="Administrator">Administrator</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Add</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add User
+                    </button>
                 </form>
             </div>
         </div>
@@ -122,128 +137,481 @@
 </div>
 
 <!-- Edit User Modal -->
-<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="editUserModal" tabindex="-1">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
-                <button type="button" class="close" onclick="closeModal('#editUserModal')" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <h5 class="modal-title">Edit User</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="editUserForm" asp-action="EditUser" method="post">
+                <form id="editUserForm">
+                    <input type="hidden" name="UserID">
                     <div class="form-group">
-                        <label asp-for="EditUser.Username"></label>
-                        <input asp-for="EditUser.Username" class="form-control" name="Username" />
+                        <label>Username</label>
+                        <input type="text" class="form-control" name="Username" required>
                     </div>
                     <div class="form-group">
-                        <label asp-for="EditUser.PasswordHash"></label>
-                        <input asp-for="EditUser.PasswordHash" class="form-control" type="password" name="PasswordHash" placeholder="Current password" />
+                        <label>Email</label>
+                        <input type="email" class="form-control" name="Email" required>
                     </div>
                     <div class="form-group">
-                        <label asp-for="EditUser.Email"></label>
-                        <input asp-for="EditUser.Email" class="form-control" name="Email" />
+                        <label>New Password (leave blank to keep current)</label>
+                        <div class="password-input">
+                            <input type="password" class="form-control" name="Password">
+                            <button type="button" class="toggle-password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>First Name</label>
+                            <input type="text" class="form-control" name="FirstName">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Last Name</label>
+                            <input type="text" class="form-control" name="LastName">
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label asp-for="EditUser.FirstName"></label>
-                        <input asp-for="EditUser.FirstName" class="form-control" name="FirstName" />
+                        <label>Phone Number</label>
+                        <input type="tel" class="form-control" name="PhoneNumber">
                     </div>
                     <div class="form-group">
-                        <label asp-for="EditUser.MiddleName"></label>
-                        <input asp-for="EditUser.MiddleName" class="form-control" name="MiddleName" />
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="EditUser.LastName"></label>
-                        <input asp-for="EditUser.LastName" class="form-control" name="LastName" />
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="EditUser.PhoneNumber"></label>
-                        <input asp-for="EditUser.PhoneNumber" class="form-control" name="PhoneNumber" />
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="EditUser.Role"></label>
-                        <select asp-for="EditUser.Role" class="form-control" name="Role">
+                        <label>Role</label>
+                        <select class="form-control" name="Role" required>
                             <option value="Homeowner">Homeowner</option>
-                            @if (Context.Session.GetString("Role") == "Administrator")
-                            {
-                                <option value="Staff">Staff</option>
-                                <option value="Administrator">Administrator</option>
-                            }
+                            <option value="Staff">Staff</option>
+                            <option value="Administrator">Administrator</option>
                         </select>
                     </div>
-                    <input type="hidden" asp-for="EditUser.UserID" name="UserID" />
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
+@section Styles {
+    <style>
+        /* Dashboard Layout */
+        .user-management {
+            padding: 2rem;
+            background: #1a1a1a;
+            min-height: 100vh;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-header h1 {
+            color: #fff;
+            font-size: 2rem;
+            margin: 0;
+            background: linear-gradient(45deg, #00bcd4, #2196f3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: none;
+            border-radius: 25px;
+            background: #222;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            background: #2a2a2a;
+            box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.25);
+            outline: none;
+        }
+
+        /* Users Section */
+        .users-section {
+            background: #222;
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            color: #fff;
+            font-size: 1.5rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-header h2 i {
+            color: #00bcd4;
+        }
+
+        /* User Grid */
+        .user-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .user-card {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #00bcd4;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-info h3 {
+            color: #fff;
+            margin: 0 0 0.5rem 0;
+            font-size: 1.2rem;
+        }
+
+        .role-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .role-badge.administrator {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+        }
+
+        .role-badge.staff {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196f3;
+        }
+
+        .role-badge.homeowner {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: #333;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .btn-icon:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-icon.edit-user:hover {
+            background: #00bcd4;
+        }
+
+        .btn-icon.delete-user:hover {
+            background: #f44336;
+        }
+
+        .user-details {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #bbb;
+        }
+
+        .detail-item i {
+            color: #00bcd4;
+            width: 16px;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            background: #2a2a2a;
+            color: #fff;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #333;
+        }
+
+        .modal-header .close {
+            color: #fff;
+        }
+
+        .form-control {
+            background: #333;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 8px;
+        }
+
+        .form-control:focus {
+            background: #333;
+            border-color: #00bcd4;
+            box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.25);
+            color: #fff;
+        }
+
+        .password-input {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background: #00bcd4;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #008ba3;
+            transform: translateY(-2px);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            z-index: 9999;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+        }
+
+        .toast.error {
+            background: linear-gradient(45deg, #f44336, #e91e63);
+        }
+    </style>
+}
+
 @section Scripts {
     <script>
-        function showAddUserModal() {
-            $('#addUserModal').modal('show');
-        }
+        $(document).ready(function() {
+            // Search functionality
+            $('#searchInput').on('keyup', function() {
+                const value = $(this).val().toLowerCase();
+                $('.user-card').filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            });
 
-        function showEditModal(userId) {
-            $.ajax({
-                url: '@Url.Action("GetUser", "Account")',
-                type: 'GET',
-                data: { id: userId },
-                success: function (data) {
-                    $('#editUserForm').find('input[name="Username"]').val(data.username);
-                    $('#editUserForm').find('input[name="PasswordHash"]').attr('placeholder', 'Current password');
-                    $('#editUserForm').find('input[name="Email"]').val(data.email);
-                    $('#editUserForm').find('input[name="FirstName"]').val(data.firstName);
-                    $('#editUserForm').find('input[name="MiddleName"]').val(data.middleName);
-                    $('#editUserForm').find('input[name="LastName"]').val(data.lastName);
-                    $('#editUserForm').find('input[name="PhoneNumber"]').val(data.phoneNumber);
-                    $('#editUserForm').find('select[name="Role"]').val(data.role);
-                    $('#editUserForm').find('input[name="UserID"]').val(data.userID);
-                    $('#editUserModal').modal('show');
+            // Role filter
+            $('#roleFilter').change(function() {
+                const selectedRole = $(this).val();
+                if (selectedRole === 'All') {
+                    $('.user-card').show();
+                } else {
+                    $('.user-card').each(function() {
+                        $(this).toggle($(this).data('role') === selectedRole);
+                    });
                 }
             });
-        }
 
-        function closeModal(modalId) {
-            $(modalId).modal('hide');
-        }
+            // Toggle password visibility
+            $('.toggle-password').click(function() {
+                const input = $(this).parent().find('input');
+                const icon = $(this).find('i');
+                
+                if (input.attr('type') === 'password') {
+                    input.attr('type', 'text');
+                    icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    input.attr('type', 'password');
+                    icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                }
+            });
 
-        $(document).ready(function () {
-            $('#addUserForm').submit(function (event) {
-                event.preventDefault();
-                var form = $(this);
+            // Add user
+            $('#addUserForm').submit(function(e) {
+                e.preventDefault();
                 $.ajax({
-                    url: form.attr('action'),
-                    type: form.attr('method'),
-                    data: form.serialize(),
-                    success: function (response) {
-                        closeModal('#addUserModal');
-                        location.reload();
-                    },
-                    error: function (xhr, status, error) {
-                        alert('Error: ' + xhr.responseText);
+                    url: '@Url.Action("AddUser", "Account")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.success) {
+                            showToast('User added successfully!', 'success');
+                            setTimeout(() => location.reload(), 1000);
+                        } else {
+                            showToast(response.message, 'error');
+                        }
                     }
                 });
             });
 
-            $('#editUserForm').submit(function (event) {
-                event.preventDefault();
-                var form = $(this);
+            // Edit user
+            $('.edit-user').click(function() {
+                const userId = $(this).data('user-id');
+                $.get('@Url.Action("GetUser", "Account")/' + userId, function(data) {
+                    const form = $('#editUserForm');
+                    form.find('[name="UserID"]').val(data.userID);
+                    form.find('[name="Username"]').val(data.username);
+                    form.find('[name="Email"]').val(data.email);
+                    form.find('[name="FirstName"]').val(data.firstName);
+                    form.find('[name="LastName"]').val(data.lastName);
+                    form.find('[name="PhoneNumber"]').val(data.phoneNumber);
+                    form.find('[name="Role"]').val(data.role);
+                    $('#editUserModal').modal('show');
+                });
+            });
+
+            // Submit edit form
+            $('#editUserForm').submit(function(e) {
+                e.preventDefault();
                 $.ajax({
-                    url: form.attr('action'),
-                    type: form.attr('method'),
-                    data: form.serialize(),
-                    success: function (response) {
-                        closeModal('#editUserModal');
-                        location.reload();
-                    },
-                    error: function (xhr, status, error) {
-                        alert('Error: ' + xhr.responseText);
+                    url: '@Url.Action("EditUser", "Account")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.success) {
+                            showToast('User updated successfully!', 'success');
+                            setTimeout(() => location.reload(), 1000);
+                        } else {
+                            showToast(response.message, 'error');
+                        }
                     }
                 });
             });
+
+            // Delete user
+            $('.delete-user').click(function() {
+                const userId = $(this).data('user-id');
+                if (confirm('Are you sure you want to delete this user?')) {
+                    $.ajax({
+                        url: '@Url.Action("DeleteUser", "Account")',
+                        type: 'POST',
+                        data: { id: userId },
+                        success: function(response) {
+                            if (response.success) {
+                                showToast('User deleted successfully!', 'success');
+                                setTimeout(() => location.reload(), 1000);
+                            } else {
+                                showToast(response.message, 'error');
+                            }
+                        }
+                    });
+                }
+            });
+
+            // Toast notification function
+            function showToast(message, type) {
+                const toast = $('<div>').addClass('toast ' + type).text(message);
+                $('body').append(toast);
+                setTimeout(() => toast.addClass('show'), 100);
+                setTimeout(() => {
+                    toast.removeClass('show');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
         });
     </script>
 }

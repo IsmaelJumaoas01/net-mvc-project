@@ -3,6 +3,170 @@
   "ManifestType": "Build",
   "Endpoints": [
     {
+      "Route": "css/admin-dashboard.css",
+      "AssetFile": "css/admin-dashboard.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2562"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"QXAVq3yBc55ycX1KsC5Gc6fCf8lYZ4vCo8Ms0Cb0QnY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 09 Mar 2025 10:02:15 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-QXAVq3yBc55ycX1KsC5Gc6fCf8lYZ4vCo8Ms0Cb0QnY="
+        }
+      ]
+    },
+    {
+      "Route": "css/admin-dashboard.d9fo52yym9.css",
+      "AssetFile": "css/admin-dashboard.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2562"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"QXAVq3yBc55ycX1KsC5Gc6fCf8lYZ4vCo8Ms0Cb0QnY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 09 Mar 2025 10:02:15 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "d9fo52yym9"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-QXAVq3yBc55ycX1KsC5Gc6fCf8lYZ4vCo8Ms0Cb0QnY="
+        },
+        {
+          "Name": "label",
+          "Value": "css/admin-dashboard.css"
+        }
+      ]
+    },
+    {
+      "Route": "css/feedback.css",
+      "AssetFile": "css/feedback.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3516"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"U299L/NAYT9nNinM8eHl59XyXI+SbYM+6DRyeUD/TB8=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 09 Mar 2025 10:16:13 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-U299L/NAYT9nNinM8eHl59XyXI+SbYM+6DRyeUD/TB8="
+        }
+      ]
+    },
+    {
+      "Route": "css/feedback.fh62am8gh9.css",
+      "AssetFile": "css/feedback.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3516"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"U299L/NAYT9nNinM8eHl59XyXI+SbYM+6DRyeUD/TB8=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 09 Mar 2025 10:16:13 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "fh62am8gh9"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-U299L/NAYT9nNinM8eHl59XyXI+SbYM+6DRyeUD/TB8="
+        },
+        {
+          "Name": "label",
+          "Value": "css/feedback.css"
+        }
+      ]
+    },
+    {
       "Route": "css/home.css",
       "AssetFile": "css/home.css",
       "Selectors": [],
@@ -439,7 +603,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 06 Mar 2025 01:35:34 GMT"
+          "Value": "Sun, 09 Mar 2025 11:23:30 GMT"
         }
       ],
       "EndpointProperties": [
@@ -484,7 +648,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 06 Mar 2025 01:35:34 GMT"
+          "Value": "Sun, 09 Mar 2025 11:23:30 GMT"
         }
       ],
       "EndpointProperties": [

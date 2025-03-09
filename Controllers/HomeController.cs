@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using MySql.Data.MySqlClient;
 using homeowner.Models;
 using System.Collections.Generic;
+using Dapper;
 
 namespace homeowner.Controllers
 {
@@ -27,24 +28,11 @@ namespace homeowner.Controllers
 
             List<AnnouncementModel> announcements = new List<AnnouncementModel>();
 
-            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            using (var conn = new MySqlConnection(connectionString))
             {
                 conn.Open();
                 string query = "SELECT * FROM announcements ORDER BY CreatedAt DESC";
-                MySqlCommand cmd = new MySqlCommand(query, conn);
-                var reader = cmd.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    announcements.Add(new AnnouncementModel
-                    {
-                        AnnouncementID = reader.GetInt32("AnnouncementID"),
-                        Title = reader.GetString("Title"),
-                        Content = reader.GetString("Content"),
-                        CreatedAt = reader.GetDateTime("CreatedAt"),
-                        UserID = reader.GetInt32("UserID")
-                    });
-                }
+                announcements = conn.Query<AnnouncementModel>(query).ToList();
             }
 
             ViewBag.Announcements = announcements;
@@ -54,11 +42,60 @@ namespace homeowner.Controllers
 
         public IActionResult StaffDashboard()
         {
+            if (!IsStaff())
+            {
+                return RedirectToAction("Index");
+            }
+
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                // Get today's reservations count
+                var todaysReservations = connection.ExecuteScalar<int>(
+                    "SELECT COUNT(*) FROM facility_reservations WHERE DATE(ReservationDate) = CURDATE()");
+
+                // Get pending service requests count
+                var pendingServices = connection.ExecuteScalar<int>(
+                    "SELECT COUNT(*) FROM service_requests WHERE Status = 'Pending'");
+
+                // Get new feedback count (feedback from last 24 hours)
+                var newFeedback = connection.ExecuteScalar<int>(
+                    "SELECT COUNT(*) FROM feedback WHERE CreatedAt >= DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+
+                ViewBag.TodaysReservations = todaysReservations;
+                ViewBag.PendingServices = pendingServices;
+                ViewBag.NewFeedback = newFeedback;
+            }
+
             return View();
         }
 
         public IActionResult AdminDashboard()
         {
+            if (!IsAdmin())
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                // Get total users count
+                var totalUsers = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM USERS");
+
+                // Get today's reservations count
+                var todaysReservations = connection.ExecuteScalar<int>(
+                    "SELECT COUNT(*) FROM facility_reservations WHERE DATE(ReservationDate) = CURDATE()");
+
+                // Get pending service requests count
+                var pendingServices = connection.ExecuteScalar<int>(
+                    "SELECT COUNT(*) FROM service_requests WHERE Status = 'Pending'");
+
+                ViewBag.TotalUsers = totalUsers;
+                ViewBag.TodaysReservations = todaysReservations;
+                ViewBag.PendingServices = pendingServices;
+            }
+
             return View();
         }
 
@@ -72,29 +109,11 @@ namespace homeowner.Controllers
             }
 
             UserModel user = null;
-            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            using (var conn = new MySqlConnection(connectionString))
             {
                 conn.Open();
                 string query = "SELECT * FROM USERS WHERE UserID = @UserID";
-                MySqlCommand cmd = new MySqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@UserID", userId);
-                var reader = cmd.ExecuteReader();
-
-                if (reader.Read())
-                {
-                    user = new UserModel
-                    {
-                        UserID = reader.GetInt32("UserID"),
-                        Username = reader.GetString("Username"),
-                        Email = reader.GetString("Email"),
-                        FirstName = reader["FirstName"] as string,
-                        MiddleName = reader["MiddleName"] as string,
-                        LastName = reader["LastName"] as string,
-                        PhoneNumber = reader["PhoneNumber"] as string,
-                        Role = reader.GetString("Role"),
-                        CreatedAt = reader.GetDateTime("CreatedAt")
-                    };
-                }
+                user = conn.QueryFirstOrDefault<UserModel>(query, new { UserID = userId });
             }
 
             if (user == null)
@@ -106,8 +125,16 @@ namespace homeowner.Controllers
             return View(user);
         }
 
-     
+        private bool IsAdmin()
+        {
+            string role = HttpContext.Session.GetString("Role");
+            return role == "Administrator";
+        }
 
-
+        private bool IsStaff()
+        {
+            var role = HttpContext.Session.GetString("Role");
+            return role == "Staff";
+        }
     }
 }

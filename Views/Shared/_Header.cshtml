@@ -43,7 +43,22 @@
                             <i class="fas fa-tools"></i>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="ContactDirectory" asp-action="Index" title="Contact Directory">
+                            <i class="fas fa-address-book"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Feedback" asp-action="Index" title="Feedback & Complaints">
+                            <i class="fas fa-comment-dots"></i>
+                        </a>
+                    </li>
                 }
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Index", "Poll")">
+                        <i class="fas fa-poll me-2"></i>Polls & Surveys
+                    </a>
+                </li>
             </ul>
         }
 

@@ -1,290 +1,764 @@
 @model homeowner.Models.ForumPostModel
 @{
-    ViewBag.Title = "Post Details";
-    var currentUserId = ViewBag.UserID?.ToString();
+    ViewData["Title"] = "Forum Post Details";
+    var currentUserId = ViewBag.CurrentUserId;
 }
 
-<link rel="stylesheet" href="~/css/home.css" />
-<link rel="stylesheet" href="~/css/homeowner_forum.css" />
-
-<a href="@Url.Action("Index", "Forum")" class="btn btn-secondary mt-3">Back to Forum</a>
-
-<div class="container mt-4">
-    <div class="card mb-3 post-card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <div>
-                <h5 class="card-title mb-0">@Model.Title</h5>
-                <small class="text-muted">
-                    <strong>@Model.Username</strong> • Posted on @Model.CreatedAt.ToString("yyyy-MM-dd hh:mm tt")
-                </small>
+<div class="forum-details">
+    <div class="post-container" data-post-id="@Model.PostID">
+        <div class="post-header">
+            <h1>@Model.Title</h1>
+            <div class="post-meta">
+                <span class="author"><i class="fas fa-user"></i> @Model.Username</span>
+                <span class="date"><i class="fas fa-calendar"></i> @Model.CreatedAt.ToString("MMM dd, yyyy hh:mm tt")</span>
             </div>
         </div>
-        <div class="card-body">
-            <p class="card-text">@Model.Content</p>
 
+        <div class="post-content">
+            <p>@Model.Content</p>
             @if (Model.Image != null && Model.Image.Length > 0)
             {
-                <img src="data:image/png;base64,@Convert.ToBase64String(Model.Image)" class="img-fluid mt-2 rounded" alt="Post Image" style="max-width: 100%; height: auto;">
+                <img src="data:image/png;base64,@Convert.ToBase64String(Model.Image)" class="post-image" alt="Post Image">
             }
+        </div>
 
-            <div class="d-flex align-items-center mt-2">
-                <button class="btn btn-sm btn-outline-success upvote-btn upvote-post-btn" data-id="@Model.PostID">
-                    👍 <span class="upvote-count">@Model.Upvotes</span>
+        <div class="post-actions">
+            <div class="vote-section">
+                <button class="vote-btn upvote-btn @(Model.HasUpvoted ? "active" : "")" data-post-id="@Model.PostID" data-vote="1">
+                    <i class="fas fa-arrow-up"></i>
+                    <span class="upvote-count">@Model.Upvotes</span>
                 </button>
-                <button class="btn btn-sm btn-outline-danger downvote-btn downvote-post-btn ms-2" data-id="@Model.PostID">
-                    👎 <span class="downvote-count">@Model.Downvotes</span>
+                <button class="vote-btn downvote-btn @(Model.HasDownvoted ? "active" : "")" data-post-id="@Model.PostID" data-vote="-1">
+                    <i class="fas fa-arrow-down"></i>
+                    <span class="downvote-count">@Model.Downvotes</span>
                 </button>
             </div>
             
-            @if (Context.Session.GetString("UserID") == Model.UserID.ToString())
+            @if (currentUserId != null && Model.UserID.ToString() == currentUserId)
             {
-                <div class="edit-delete-buttons mt-2">
-                    <button class="edit-post-btn modern-btn edit-btn" data-id="@Model.PostID" data-title="@Model.Title" data-content="@Model.Content" data-image="@Convert.ToBase64String(Model.Image ?? new byte[0])">
-                        ✏️ Edit
+                <div class="post-edit-actions">
+                    <button class="btn btn-primary edit-post-btn" data-post-id="@Model.PostID">
+                        <i class="fas fa-edit"></i> Edit Post
+                    </button>
+                    <button class="btn btn-danger delete-post-btn" data-post-id="@Model.PostID">
+                        <i class="fas fa-trash"></i> Delete Post
                     </button>
                 </div>
-                <button class="btn btn-primary save-post-btn d-none">💾 Save</button>
-                <button class="btn btn-secondary cancel-post-btn d-none">❌ Cancel</button>
             }
-                <div class="post-edit-container d-none">
-                <form id="editPostForm">
-                    <input type="hidden" name="PostID" value="@Model.PostID">
-                    <input type="text" name="Title" class="form-control mt-2" value="@Model.Title">
-                    <textarea name="Content" class="form-control mt-2">@Model.Content</textarea>
-                    <input type="file" name="imageFile" class="form-control mt-2">
-
-                    @if (Model.Image != null && Model.Image.Length > 0)
-                    {
-                        <div class="mt-2">
-                            <label>
-                        <button type="button" class="btn btn-danger mt-2" id="deleteImageBtn">Delete Image</button>
-                            </label>
-                        </div>
-                    }
-                </form>
-            
-            </div>
         </div>
     </div>
 
-    <hr>
-    <h4 class="mt-4">Comments</h4>
-    <div class="card p-3 mb-3 shadow-sm">
-        <h5 class="text-secondary">Leave a Comment</h5>
-        <form id="commentForm">
-            <input type="hidden" name="PostID" value="@Model.PostID">
-            <textarea name="Content" class="form-control" rows="3" placeholder="Write your comment here..." required></textarea>
-            <input type="file" name="imageFile" class="form-control mt-2">
-            <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
+    <div class="comments-section">
+        <h2>Comments</h2>
+        <form id="commentForm" class="comment-form">
+            <div class="form-group">
+                <textarea class="form-control" name="Content" rows="3" placeholder="Write your comment..." required></textarea>
+            </div>
+            <div class="form-group">
+                <label class="custom-file-upload">
+                    <input type="file" name="imageFile" accept="image/*">
+                    <i class="fas fa-image"></i> Add Image
+                </label>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> Post Comment
+                </button>
+            </div>
         </form>
-    </div>
 
-    @if (ViewBag.Comments != null && ViewBag.Comments.Count > 0)
-    {
+        <div id="commentsContainer">
         @foreach (var comment in ViewBag.Comments)
         {
-            <div class="card mb-3 post-card" id="comment-@comment.CommentID">
-                <div class="card-body">
-                    <p class="comment-text font-weight-bold">@comment.Content</p>
-                    <textarea class="form-control edit-textarea d-none">@comment.Content</textarea>
+                <div class="comment-card" data-comment-id="@comment.CommentID">
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">@comment.Username</span>
+                            <span class="comment-date">@comment.CreatedAt.ToString("MMM dd, yyyy hh:mm tt")</span>
+                        </div>
+                        <p>@comment.Content</p>
                     @if (comment.Image != null && comment.Image.Length > 0)
                     {
-                        <img src="data:image/png;base64,@Convert.ToBase64String(comment.Image)" class="img-fluid mt-2 rounded" alt="Comment Image" style="max-width: 100%; height: auto;">
-                    }
-                    <small class="text-muted">Posted on @comment.CreatedAt.ToString("yyyy-MM-dd hh:mm tt")</small>
-                    <div class="mt-2 d-flex align-items-center">
-                        <button class="btn btn-sm btn-outline-success upvote-btn upvote-comment-btn" data-id="@comment.CommentID">
-                            👍 <span class="upvote-count">@comment.Upvotes</span>
+                            <img src="data:image/png;base64,@Convert.ToBase64String(comment.Image)" class="comment-image" alt="Comment Image">
+                        }
+                    </div>
+
+                    <div class="comment-actions">
+                        <div class="vote-section">
+                            <button class="vote-btn upvote-btn @(comment.HasUpvoted ? "active" : "")" 
+                                    data-comment-id="@comment.CommentID" data-vote="1">
+                                <i class="fas fa-arrow-up"></i>
+                                <span class="upvote-count">@comment.Upvotes</span>
                         </button>
-                        <button class="btn btn-sm btn-outline-danger downvote-btn downvote-comment-btn ms-2" data-id="@comment.CommentID">
-                            👎 <span class="downvote-count">@comment.Downvotes</span>
+                            <button class="vote-btn downvote-btn @(comment.HasDownvoted ? "active" : "")" 
+                                    data-comment-id="@comment.CommentID" data-vote="-1">
+                                <i class="fas fa-arrow-down"></i>
+                                <span class="downvote-count">@comment.Downvotes</span>
                         </button>
-                        @if (Context.Session.GetString("UserID") == comment.UserID.ToString())
+                        </div>
+
+                        @if (currentUserId != null && comment.UserID.ToString() == currentUserId)
                         {
-                            <button class="btn btn-sm btn-warning edit-btn ms-2" data-id="@comment.CommentID">✏️ Edit</button>
-                            <button class="btn btn-sm btn-primary save-btn d-none ms-2" data-id="@comment.CommentID">💾 Save</button>
-                            <button class="btn btn-sm btn-secondary cancel-btn d-none ms-2" data-id="@comment.CommentID">❌ Cancel</button>
-                            <button class="btn btn-sm btn-danger delete-btn ms-2" data-id="@comment.CommentID">🗑️ Delete</button>
+                            <div class="comment-edit-actions">
+                                <button class="btn btn-sm btn-primary edit-comment-btn" data-comment-id="@comment.CommentID">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger delete-comment-btn" data-comment-id="@comment.CommentID">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
                         }
                     </div>
                 </div>
-            </div>
-        }
-    }
-    else
-    {
-        <p class="text-muted">No comments yet.</p>
-    }
+            }
+        </div>
+    </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<script>
-      $(document).ready(function () {
-        $(".upvote-post-btn, .downvote-post-btn").click(function () {
-            var postID = $(this).data("id");
-            var voteValue = $(this).hasClass("upvote-post-btn") ? 1 : -1;
-
-            $.post("/Forum/VotePost", { postID: postID, voteValue: voteValue }, function (data) {
-                if (data.success) {
-                    location.reload(); // Refresh page to show updated vote count
-                } else {
-                    alert(data.message);
-                }
-            });
-        });
-
-        $(".upvote-comment-btn, .downvote-comment-btn").click(function () {
-            var commentID = $(this).data("id");
-            var voteValue = $(this).hasClass("upvote-comment-btn") ? 1 : -1;
-
-            $.post("/Forum/VoteComment", { commentID: commentID, voteValue: voteValue }, function (data) {
-                if (data.success) {
-                    location.reload(); // Refresh page to show updated vote count
-                } else {
-                    alert(data.message);
-                }
-            });
-        });
-
-        $(".delete-btn").click(function () {
-            var commentID = $(this).data("id");
-            if (confirm("Are you sure you want to delete this comment?")) {
-                $.post("/Forum/DeleteComment", { id: commentID }, function (data) {
-                    if (data.success) {
-                        location.reload();
-                    } else {
-                        alert(data.message);
-                    }
-                });
-            }
-        });
-
-        $(".edit-btn").click(function () {
-            var commentID = $(this).data("id");
-            var commentCard = $("#comment-" + commentID);
-            var commentText = commentCard.find(".comment-text");
-            var editTextarea = commentCard.find(".edit-textarea");
-
-            // Show the textarea and buttons, hide original text
-            commentText.addClass("d-none");
-            editTextarea.removeClass("d-none");
-            commentCard.find(".save-btn, .cancel-btn").removeClass("d-none");
-            $(this).addClass("d-none");
-        });
-
-        $(".cancel-btn").click(function () {
-            var commentID = $(this).data("id");
-            var commentCard = $("#comment-" + commentID);
-            var commentText = commentCard.find(".comment-text");
-            var editTextarea = commentCard.find(".edit-textarea");
-
-            // Restore original text, hide textarea and buttons
-            editTextarea.addClass("d-none");
-            commentText.removeClass("d-none");
-            commentCard.find(".edit-btn").removeClass("d-none");
-            commentCard.find(".save-btn, .cancel-btn").addClass("d-none");
-        });
-
-        $(".save-btn").click(function () {
-            var commentID = $(this).data("id");
-            var commentCard = $("#comment-" + commentID);
-            var newContent = commentCard.find(".edit-textarea").val();
-
-            if (newContent.trim() === "") {
-                alert("Comment cannot be empty.");
-                return;
-            }
-
-            $.post("/Forum/EditComment", { CommentID: commentID, Content: newContent }, function (data) {
-                if (data.success) {
-                    // Update comment text and revert UI
-                    commentCard.find(".comment-text").text(newContent).removeClass("d-none");
-                    commentCard.find(".edit-textarea").addClass("d-none");
-                    commentCard.find(".edit-btn").removeClass("d-none");
-                    commentCard.find(".save-btn, .cancel-btn").addClass("d-none");
-                } else {
-                    alert(data.message);
-                }
-            });
-        });
-
-        $("#commentForm").submit(function (e) {
-            e.preventDefault();
-
-            var formData = new FormData(this);
-
-            $.ajax({
-                url: "/Forum/AddComment",
-                type: "POST",
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (data) {
-                    if (data.success) {
-                        location.reload(); // Refresh to show new comment
-                    } else {
-                        alert(data.message);
-                    }
-                }
-            });
-        });
-
-        $(".edit-post-btn").click(function () {
-            $(".post-edit-container").removeClass("d-none");
-            $(".edit-post-btn").addClass("d-none");
-            $(".save-post-btn, .cancel-post-btn").removeClass("d-none");
-        });
-
-        $(".cancel-post-btn").click(function () {
-            $(".post-edit-container").addClass("d-none");
-            $(".edit-post-btn").removeClass("d-none");
-            $(".save-post-btn, .cancel-post-btn").addClass("d-none");
-        });
-
-        $(".save-post-btn").click(function () {
-            var formData = new FormData($("#editPostForm")[0]);
-
-            formData.append("RemoveImage", $("input[name='RemoveImage']").is(":checked"));
-
-            $.ajax({
-                url: "/Forum/EditPost",
-                type: "POST",
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (data) {
-                    alert(data.message);
-                    if (data.success) {
-                        location.reload();
-                    }
-                }
-            });
-        });
-
-        $("#deleteImageBtn").click(function () {
-            var postID = $("input[name='PostID']").val(); // Get PostID from the hidden input
-
-            if (confirm("Are you sure you want to delete this image?")) {
-                $.ajax({
-                    url: "/Forum/DeletePostImage",
-                    type: "POST", // Change to DELETE if necessary
-                    data: { PostID: postID },
-                    success: function (data) {
-                        if (data.success) {
-                            alert("Image deleted successfully.");
-                            location.reload(); // Refresh to reflect the change
-                        } else {
-                            alert(data.message);
+<!-- Edit Post Modal -->
+<div class="modal fade" id="editPostModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Post</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editPostForm">
+                    <input type="hidden" name="PostID" value="@Model.PostID">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" class="form-control" name="Title" value="@Model.Title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Content</label>
+                        <textarea class="form-control" name="Content" rows="4" required>@Model.Content</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="custom-file-upload">
+                            <input type="file" name="imageFile" accept="image/*">
+                            <i class="fas fa-image"></i> Change Image
+                        </label>
+                        @if (Model.Image != null && Model.Image.Length > 0)
+                        {
+                            <button type="button" class="btn btn-danger" id="removeImage">
+                                <i class="fas fa-trash"></i> Remove Image
+                            </button>
                         }
-                    },
-                    error: function () {
-                        alert("An error occurred while deleting the image.");
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Comment Modal -->
+<div class="modal fade" id="editCommentModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Comment</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editCommentForm">
+                    <input type="hidden" name="CommentID">
+                    <div class="form-group">
+                        <label>Content</label>
+                        <textarea class="form-control" name="Content" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .forum-details {
+        padding: 2rem;
+        background: #1a1a1a;
+        min-height: 100vh;
+        color: #fff;
+    }
+
+    .post-container {
+        background: #222;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .post-header h1 {
+        color: #fff;
+        font-size: 2rem;
+        margin: 0;
+        margin-bottom: 1rem;
+    }
+
+    .post-meta {
+        display: flex;
+        gap: 1rem;
+        color: #888;
+        margin-bottom: 1.5rem;
+    }
+
+    .post-meta span {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .post-meta i {
+        color: #00bcd4;
+    }
+
+    .post-content {
+        color: #ddd;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .post-image {
+        max-width: 100%;
+        border-radius: 10px;
+        margin-top: 1rem;
+    }
+
+    .post-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #333;
+    }
+
+    .vote-section {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .vote-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 20px;
+        background: #333;
+        color: #fff;
+        transition: all 0.3s ease;
+    }
+
+    .vote-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .vote-btn.active {
+        background: #00bcd4;
+    }
+
+    .upvote-btn:hover {
+        background: #4caf50;
+    }
+
+    .downvote-btn:hover {
+        background: #f44336;
+    }
+
+    .comments-section {
+        background: #222;
+        border-radius: 15px;
+        padding: 2rem;
+    }
+
+    .comments-section h2 {
+        color: #fff;
+        margin-bottom: 1.5rem;
+    }
+
+    .comment-form {
+        background: #2a2a2a;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+    }
+
+    .form-control {
+        background: #333;
+        border: 1px solid #444;
+        color: #fff;
+        border-radius: 8px;
+    }
+
+    .form-control:focus {
+        background: #333;
+        border-color: #00bcd4;
+        box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.25);
+    }
+
+    .custom-file-upload {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background: #333;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .custom-file-upload:hover {
+        background: #444;
+    }
+
+    .custom-file-upload input[type="file"] {
+        display: none;
+    }
+
+    .comment-card {
+        background: #2a2a2a;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .comment-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .comment-author {
+        color: #00bcd4;
+        font-weight: 500;
+    }
+
+    .comment-date {
+        color: #888;
+        font-size: 0.9rem;
+    }
+
+    .comment-image {
+        max-width: 100%;
+        border-radius: 8px;
+        margin-top: 1rem;
+    }
+
+    .comment-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #333;
+    }
+
+    .modal-content {
+        background: #2a2a2a;
+        color: #fff;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #333;
+    }
+
+    .modal-header .close {
+        color: #fff;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: #00bcd4;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background: #008ba3;
+        transform: translateY(-2px);
+    }
+
+    .btn-danger {
+        background: #f44336;
+        border: none;
+    }
+
+    .btn-danger:hover {
+        background: #d32f2f;
+        transform: translateY(-2px);
+    }
+
+    .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        color: white;
+        font-weight: 500;
+        transform: translateX(120%);
+        transition: transform 0.3s ease;
+        z-index: 9999;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .toast.show {
+        transform: translateX(0);
+    }
+
+    .toast.success {
+        background: linear-gradient(45deg, #4CAF50, #8BC34A);
+    }
+
+    .toast.error {
+        background: linear-gradient(45deg, #f44336, #e91e63);
+    }
+</style>
+
+<script>
+    $(document).ready(function() {
+        // Post voting
+        $('.vote-btn[data-post-id]').click(function() {
+            const postId = $(this).data('post-id');
+            const voteValue = $(this).data('vote');
+            const btn = $(this);
+            const voteSection = btn.closest('.vote-section');
+            const oppositeBtn = voteValue === 1 ? 
+                voteSection.find('.downvote-btn') : 
+                voteSection.find('.upvote-btn');
+
+            $.ajax({
+                url: '@Url.Action("VotePost", "Forum")',
+                type: 'POST',
+                data: { postID: postId, voteValue: voteValue },
+                success: function(response) {
+                    if (response.success) {
+                        // Update vote counts
+                        voteSection.find('.upvote-count').text(response.upvotes);
+                        voteSection.find('.downvote-count').text(response.downvotes);
+
+                        // Toggle active states
+                        if (response.newVoteValue === voteValue) {
+                            btn.addClass('active');
+                            oppositeBtn.removeClass('active');
+                        } else {
+                            btn.removeClass('active');
+                        }
+
+                        showToast('Vote recorded successfully!', 'success');
+                } else {
+                        showToast(response.message, 'error');
+                    }
+                }
+            });
+        });
+
+        // Comment voting
+        $('.vote-btn[data-comment-id]').click(function() {
+            const commentId = $(this).data('comment-id');
+            const voteValue = $(this).data('vote');
+            const btn = $(this);
+            const voteSection = btn.closest('.vote-section');
+            const oppositeBtn = voteValue === 1 ? 
+                voteSection.find('.downvote-btn') : 
+                voteSection.find('.upvote-btn');
+
+            $.ajax({
+                url: '@Url.Action("VoteComment", "Forum")',
+                type: 'POST',
+                data: { commentID: commentId, voteValue: voteValue },
+                success: function(response) {
+                    if (response.success) {
+                        // Update vote counts
+                        voteSection.find('.upvote-count').text(response.upvotes);
+                        voteSection.find('.downvote-count').text(response.downvotes);
+
+                        // Toggle active states
+                        if (response.newVoteValue === voteValue) {
+                            btn.addClass('active');
+                            oppositeBtn.removeClass('active');
+                        } else {
+                            btn.removeClass('active');
+                        }
+
+                        showToast('Vote recorded successfully!', 'success');
+                } else {
+                        showToast(response.message, 'error');
+                    }
+                }
+            });
+        });
+
+// Add comment
+$('#commentForm').submit(function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    formData.append('PostID', '@Model.PostID');
+
+    $.ajax({
+        url: '@Url.Action("AddComment", "Forum")',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.success) {
+                // Clear form
+                $('#commentForm')[0].reset();
+                $('#commentImagePreview').hide();
+                // Add new comment to the list
+                const newComment = createCommentElement(response.comment);
+                $('#commentsContainer').prepend(newComment);
+                showToast('Comment added successfully!', 'success');
+                    } else {
+                showToast(response.message, 'error');
+            }
+        }
+    });
+});
+        // Image preview for comment
+        $('input[name="imageFile"]').change(function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#commentImagePreview').attr('src', e.target.result).show();
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Edit post
+        $('.edit-post-btn').click(function() {
+            const postId = $(this).data('post-id');
+            const title = $(this).closest('.post-container').find('h1').text();
+            const content = $(this).closest('.post-container').find('.post-content p').text();
+            
+            $('#editPostForm input[name="PostID"]').val(postId);
+            $('#editPostForm input[name="Title"]').val(title);
+            $('#editPostForm textarea[name="Content"]').val(content);
+            $('#editPostModal').modal('show');
+        });
+
+       // Edit post
+$('#editPostForm').submit(function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const postContainer = $('.post-container');
+
+    $.ajax({
+        url: '@Url.Action("EditPost", "Forum")',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.success) {
+                // Update post content without reload
+                postContainer.find('h1').text(formData.get('Title'));
+                postContainer.find('.post-content p').text(formData.get('Content'));
+                if (response.imageUrl) {
+                    postContainer.find('.post-image').attr('src', response.imageUrl).show();
+                } else if (formData.get('imageFile').size === 0) {
+                    postContainer.find('.post-image').show();
+                } else {
+                    postContainer.find('.post-image').hide();
+                }
+                $('#editPostModal').modal('hide');
+                showToast('Post updated successfully!', 'success');
+            } else {
+                showToast(response.message, 'error');
+            }
+        },
+        error: function(xhr) {
+            if (xhr.responseText.includes("Packets larger than max_allowed_packet")) {
+                showToast("The image is too large to upload. Please choose a smaller image.", 'error');
+            } else {
+                showToast("An error occurred while updating the post.", 'error');
+            }
+        }
+    });
+});
+
+        // Remove post image
+        $('#removeImage').click(function() {
+            const postId = $('#editPostForm input[name="PostID"]').val();
+
+            $.ajax({
+                url: '@Url.Action("DeletePostImage", "Forum")',
+                type: 'POST',
+                data: { postId: postId },
+                success: function(response) {
+                    if (response.success) {
+                        $('.post-image').hide();
+                        $('#removeImage').hide();
+                        showToast('Image removed successfully!', 'success');
+                } else {
+                        showToast(response.message, 'error');
+                    }
+                }
+            });
+        });
+
+        // Delete post
+        $('.delete-post-btn').click(function() {
+            if (confirm('Are you sure you want to delete this post?')) {
+                const postId = $(this).data('post-id');
+                $.ajax({
+                    url: '@Url.Action("DeletePost", "Forum")',
+                    type: 'POST',
+                    data: { id: postId },
+                    success: function(response) {
+                        if (response.success) {
+                            window.location.href = '@Url.Action("Index", "Forum")';
+                        } else {
+                            showToast(response.message, 'error');
+                        }
                     }
                 });
             }
         });
+
+        // Edit comment
+        $('.edit-comment-btn').click(function() {
+            const commentId = $(this).data('comment-id');
+            const content = $(this).closest('.comment-card').find('p').text();
+            $('#editCommentForm input[name="CommentID"]').val(commentId);
+            $('#editCommentForm textarea[name="Content"]').val(content);
+            $('#editCommentModal').modal('show');
+        });
+
+        $('#editCommentForm').submit(function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const commentId = formData.get('CommentID');
+            const content = formData.get('Content');
+            const commentCard = $(`.comment-card[data-comment-id="${commentId}"]`);
+
+            $.ajax({
+                url: '@Url.Action("EditComment", "Forum")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        // Update comment content without reload
+                        commentCard.find('p').text(content);
+                        if (response.imageUrl) {
+                            commentCard.find('.comment-image').attr('src', response.imageUrl).show();
+                        } else {
+                            commentCard.find('.comment-image').hide();
+                        }
+                        $('#editCommentModal').modal('hide');
+                        showToast('Comment updated successfully!', 'success');
+                    } else {
+                        showToast(response.message, 'error');
+                    }
+                }
+            });
+        });
+
+        // Remove comment image
+        $('#removeCommentImage').click(function() {
+            const commentId = $('#editCommentForm input[name="CommentID"]').val();
+
+            $.ajax({
+                url: '@Url.Action("DeleteCommentImage", "Forum")',
+                type: 'POST',
+                data: { commentId: commentId },
+                success: function(response) {
+                    if (response.success) {
+                        $('.comment-image').hide();
+                        $('#removeCommentImage').hide();
+                        showToast('Image removed successfully!', 'success');
+                    } else {
+                        showToast(response.message, 'error');
+                    }
+                }
+            });
+        });
+
+        // Delete comment
+        $('.delete-comment-btn').click(function() {
+            if (confirm('Are you sure you want to delete this comment?')) {
+                const commentId = $(this).data('comment-id');
+                const commentCard = $(`.comment-card[data-comment-id="${commentId}"]`);
+
+                $.ajax({
+                    url: '@Url.Action("DeleteComment", "Forum")',
+                    type: 'POST',
+                    data: { id: commentId },
+                    success: function(response) {
+                        if (response.success) {
+                            // Remove comment without reload
+                            commentCard.fadeOut(300, function() { $(this).remove(); });
+                            showToast('Comment deleted successfully!', 'success');
+                        } else {
+                            showToast(response.message, 'error');
+                        }
+                    }
+                });
+            }
+        });
+
+       // Helper function to create comment element
+function createCommentElement(comment) {
+    const currentUserId = '@currentUserId';
+    const isOwner = currentUserId === comment.UserID.toString();
+    
+    return `
+        <div class="comment-card" data-comment-id="${comment.CommentID}">
+            <div class="comment-content">
+                <div class="comment-header">
+                    <span class="comment-author">${comment.Username}</span>
+                    <span class="comment-date">${new Date(comment.CreatedAt).toLocaleString()}</span>
+                </div>
+                <p>${comment.Content}</p>
+                ${comment.Image ? `<img src="data:image/png;base64,${comment.Image}" class="comment-image" alt="Comment Image">` : ''}
+            </div>
+            <div class="comment-actions">
+                <div class="vote-section">
+                    <button class="vote-btn upvote-btn" data-comment-id="${comment.CommentID}" data-vote="1">
+                        <i class="fas fa-arrow-up"></i>
+                        <span class="upvote-count">0</span>
+                    </button>
+                    <button class="vote-btn downvote-btn" data-comment-id="${comment.CommentID}" data-vote="-1">
+                        <i class="fas fa-arrow-down"></i>
+                        <span class="downvote-count">0</span>
+                    </button>
+                </div>
+                ${isOwner ? `
+                    <div class="comment-edit-actions">
+                        <button class="btn btn-sm btn-primary edit-comment-btn" data-comment-id="${comment.CommentID}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger delete-comment-btn" data-comment-id="${comment.CommentID}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+    `;
+}
+        // Toast notification
+        function showToast(message, type) {
+            const toast = $('<div>').addClass('toast ' + type).text(message);
+            $('body').append(toast);
+            setTimeout(() => toast.addClass('show'), 100);
+            setTimeout(() => {
+                toast.removeClass('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
     });
-
-
 </script>

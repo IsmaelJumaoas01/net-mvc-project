@@ -44,8 +44,24 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5fU3RhZmZcX1NlcnZpY2VSZXF1ZXN0VGFibGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[X:/vscode projects/net-mvc-project/Views/ContactDirectory/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udGFjdERpcmVjdG9yeVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[X:/vscode projects/net-mvc-project/Views/Contact/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udGFjdFxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[X:/vscode projects/net-mvc-project/Views/Feedback/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmVlZGJhY2tcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [X:/vscode projects/net-mvc-project/Views/Forum/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRm9ydW1cRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[X:/vscode projects/net-mvc-project/Views/Forum/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRm9ydW1cSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [X:/vscode projects/net-mvc-project/Views/Homeowner/BookFacility.cshtml]
@@ -82,6 +98,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [X:/vscode projects/net-mvc-project/Views/Home/StaffDashboard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxTdGFmZkRhc2hib2FyZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[X:/vscode projects/net-mvc-project/Views/Poll/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUG9sbFxDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[X:/vscode projects/net-mvc-project/Views/Poll/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUG9sbFxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [X:/vscode projects/net-mvc-project/Views/Shared/Error.cshtml]

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "r8tU7ndeinLazBHp6joqaY9Q3t8uLldOOxpMcqxHY0U=",
+  "Hash": "VvGOJj8m0ofC1qnNQlDmZk1qwYa6NYaYDYMTE/yznLI=",
   "Source": "homeowner_app",
   "BasePath": "_content/homeowner_app",
   "Mode": "Default",
@@ -57,6 +57,48 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "X:\\vscode projects\\net-mvc-project\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\homeowner_app.bundle.scp.css"
+    },
+    {
+      "Identity": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\admin-dashboard.css",
+      "SourceId": "homeowner_app",
+      "SourceType": "Discovered",
+      "ContentRoot": "X:\\vscode projects\\net-mvc-project\\wwwroot\\",
+      "BasePath": "_content/homeowner_app",
+      "RelativePath": "css/admin-dashboard#[.{fingerprint}]?.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "d9fo52yym9",
+      "Integrity": "QXAVq3yBc55ycX1KsC5Gc6fCf8lYZ4vCo8Ms0Cb0QnY=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\admin-dashboard.css"
+    },
+    {
+      "Identity": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\feedback.css",
+      "SourceId": "homeowner_app",
+      "SourceType": "Discovered",
+      "ContentRoot": "X:\\vscode projects\\net-mvc-project\\wwwroot\\",
+      "BasePath": "_content/homeowner_app",
+      "RelativePath": "css/feedback#[.{fingerprint}]?.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "fh62am8gh9",
+      "Integrity": "U299L/NAYT9nNinM8eHl59XyXI+SbYM+6DRyeUD/TB8=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\feedback.css"
     },
     {
       "Identity": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\home.css",
@@ -1426,6 +1468,170 @@
   ],
   "Endpoints": [
     {
+      "Route": "css/admin-dashboard.css",
+      "AssetFile": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\admin-dashboard.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2562"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"QXAVq3yBc55ycX1KsC5Gc6fCf8lYZ4vCo8Ms0Cb0QnY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 09 Mar 2025 10:02:15 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-QXAVq3yBc55ycX1KsC5Gc6fCf8lYZ4vCo8Ms0Cb0QnY="
+        }
+      ]
+    },
+    {
+      "Route": "css/admin-dashboard.d9fo52yym9.css",
+      "AssetFile": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\admin-dashboard.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2562"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"QXAVq3yBc55ycX1KsC5Gc6fCf8lYZ4vCo8Ms0Cb0QnY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 09 Mar 2025 10:02:15 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "d9fo52yym9"
+        },
+        {
+          "Name": "label",
+          "Value": "css/admin-dashboard.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-QXAVq3yBc55ycX1KsC5Gc6fCf8lYZ4vCo8Ms0Cb0QnY="
+        }
+      ]
+    },
+    {
+      "Route": "css/feedback.css",
+      "AssetFile": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\feedback.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3516"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"U299L/NAYT9nNinM8eHl59XyXI+SbYM+6DRyeUD/TB8=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 09 Mar 2025 10:16:13 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-U299L/NAYT9nNinM8eHl59XyXI+SbYM+6DRyeUD/TB8="
+        }
+      ]
+    },
+    {
+      "Route": "css/feedback.fh62am8gh9.css",
+      "AssetFile": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\feedback.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3516"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"U299L/NAYT9nNinM8eHl59XyXI+SbYM+6DRyeUD/TB8=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 09 Mar 2025 10:16:13 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "fh62am8gh9"
+        },
+        {
+          "Name": "label",
+          "Value": "css/feedback.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-U299L/NAYT9nNinM8eHl59XyXI+SbYM+6DRyeUD/TB8="
+        }
+      ]
+    },
+    {
       "Route": "css/home.css",
       "AssetFile": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\home.css",
       "Selectors": [],
@@ -1858,7 +2064,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 06 Mar 2025 01:35:34 GMT"
+          "Value": "Sun, 09 Mar 2025 11:23:30 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1895,7 +2101,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 06 Mar 2025 01:35:34 GMT"
+          "Value": "Sun, 09 Mar 2025 11:23:30 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1940,7 +2146,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 06 Mar 2025 01:35:34 GMT"
+          "Value": "Sun, 09 Mar 2025 11:23:30 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1985,7 +2191,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 06 Mar 2025 01:35:34 GMT"
+          "Value": "Sun, 09 Mar 2025 11:23:30 GMT"
         },
         {
           "Name": "Cache-Control",

@@ -1,14 +1,139 @@
 @{
-    ViewBag.Title = "Admin Dashboard";
+    ViewData["Title"] = "Admin Dashboard";
+    var username = Context.Session.GetString("Username");
 }
 
-<h1>Admin Dashboard</h1>
-<p>Welcome, @Context.Session.GetString("Username")!</p>
-<!-- Add admin-specific content here -->
+<link rel="stylesheet" href="~/css/admin-dashboard.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
+<div class="admin-dashboard">
+    <div class="dashboard-header">
+        <h1 class="animate__animated animate__fadeIn">Welcome, @username!</h1>
+    </div>
 
-    <a asp-controller="Account" asp-action="ManageUsers" class="btn btn-primary">Manage Users</a>
-    <a asp-controller="Announcement" asp-action="Index" class="btn btn-primary">Manage Announcements</a>
-    <a asp-controller="FacilityReservation" asp-action="Index" class="btn btn-primary">Manage Facility Reservations</a>
-    <a asp-controller="Account" asp-action="Logout" class="btn btn-secondary">Logout</a>
-    <a asp-controller="ServiceRequests" asp-action="ManageRequests" class="btn btn-primary">Manage Service Requests</a>
+    <div class="dashboard-stats">
+        <div class="stat-card animate__animated animate__fadeInUp">
+            <i class="fas fa-users"></i>
+            <div class="stat-info">
+                <h3>Total Users</h3>
+                <div class="stat-number">@ViewBag.TotalUsers</div>
+            </div>
+        </div>
+
+        <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+            <i class="fas fa-calendar-check"></i>
+            <div class="stat-info">
+                <h3>Today's Reservations</h3>
+                <div class="stat-number">@ViewBag.TodaysReservations</div>
+            </div>
+        </div>
+
+        <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
+            <i class="fas fa-tasks"></i>
+            <div class="stat-info">
+                <h3>Pending Services</h3>
+                <div class="stat-number">@ViewBag.PendingServices</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="card animate__animated animate__fadeInLeft">
+            <div class="card-header">
+                <i class="fas fa-user-cog"></i>
+                <h3>User Management</h3>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("ManageUsers", "Account")" class="btn btn-primary">
+                    <i class="fas fa-users-cog"></i>
+                    Manage Users
+                </a>
+            </div>
+        </div>
+
+        <div class="card animate__animated animate__fadeInLeft" style="animation-delay: 0.2s">
+            <div class="card-header">
+                <i class="fas fa-bullhorn"></i>
+                <h3>Announcements</h3>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("Index", "Announcement")" class="btn btn-primary">
+                    <i class="fas fa-plus-circle"></i>
+                    Manage Announcements
+                </a>
+            </div>
+        </div>
+
+        <div class="card animate__animated animate__fadeInLeft" style="animation-delay: 0.4s">
+            <div class="card-header">
+                <i class="fas fa-building"></i>
+                <h3>Facility Management</h3>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("Index", "FacilityReservation")" class="btn btn-primary">
+                    <i class="fas fa-tools"></i>
+                    Manage Facilities
+                </a>
+            </div>
+        </div>
+
+        <div class="card animate__animated animate__fadeInLeft" style="animation-delay: 0.6s">
+            <div class="card-header">
+                <i class="fas fa-clipboard-list"></i>
+                <h3>Service Requests</h3>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("ManageRequests", "ServiceRequests")" class="btn btn-primary">
+                    <i class="fas fa-tasks"></i>
+                    Manage Services
+                </a>
+            </div>
+        </div>
+
+        <div class="card animate__animated animate__fadeInLeft" style="animation-delay: 0.8s">
+            <div class="card-header">
+                <i class="fas fa-poll"></i>
+                <h3>Polls & Surveys</h3>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("Create", "Poll")" class="btn btn-primary">
+                    <i class="fas fa-plus-circle"></i>
+                    Create New Poll
+                </a>
+                <a href="@Url.Action("Index", "Poll")" class="btn btn-secondary">
+                    <i class="fas fa-list"></i>
+                    View All Polls
+                </a>
+            </div>
+        </div>
+
+        <div class="card animate__animated animate__fadeInLeft" style="animation-delay: 1s">
+            <div class="card-header">
+                <i class="fas fa-comments"></i>
+                <h3>Feedback & Complaints</h3>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("Index", "Feedback")" class="btn btn-primary">
+                    <i class="fas fa-clipboard-list"></i>
+                    Manage Feedback
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Add intersection observer for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate__animated', 'animate__fadeIn');
+                }
+            });
+        });
+
+        document.querySelectorAll('.card').forEach((el) => observer.observe(el));
+    </script>
+}

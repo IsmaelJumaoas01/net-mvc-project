@@ -5,8 +5,8 @@ namespace homeowner.ViewModels
 {
     public class ManageUsersViewModel
     {
-        public IEnumerable<UserModel> Users { get; set; }
-        public UserModel AddUser { get; set; }
-        public UserModel EditUser { get; set; }
+        public List<UserModel> Users { get; set; } = new();
+        public UserModel AddUser { get; set; } = new();
+        public UserModel EditUser { get; set; } = new();
     }
 }

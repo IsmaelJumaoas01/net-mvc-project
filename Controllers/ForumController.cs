@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using System.Security.Claims; // ✅ Required for user identity logging
+using Dapper;
 
 namespace homeowner.Controllers
 {
@@ -16,13 +17,8 @@ namespace homeowner.Controllers
         // GET: /Forum/
         public IActionResult Index()
         {
-            // ✅ Get the UserID from session
             string currentUserId = HttpContext.Session.GetString("UserID");
-
-            // ✅ Log the user ID in the VS Code terminal
             Console.WriteLine($"[LOG] Current Logged-in User ID: {currentUserId ?? "No user logged in"}");
-
-            // ✅ Pass it to the ViewBag for debugging in the frontend
             ViewBag.CurrentUserId = currentUserId;
 
             List<ForumPostModel> posts = new List<ForumPostModel>();
@@ -31,14 +27,12 @@ namespace homeowner.Controllers
             {
                 conn.Open();
                 string sql = @"
-    SELECT fp.*, u.Username, 
-           (SELECT COUNT(*) FROM forum_post_votes WHERE PostID = fp.PostID AND VoteValue = 1) AS Upvotes,
-           (SELECT COUNT(*) FROM forum_post_votes WHERE PostID = fp.PostID AND VoteValue = -1) AS Downvotes
-    FROM forum_posts fp 
-    JOIN users u ON fp.UserID = u.UserID 
-    ORDER BY fp.CreatedAt DESC";
-
-
+                    SELECT fp.*, u.Username, 
+                           (SELECT COUNT(*) FROM forum_post_votes WHERE PostID = fp.PostID AND VoteValue = 1) AS Upvotes,
+                           (SELECT COUNT(*) FROM forum_post_votes WHERE PostID = fp.PostID AND VoteValue = -1) AS Downvotes
+                    FROM forum_posts fp 
+                    JOIN users u ON fp.UserID = u.UserID 
+                    ORDER BY fp.CreatedAt DESC";
 
                 MySqlCommand cmd = new MySqlCommand(sql, conn);
                 var reader = cmd.ExecuteReader();
@@ -53,8 +47,8 @@ namespace homeowner.Controllers
                         Content = reader.GetString("Content"),
                         CreatedAt = reader.GetDateTime("CreatedAt"),
                         Image = reader.IsDBNull(reader.GetOrdinal("Image")) ? null : (byte[])reader["Image"],
-                        Upvotes = reader.GetInt32("Upvotes"),   // Get upvote count
-                        Downvotes = reader.GetInt32("Downvotes") // Get downvote count
+                        Upvotes = reader.GetInt32("Upvotes"),
+                        Downvotes = reader.GetInt32("Downvotes")
                     });
                 }
 
@@ -84,89 +78,47 @@ namespace homeowner.Controllers
 
         public IActionResult Details(int id)
         {
-            ForumPostModel post = null;
-            List<ForumCommentModel> comments = new List<ForumCommentModel>();
-            int? currentUserId = null; // Store the current user's ID
+            string userIdStr = HttpContext.Session.GetString("UserID");
+            ViewBag.CurrentUserId = userIdStr;
 
-            if (HttpContext.Session.GetString("UserID") != null)
+            using (var connection = new MySqlConnection(connectionString))
             {
-                currentUserId = int.Parse(HttpContext.Session.GetString("UserID"));
-            }
+                connection.Open();
 
-            using (MySqlConnection conn = new MySqlConnection(connectionString))
-            {
-                conn.Open();
+                // Get post details
+                string postSql = @"
+                    SELECT p.*, u.Username,
+                           (SELECT COUNT(*) FROM forum_post_votes WHERE PostID = p.PostID AND VoteValue = 1) as Upvotes,
+                           (SELECT COUNT(*) FROM forum_post_votes WHERE PostID = p.PostID AND VoteValue = -1) as Downvotes,
+                           CASE WHEN EXISTS (SELECT 1 FROM forum_post_votes WHERE PostID = p.PostID AND UserID = @UserID AND VoteValue = 1) THEN 1 ELSE 0 END as HasUpvoted,
+                           CASE WHEN EXISTS (SELECT 1 FROM forum_post_votes WHERE PostID = p.PostID AND UserID = @UserID AND VoteValue = -1) THEN 1 ELSE 0 END as HasDownvoted
+                    FROM forum_posts p
+                    JOIN users u ON p.UserID = u.UserID
+                    WHERE p.PostID = @PostID";
 
-                // Get the forum post with upvote and downvote counts.
-                string sqlPost = @"
-            SELECT fp.*, 
-                (SELECT COUNT(*) FROM forum_post_votes WHERE PostID = fp.PostID AND VoteValue = 1) AS Upvotes,
-                (SELECT COUNT(*) FROM forum_post_votes WHERE PostID = fp.PostID AND VoteValue = -1) AS Downvotes
-            FROM forum_posts fp
-            WHERE fp.PostID = @PostID";
-
-                using (MySqlCommand cmdPost = new MySqlCommand(sqlPost, conn))
+                var post = connection.QueryFirstOrDefault<ForumPostModel>(postSql, new { PostID = id, UserID = userIdStr });
+                if (post == null)
                 {
-                    cmdPost.Parameters.AddWithValue("@PostID", id);
-                    using (var reader = cmdPost.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            post = new ForumPostModel
-                            {
-                                PostID = reader.GetInt32("PostID"),
-                                UserID = reader.IsDBNull(reader.GetOrdinal("UserID")) ? (int?)null : reader.GetInt32("UserID"),
-                                Title = reader.GetString("Title"),
-                                Content = reader.GetString("Content"),
-                                CreatedAt = reader.GetDateTime("CreatedAt"),
-                                Image = reader.IsDBNull(reader.GetOrdinal("Image")) ? null : (byte[])reader["Image"],
-                                Upvotes = reader.GetInt32("Upvotes"),
-                                Downvotes = reader.GetInt32("Downvotes")
-                            };
-                        }
-                    }
+                    return NotFound();
                 }
 
-                // Get the comments for the post with their upvote and downvote counts.
-                string sqlComments = @"
-            SELECT c.*, 
-                (SELECT COUNT(*) FROM forum_comment_votes WHERE CommentID = c.CommentID AND VoteValue = 1) AS Upvotes,
-                (SELECT COUNT(*) FROM forum_comment_votes WHERE CommentID = c.CommentID AND VoteValue = -1) AS Downvotes
-            FROM forum_comments c 
-            WHERE c.PostID = @PostID
-            ORDER BY c.CreatedAt ASC";
+                // Get comments
+                string commentSql = @"
+                    SELECT c.*, u.Username,
+                           (SELECT COUNT(*) FROM forum_comment_votes WHERE CommentID = c.CommentID AND VoteValue = 1) as Upvotes,
+                           (SELECT COUNT(*) FROM forum_comment_votes WHERE CommentID = c.CommentID AND VoteValue = -1) as Downvotes,
+                           CASE WHEN EXISTS (SELECT 1 FROM forum_comment_votes WHERE CommentID = c.CommentID AND UserID = @UserID AND VoteValue = 1) THEN 1 ELSE 0 END as HasUpvoted,
+                           CASE WHEN EXISTS (SELECT 1 FROM forum_comment_votes WHERE CommentID = c.CommentID AND UserID = @UserID AND VoteValue = -1) THEN 1 ELSE 0 END as HasDownvoted
+                    FROM forum_comments c
+                    JOIN users u ON c.UserID = u.UserID
+                    WHERE c.PostID = @PostID
+                    ORDER BY c.CreatedAt DESC";
 
-                using (MySqlCommand cmdComments = new MySqlCommand(sqlComments, conn))
-                {
-                    cmdComments.Parameters.AddWithValue("@PostID", id);
-                    using (var readerComments = cmdComments.ExecuteReader())
-                    {
-                        while (readerComments.Read())
-                        {
-                            comments.Add(new ForumCommentModel
-                            {
-                                CommentID = readerComments.GetInt32("CommentID"),
-                                PostID = readerComments.GetInt32("PostID"),
-                                UserID = readerComments.GetInt32("UserID"),
-                                Content = readerComments.GetString("Content"),
-                                CreatedAt = readerComments.GetDateTime("CreatedAt"),
-                                Image = readerComments.IsDBNull(readerComments.GetOrdinal("Image")) ? null : (byte[])readerComments["Image"],
-                                Upvotes = readerComments.GetInt32("Upvotes"),
-                                Downvotes = readerComments.GetInt32("Downvotes")
-                            });
-                        }
-                    }
-                }
+                var comments = connection.Query<ForumCommentModel>(commentSql, new { PostID = id, UserID = userIdStr }).ToList();
+                ViewBag.Comments = comments;
+
+                return View(post);
             }
-
-            if (post == null)
-            {
-                return NotFound();
-            }
-
-            ViewBag.Comments = comments;
-            ViewBag.CurrentUserId = currentUserId; // Pass UserID to the view
-            return View(post);
         }
 
 
@@ -262,37 +214,39 @@ namespace homeowner.Controllers
             string currentUserId = HttpContext.Session.GetString("UserID");
             if (string.IsNullOrEmpty(currentUserId) || !int.TryParse(currentUserId, out int userId))
             {
-                Console.WriteLine("❌ Unauthorized access attempt - No valid UserID in session.");
                 return Json(new { success = false, message = "Unauthorized access" });
             }
-
-            Console.WriteLine($"📌 EditPost Called - PostID: {model.PostID}, Title: {model.Title}, Content: {model.Content}");
 
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
                 try
                 {
                     conn.Open();
-                    Console.WriteLine("✅ Database Connection Successful!");
 
                     // Check if post exists & belongs to user
-                    string sqlCheck = "SELECT UserID FROM forum_posts WHERE PostID = @PostID";
+                    string sqlCheck = "SELECT UserID, Image FROM forum_posts WHERE PostID = @PostID";
+                    byte[] existingImage = null;
                     using (MySqlCommand cmdCheck = new MySqlCommand(sqlCheck, conn))
                     {
                         cmdCheck.Parameters.AddWithValue("@PostID", model.PostID);
-                        object ownerObj = cmdCheck.ExecuteScalar();
-
-                        if (ownerObj == null)
+                        using (var reader = cmdCheck.ExecuteReader())
                         {
-                            Console.WriteLine($"❌ Post with ID {model.PostID} not found.");
-                            return Json(new { success = false, message = "Post not found." });
-                        }
-
-                        int ownerID = Convert.ToInt32(ownerObj);
-                        if (ownerID != userId)
-                        {
-                            Console.WriteLine($"❌ Unauthorized edit attempt. Owner ID: {ownerID}, User ID: {userId}");
-                            return Json(new { success = false, message = "You can only edit your own posts." });
+                            if (reader.Read())
+                            {
+                                int ownerID = reader.GetInt32("UserID");
+                                if (ownerID != userId)
+                                {
+                                    return Json(new { success = false, message = "You can only edit your own posts." });
+                                }
+                                if (!reader.IsDBNull(reader.GetOrdinal("Image")))
+                                {
+                                    existingImage = (byte[])reader["Image"];
+                                }
+                            }
+                            else
+                            {
+                                return Json(new { success = false, message = "Post not found." });
+                            }
                         }
                     }
 
@@ -305,7 +259,6 @@ namespace homeowner.Controllers
                             imageFile.CopyTo(ms);
                             imageData = ms.ToArray();
                         }
-                        Console.WriteLine("📸 Image uploaded and processed.");
                     }
 
                     // Construct SQL query dynamically
@@ -327,24 +280,33 @@ namespace homeowner.Controllers
                             cmd.Parameters.AddWithValue("@Image", imageData);
                         }
 
-                        Console.WriteLine($"📜 SQL Query: {sql}");
                         int rowsAffected = cmd.ExecuteNonQuery();
-                        Console.WriteLine($"✅ Rows affected: {rowsAffected}");
 
                         if (rowsAffected > 0)
                         {
-                            return Json(new { success = true, message = "Post updated successfully!" });
+                            string imageUrl = null;
+                            if (imageData != null)
+                            {
+                                imageUrl = "data:image/png;base64," + Convert.ToBase64String(imageData);
+                            }
+                            else if (existingImage != null)
+                            {
+                                imageUrl = "data:image/png;base64," + Convert.ToBase64String(existingImage);
+                            }
+                            return Json(new { success = true, message = "Post updated successfully!", imageUrl = imageUrl });
                         }
                         else
                         {
-                            Console.WriteLine("⚠ Update failed: No rows affected.");
                             return Json(new { success = false, message = "Update failed." });
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"🔥 ERROR updating post: {ex.Message}");
+                    if (ex.Message.Contains("Packets larger than max_allowed_packet"))
+                    {
+                        return Json(new { success = false, message = "The image is too large to upload. Please choose a smaller image." });
+                    }
                     return Json(new { success = false, message = "An error occurred while updating the post." });
                 }
             }
@@ -354,16 +316,11 @@ namespace homeowner.Controllers
         [HttpPost]
         public IActionResult DeletePostImage([FromForm] int postId)
         {
-            Console.WriteLine($"Received postId={postId}");
-
             string currentUserId = HttpContext.Session.GetString("UserID");
             if (string.IsNullOrEmpty(currentUserId) || !int.TryParse(currentUserId, out int userId))
             {
-                Console.WriteLine("Unauthorized access attempt - No valid UserID in session.");
                 return Json(new { success = false, message = "Unauthorized access" });
             }
-
-            Console.WriteLine($"DeletePostImage called with postId={postId} by userId={userId}");
 
             try
             {
@@ -379,14 +336,12 @@ namespace homeowner.Controllers
 
                     if (result == null)
                     {
-                        Console.WriteLine("Post not found.");
                         return Json(new { success = false, message = "Post not found." });
                     }
 
                     int postUserId = Convert.ToInt32(result);
                     if (postUserId != userId)
                     {
-                        Console.WriteLine("Unauthorized attempt to delete image.");
                         return Json(new { success = false, message = "Unauthorized" });
                     }
 
@@ -399,19 +354,16 @@ namespace homeowner.Controllers
                     int rowsAffected = cmd.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {
-                        Console.WriteLine("Image deleted successfully.");
                         return Json(new { success = true, message = "Image deleted successfully" });
                     }
                     else
                     {
-                        Console.WriteLine("Failed to delete image.");
                         return Json(new { success = false, message = "Failed to delete image" });
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occurred while deleting the image: {ex.Message}");
                 return Json(new { success = false, message = "An error occurred while deleting the image: " + ex.Message });
             }
         }
@@ -473,16 +425,14 @@ namespace homeowner.Controllers
 
 
 
-        // POST: /Forum/AddComment
         [HttpPost]
-        public IActionResult AddComment(ForumCommentModel comment, IFormFile imageFile)
+        public IActionResult AddComment(int postID, string content, IFormFile imageFile)
         {
-            string userIdStr = HttpContext.Session.GetString("UserID");
-            if (string.IsNullOrEmpty(userIdStr))
+            string currentUserId = HttpContext.Session.GetString("UserID");
+            if (string.IsNullOrEmpty(currentUserId) || !int.TryParse(currentUserId, out int userId))
             {
                 return Json(new { success = false, message = "User not logged in" });
             }
-            comment.UserID = int.Parse(userIdStr);
 
             byte[] imageData = null;
             if (imageFile != null && imageFile.Length > 0)
@@ -497,17 +447,38 @@ namespace homeowner.Controllers
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
                 conn.Open();
-                string sql = "INSERT INTO forum_comments (PostID, UserID, Content, Image) VALUES (@PostID, @UserID, @Content, @Image)";
-                MySqlCommand cmd = new MySqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@PostID", comment.PostID);
-                cmd.Parameters.AddWithValue("@UserID", comment.UserID);
-                cmd.Parameters.AddWithValue("@Content", comment.Content);
-                cmd.Parameters.AddWithValue("@Image", imageData ?? (object)DBNull.Value);
-                cmd.ExecuteNonQuery();
-            }
-            return Json(new { success = true, message = "Comment added successfully." });
-        }
+                string sql = "INSERT INTO forum_comments (PostID, UserID, Content, Image, CreatedAt) VALUES (@PostID, @UserID, @Content, @Image, @CreatedAt)";
+                using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@PostID", postID);
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.Parameters.AddWithValue("@Content", content);
+                    cmd.Parameters.AddWithValue("@Image", imageData);
+                    cmd.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
 
+                    int result = cmd.ExecuteNonQuery();
+                    if (result > 0)
+                    {
+                        int commentID = (int)cmd.LastInsertedId;
+                        var comment = new
+                        {
+                            CommentID = commentID,
+                            PostID = postID,
+                            UserID = userId,
+                            Content = content,
+                            Image = imageData != null ? Convert.ToBase64String(imageData) : null,
+                            CreatedAt = DateTime.Now,
+                            Username = HttpContext.Session.GetString("Username")
+                        };
+                        return Json(new { success = true, comment = comment });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = "Failed to add comment." });
+                    }
+                }
+            }
+        }
         // GET: /Forum/EditComment/5
         public IActionResult EditComment(int id)
         {
@@ -542,71 +513,83 @@ namespace homeowner.Controllers
             return View(comment);
         }
 
-        // POST: /Forum/EditComment
         [HttpPost]
-        public JsonResult EditComment(int CommentID, string Content)
+        public IActionResult EditComment(int commentID, string content, IFormFile imageFile)
         {
-            try
+            string currentUserId = HttpContext.Session.GetString("UserID");
+            if (string.IsNullOrEmpty(currentUserId) || !int.TryParse(currentUserId, out int userId))
             {
-                // Validate inputs
-                if (CommentID <= 0 || string.IsNullOrWhiteSpace(Content))
+                return Json(new { success = false, message = "User not logged in" });
+            }
+
+            byte[] imageData = null;
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                using (var ms = new MemoryStream())
                 {
-                    return Json(new { success = false, message = "Invalid input data." });
-                }
-
-                // Get current user ID from session
-                string userIdStr = HttpContext.Session.GetString("UserID");
-                if (string.IsNullOrEmpty(userIdStr))
-                {
-                    return Json(new { success = false, message = "Unauthorized: User not logged in." });
-                }
-
-                int userID = int.Parse(userIdStr);
-
-                using (MySqlConnection conn = new MySqlConnection(connectionString))
-                {
-                    conn.Open();
-
-                    // Verify comment exists and belongs to the user
-                    string sqlCheck = "SELECT UserID FROM forum_comments WHERE CommentID = @CommentID";
-                    using (MySqlCommand cmdCheck = new MySqlCommand(sqlCheck, conn))
-                    {
-                        cmdCheck.Parameters.AddWithValue("@CommentID", CommentID);
-                        var reader = cmdCheck.ExecuteReader();
-
-                        if (!reader.Read() || reader.GetInt32("UserID") != userID)
-                        {
-                            reader.Close();
-                            return Json(new { success = false, message = "Unauthorized or comment not found." });
-                        }
-                        reader.Close();
-                    }
-
-                    // Update the comment
-                    string sqlUpdate = "UPDATE forum_comments SET Content = @Content WHERE CommentID = @CommentID";
-                    using (MySqlCommand cmdUpdate = new MySqlCommand(sqlUpdate, conn))
-                    {
-                        cmdUpdate.Parameters.AddWithValue("@Content", Content);
-                        cmdUpdate.Parameters.AddWithValue("@CommentID", CommentID);
-                        int rowsAffected = cmdUpdate.ExecuteNonQuery();
-
-                        if (rowsAffected > 0)
-                        {
-                            return Json(new { success = true });
-                        }
-                        else
-                        {
-                            return Json(new { success = false, message = "Failed to update comment." });
-                        }
-                    }
+                    imageFile.CopyTo(ms);
+                    imageData = ms.ToArray();
                 }
             }
-            catch (Exception ex)
+
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
-                return Json(new { success = false, message = "An error occurred: " + ex.Message });
+                conn.Open();
+
+                // Check if the comment belongs to the user
+                string sqlCheck = "SELECT UserID FROM forum_comments WHERE CommentID = @CommentID";
+                using (MySqlCommand cmdCheck = new MySqlCommand(sqlCheck, conn))
+                {
+                    cmdCheck.Parameters.AddWithValue("@CommentID", commentID);
+                    object result = cmdCheck.ExecuteScalar();
+
+                    if (result == null)
+                    {
+                        return Json(new { success = false, message = "Comment not found." });
+                    }
+
+                    int commentUserId = Convert.ToInt32(result);
+                    if (commentUserId != userId)
+                    {
+                        return Json(new { success = false, message = "Unauthorized" });
+                    }
+                }
+
+                // Update the comment
+                string sql = "UPDATE forum_comments SET Content = @Content";
+                if (imageData != null)
+                {
+                    sql += ", Image = @Image";
+                }
+                sql += " WHERE CommentID = @CommentID AND UserID = @UserID";
+
+                using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Content", content);
+                    cmd.Parameters.AddWithValue("@CommentID", commentID);
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    if (imageData != null)
+                    {
+                        cmd.Parameters.AddWithValue("@Image", imageData);
+                    }
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+                        string imageUrl = null;
+                        if (imageData != null)
+                        {
+                            imageUrl = "data:image/png;base64," + Convert.ToBase64String(imageData);
+                        }
+                        return Json(new { success = true, message = "Comment updated successfully!", imageUrl = imageUrl });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = "Update failed." });
+                    }
+                }
             }
         }
-
 
         // POST: /Forum/DeleteComment/5
         [HttpPost]
@@ -647,7 +630,6 @@ namespace homeowner.Controllers
             return Json(new { success = true, message = "Comment deleted." });
         }
 
-        // POST: /Forum/VotePost
         [HttpPost]
         public IActionResult VotePost(int postID, sbyte voteValue)
         {
@@ -676,7 +658,6 @@ namespace homeowner.Controllers
                         deleteCmd.Parameters.AddWithValue("@UserID", userID);
                         deleteCmd.Parameters.AddWithValue("@PostID", postID);
                         deleteCmd.ExecuteNonQuery();
-                        return Json(new { success = true, message = "Vote removed." });
                     }
                     else
                     {
@@ -687,7 +668,6 @@ namespace homeowner.Controllers
                         updateCmd.Parameters.AddWithValue("@UserID", userID);
                         updateCmd.Parameters.AddWithValue("@PostID", postID);
                         updateCmd.ExecuteNonQuery();
-                        return Json(new { success = true, message = "Vote updated." });
                     }
                 }
                 else
@@ -699,11 +679,27 @@ namespace homeowner.Controllers
                     insertCmd.Parameters.AddWithValue("@PostID", postID);
                     insertCmd.Parameters.AddWithValue("@VoteValue", voteValue);
                     insertCmd.ExecuteNonQuery();
-                    return Json(new { success = true, message = "Vote recorded." });
+                }
+
+                // Get updated vote counts
+                string countSql = @"
+            SELECT 
+                (SELECT COUNT(*) FROM forum_post_votes WHERE PostID = @PostID AND VoteValue = 1) AS Upvotes,
+                (SELECT COUNT(*) FROM forum_post_votes WHERE PostID = @PostID AND VoteValue = -1) AS Downvotes";
+                MySqlCommand countCmd = new MySqlCommand(countSql, conn);
+                countCmd.Parameters.AddWithValue("@PostID", postID);
+                using (var reader = countCmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        int upvotes = reader.GetInt32("Upvotes");
+                        int downvotes = reader.GetInt32("Downvotes");
+                        return Json(new { success = true, upvotes = upvotes, downvotes = downvotes, newVoteValue = voteValue });
+                    }
                 }
             }
+            return Json(new { success = false, message = "An error occurred while processing the vote." });
         }
-
         // POST: /Forum/VoteComment
         [HttpPost]
         public IActionResult VoteComment(int commentID, sbyte voteValue)
@@ -732,7 +728,6 @@ namespace homeowner.Controllers
                         deleteCmd.Parameters.AddWithValue("@UserID", userID);
                         deleteCmd.Parameters.AddWithValue("@CommentID", commentID);
                         deleteCmd.ExecuteNonQuery();
-                        return Json(new { success = true, message = "Vote removed." });
                     }
                     else
                     {
@@ -742,7 +737,6 @@ namespace homeowner.Controllers
                         updateCmd.Parameters.AddWithValue("@UserID", userID);
                         updateCmd.Parameters.AddWithValue("@CommentID", commentID);
                         updateCmd.ExecuteNonQuery();
-                        return Json(new { success = true, message = "Vote updated." });
                     }
                 }
                 else
@@ -753,9 +747,26 @@ namespace homeowner.Controllers
                     insertCmd.Parameters.AddWithValue("@CommentID", commentID);
                     insertCmd.Parameters.AddWithValue("@VoteValue", voteValue);
                     insertCmd.ExecuteNonQuery();
-                    return Json(new { success = true, message = "Vote recorded." });
+                }
+
+                // Get updated vote counts
+                string countSql = @"
+            SELECT 
+                (SELECT COUNT(*) FROM forum_comment_votes WHERE CommentID = @CommentID AND VoteValue = 1) AS Upvotes,
+                (SELECT COUNT(*) FROM forum_comment_votes WHERE CommentID = @CommentID AND VoteValue = -1) AS Downvotes";
+                MySqlCommand countCmd = new MySqlCommand(countSql, conn);
+                countCmd.Parameters.AddWithValue("@CommentID", commentID);
+                using (var reader = countCmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        int upvotes = reader.GetInt32("Upvotes");
+                        int downvotes = reader.GetInt32("Downvotes");
+                        return Json(new { success = true, upvotes = upvotes, downvotes = downvotes, newVoteValue = voteValue });
+                    }
                 }
             }
+            return Json(new { success = false, message = "An error occurred while processing the vote." });
         }
 
 

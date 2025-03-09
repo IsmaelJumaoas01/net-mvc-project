@@ -1,0 +1,303 @@
+@model List<homeowner.Models.ContactDirectoryModel>
+@{
+    ViewData["Title"] = "Contact Directory";
+}
+
+<div class="contact-directory">
+    <div class="dashboard-header">
+        <h1>Contact Directory</h1>
+        <div class="header-actions">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search contacts...">
+            </div>
+            <div class="filter-dropdown">
+                <select id="departmentFilter" class="form-control">
+                    <option value="all">All Departments</option>
+                    <option value="management">Management</option>
+                    <option value="security">Security</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="housekeeping">Housekeeping</option>
+                    <option value="admin">Administration</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="contacts-grid">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var contact in Model)
+            {
+                <div class="contact-card" data-department="@contact.Department.ToLower()">
+                    <div class="contact-avatar">
+                        <div class="avatar-placeholder">
+                            @(contact.Name?.Length > 0 ? contact.Name.Substring(0, 1) : "?")
+                        </div>
+                    </div>
+                    <div class="contact-info">
+                        <h3>@contact.Name</h3>
+                        <span class="department-badge">@contact.Department</span>
+                        <div class="contact-details">
+                            <div class="detail-item">
+                                <i class="fas fa-briefcase"></i>
+                                <span>@contact.Position</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-phone"></i>
+                                <a href="tel:@contact.PhoneNumber">@contact.PhoneNumber</a>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-envelope"></i>
+                                <a href="mailto:@contact.Email">@contact.Email</a>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-building"></i>
+                                <span>@contact.OfficeLocation</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-clock"></i>
+                                <span>@contact.OfficeHours</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="fas fa-address-book"></i>
+                <p>No contacts available</p>
+            </div>
+        }
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        /* Dashboard Layout */
+        .contact-directory {
+            padding: 2rem;
+            background: #1a1a1a;
+            min-height: 100vh;
+        }
+
+        .dashboard-header {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-header h1 {
+            color: #fff;
+            font-size: 2rem;
+            margin: 0;
+            background: linear-gradient(45deg, #00bcd4, #2196f3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            background: #2a2a2a;
+            border-color: #00bcd4;
+            box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.25);
+        }
+
+        /* Filter Dropdown */
+        .filter-dropdown select {
+            padding: 0.75rem 1rem;
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-dropdown select:focus {
+            background: #2a2a2a;
+            border-color: #00bcd4;
+            box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.25);
+        }
+
+        /* Contacts Grid */
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .contact-card {
+            background: #222;
+            border-radius: 15px;
+            padding: 1.5rem;
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Contact Avatar */
+        .contact-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .avatar-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #00bcd4, #2196f3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 2rem;
+            font-weight: 500;
+        }
+
+        /* Contact Info */
+        .contact-info {
+            flex: 1;
+        }
+
+        .contact-info h3 {
+            color: #fff;
+            font-size: 1.25rem;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .department-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            background: rgba(0, 188, 212, 0.1);
+            color: #00bcd4;
+            margin-bottom: 1rem;
+        }
+
+        /* Contact Details */
+        .contact-details {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #888;
+        }
+
+        .detail-item i {
+            color: #00bcd4;
+            width: 16px;
+        }
+
+        .detail-item a {
+            color: #888;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .detail-item a:hover {
+            color: #00bcd4;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: #222;
+            border-radius: 15px;
+            color: #666;
+            grid-column: 1 / -1;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            font-size: 1.2rem;
+            margin: 0;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Search functionality
+            $('#searchInput').on('input', function() {
+                const searchTerm = $(this).val().toLowerCase();
+                $('.contact-card').each(function() {
+                    const name = $(this).find('h3').text().toLowerCase();
+                    const department = $(this).data('department');
+                    const position = $(this).find('.detail-item:first span').text().toLowerCase();
+                    const visible = name.includes(searchTerm) || 
+                                  department.includes(searchTerm) || 
+                                  position.includes(searchTerm);
+                    $(this).toggle(visible);
+                });
+            });
+
+            // Department filter
+            $('#departmentFilter').change(function() {
+                const department = $(this).val();
+                $('.contact-card').each(function() {
+                    if (department === 'all') {
+                        $(this).show();
+                    } else {
+                        const cardDepartment = $(this).data('department');
+                        $(this).toggle(cardDepartment === department);
+                    }
+                });
+            });
+        });
+    </script>
+} 

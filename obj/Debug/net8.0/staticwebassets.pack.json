@@ -5,6 +5,14 @@
       "PackagePath": "staticwebassets\\homeowner_app.d2eslze7rt.bundle.scp.css"
     },
     {
+      "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\admin-dashboard.css",
+      "PackagePath": "staticwebassets\\css\\admin-dashboard.css"
+    },
+    {
+      "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\feedback.css",
+      "PackagePath": "staticwebassets\\css\\feedback.css"
+    },
+    {
       "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\home.css",
       "PackagePath": "staticwebassets\\css\\home.css"
     },

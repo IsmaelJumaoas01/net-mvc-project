@@ -2,84 +2,73 @@
 @{
     ViewBag.Title = "Forums";
     var currentUserId = ViewBag.UserID?.ToString();
-
 }
 
 <link rel="stylesheet" href="~/css/home.css" />
-
 <link rel="stylesheet" href="~/css/homeowner_forum.css" />
-
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
 <div class="container mt-4">
-
-
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h1 class="mb-3 mb-md-0">Forums</h1>
         <div class="d-flex align-items-center">
             <select id="filterOptions" class="form-select me-2">
-                <option value="today" selected>Today's Posts</option>
-                <option value="all">All Posts</option>
-                <option value="oldest">Oldest to Newest</option>
+                <option value="all" selected>All Posts</option>
                 <option value="myPosts">My Posts</option>
             </select>
             <button class="btn btn-primary" id="openPostModal">Create New Post</button>
         </div>
     </div>
 
-    <div id="postsList">
+    <div id="postsList" class="row">
         @if (Model != null && Model.Any())
         {
             @foreach (var post in Model)
             {
-                <div class="card mb-3 post-card" data-date="@post.CreatedAt.ToString("yyyy-MM-dd")" data-userid="@post.UserID">
-
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="card-title mb-0">@post.Title</h5>
-                            <small class="text-muted">
-                                <strong>@post.Username</strong> • Posted on @post.CreatedAt.ToString("yyyy-MM-dd hh:mm tt")
-                            </small>
+                <div class="col-md-6 mb-3">
+                    <div class="card post-card" data-date="@post.CreatedAt.ToString("yyyy-MM-dd")" data-userid="@post.UserID"
+                        data-aos="fade-up">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title mb-0">@post.Title</h5>
+                                <small class="text-muted">
+                                    <strong>@post.Username</strong> • Posted on @post.CreatedAt.ToString("yyyy-MM-dd hh:mm tt")
+                                </small>
+                            </div>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">@post.Content</p>
-
-                        @if (post.Image != null && post.Image.Length > 0)
-                        {
-                            <img src="data:image/png;base64,@Convert.ToBase64String(post.Image)" class="img-fluid mt-2"
-                                alt="Post Image" style="max-width: 100%; height: auto;">
-                        }
-                        <br>
-                        <div class="d-flex align-items-center mt-2">
-                            <button class="btn btn-sm btn-outline-success upvote-btn" data-id="@post.PostID">
-                                👍 <span class="upvote-count">@post.Upvotes</span>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger downvote-btn ms-2" data-id="@post.PostID">
-                                👎 <span class="downvote-count">@post.Downvotes</span>
-                            </button>
+                        <div class="card-body">
+                            <p class="card-text">@post.Content</p>
+                            @if (post.Image != null && post.Image.Length > 0)
+                            {
+                                <img src="data:image/png;base64,@Convert.ToBase64String(post.Image)" class="img-fluid mt-2 rounded"
+                                    alt="Post Image" style="max-width: 100%; height: auto;">
+                            }
+                            <div class="d-flex align-items-center mt-2">
+                                <button class="btn btn-sm btn-outline-success upvote-btn" data-id="@post.PostID">
+                                    👍 <span class="upvote-count">@post.Upvotes</span>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger downvote-btn ms-2" data-id="@post.PostID">
+                                    👎 <span class="downvote-count">@post.Downvotes</span>
+                                </button>
+                            </div>
+                            <a asp-controller="Forum" asp-action="Details" asp-route-id="@post.PostID"
+                                class="btn btn-primary mt-2">View Details</a>
+                            <div class="edit-delete-buttons" style="display: none;">
+                                <button class="edit-post-btn modern-btn edit-btn" data-id="@post.PostID"
+                                    data-title="@post.Title" data-content="@post.Content"
+                                    data-image="@Convert.ToBase64String(post.Image ?? new byte[0])">
+                                    ✏️ Edit
+                                </button>
+                                <button class="delete-post-btn modern-btn delete-btn" data-id="@post.PostID">
+                                    🗑️ Delete
+                                </button>
+                            </div>
                         </div>
-
-
-                        <a asp-controller="Forum" asp-action="Details" asp-route-id="@post.PostID"
-                            class="btn btn-primary mt-2">View Details</a>
-
-                        <div class="edit-delete-buttons" style="display: none;">
-                            <button class="edit-post-btn modern-btn edit-btn" data-id="@post.PostID" data-title="@post.Title"
-                                data-content="@post.Content" data-image="@Convert.ToBase64String(post.Image ?? new byte[0])">
-                                ✏️ Edit
-                            </button>
-
-                            <button class="delete-post-btn modern-btn delete-btn" data-id="@post.PostID">
-                                🗑️ Delete
-                            </button>
-                        </div>
-
-
                     </div>
                 </div>
             }
@@ -89,14 +78,12 @@
             <p>No posts available.</p>
         }
     </div>
-
 </div>
-
 
 <!-- Create Post Modal -->
 <div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="background-color: #2c2c2c; color: #ffffff;">
             <div class="modal-header">
                 <h5 class="modal-title" id="postModalLabel">Create Post</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -105,22 +92,22 @@
                 <form id="postForm" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="postTitle" class="form-label">Title</label>
-                        <input type="text" class="form-control" id="postTitle" name="Title" required>
+                        <input type="text" class="form-control" id="postTitle" name="Title" required
+                            style="background-color: #444; color: #ffffff;">
                     </div>
-
                     <div class="mb-3">
                         <label for="postContent" class="form-label">Content</label>
-                        <textarea class="form-control" id="postContent" name="Content" rows="4" required></textarea>
+                        <textarea class="form-control" id="postContent" name="Content" rows="4" required
+                            style="background-color: #444; color: #ffffff;"></textarea>
                     </div>
-
                     <div class="mb-3">
                         <label for="postImage" class="form-label">Upload Image</label>
                         <input type="file" class="form-control" id="postImage" name="imageFile">
                         <img id="imagePreview" class="img-fluid mt-2"
                             style="display: none; max-width: 100%; height: auto;">
                     </div>
-
-                    <button type="submit" class="btn btn-primary w-100">Submit</button>
+                    <button type="submit" class="btn btn-primary w-100"
+                        style="background-color: #007bff;">Submit</button>
                 </form>
             </div>
         </div>
@@ -129,8 +116,8 @@
 
 <!-- Edit Post Modal -->
 <div class="modal fade" id="editPostModal" tabindex="-1" aria-labelledby="editPostModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="background-color: #2c2c2c; color: #ffffff;">
             <div class="modal-header">
                 <h5 class="modal-title" id="editPostModalLabel">Edit Post</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -138,39 +125,48 @@
             <div class="modal-body">
                 <form id="editPostForm" enctype="multipart/form-data">
                     <input type="hidden" id="editPostID" name="PostID">
-
                     <div class="mb-3">
                         <label for="editPostTitle" class="form-label">Title</label>
-                        <input type="text" class="form-control" id="editPostTitle" name="Title" required>
+                        <input type="text" class="form-control" id="editPostTitle" name="Title" required
+                            style="background-color: #444; color: #ffffff;">
                     </div>
-
                     <div class="mb-3">
                         <label for="editPostContent" class="form-label">Content</label>
-                        <textarea class="form-control" id="editPostContent" name="Content" rows="4" required></textarea>
+                        <textarea class="form-control" id="editPostContent" name="Content" rows="4" required
+                            style="background-color: #444; color: #ffffff;"></textarea>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label">Current Image</label>
-                        <img id="editImagePreview" class="img-fluid mt-2" style="display: none; max-width: 100%; height: auto;">
-                        <button type="button" class="btn btn-danger mt-2" id="deleteImageBtn" style="display: none;">Delete Image</button>
+                        <img id="editImagePreview" class="img-fluid mt-2"
+                            style="display: none; max-width: 100%; height: auto;">
+                        <button type="button" class="btn btn-danger mt-2" id="deleteImageBtn"
+                            style="display: none;">Delete Image</button>
                     </div>
-
                     <div class="mb-3">
                         <label for="editPostImage" class="form-label">Upload New Image</label>
                         <input type="file" class="form-control" id="editPostImage" name="imageFile">
                     </div>
-
-                    <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+                    <button type="submit" class="btn btn-primary w-100" style="background-color: #007bff;">Save
+                        Changes</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Toast Notification -->
+<div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+
 <script>
-
-
     $(document).ready(function () {
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        $(".post-card").hide().fadeIn(1000); // Fade in effect for posts
+
         let currentUserId = "@(ViewBag.CurrentUserId ?? "null")";
         console.log("Current User ID:", currentUserId);
 
@@ -182,46 +178,24 @@
             }
         });
 
-        function filterPosts() {
-            let filter = $("#filterOptions").val();
+        $("#filterOptions").change(function () {
+            let filter = $(this).val();
             let posts = $(".post-card");
 
             posts.hide();
 
-            if (filter === "today") {
-                let today = new Date().toISOString().split("T")[0];
-                posts.each(function () {
-                    let postDate = $(this).data("date");
-                    if (postDate === today) {
-                        $(this).show();
-                    }
-                });
-            } else if (filter === "all") {
-                posts.show();
-            } else if (filter === "oldest") {
-                let sortedPosts = posts.sort((a, b) =>
-                    new Date($(a).data("date")) - new Date($(b).data("date"))
-                );
-                $("#postsList").html(sortedPosts);
+            if (filter === "all") {
                 posts.show();
             } else if (filter === "myPosts") {
                 posts.each(function () {
-                    let postUserId = $(this).data("userid"); // Ensure it's a string
-                    console.log("Post User ID:", postUserId, "Current User ID:", currentUserId);
-                    if (postUserId == currentUserId) { // Compare as string (avoid NaN issues)
+                    let postUserId = $(this).data("userid");
+                    if (postUserId == currentUserId) {
                         $(this).show();
                     }
                 });
             }
-        }
+        });
 
-        $("#filterOptions").change(filterPosts);
-        filterPosts(); // Run filter on page load
-    });
-
-
-
-    $(document).ready(function () {
         $("#openPostModal").click(function () {
             $("#postForm")[0].reset();
             $("#imagePreview").hide();
@@ -242,50 +216,49 @@
         $("#postForm").submit(function (event) {
             event.preventDefault();
             var formData = new FormData(this);
-
             $.ajax({
                 type: "POST",
                 url: "/Forum/CreatePost",
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: function () {
-                    alert("Post created successfully!");
-                    location.reload();
-                },
-                error: function () {
-                    alert("Error creating post.");
-                }
-            });
-
-            $("#postModal").modal("hide");
-        });
-    });
-
-
-    $(document).on("click", ".delete-post-btn", function () {
-        var postId = $(this).data("id");
-        if (confirm("Are you sure you want to delete this post?")) {
-            $.ajax({
-                type: "POST",
-                url: "/Forum/DeletePost",
-                data: { id: postId },
                 success: function (response) {
                     if (response.success) {
-                        alert(response.message);
+                        showToast("Post created successfully!", "success");
                         location.reload();
                     } else {
-                        alert("Error: " + response.message);
+                        showToast("Error creating post: " + response.message, "error");
                     }
                 },
                 error: function () {
-                    alert("An error occurred while deleting the post.");
+                    showToast("Error creating post.", "error");
                 }
             });
-        }
-    });
+            $("#postModal").modal("hide");
+        });
 
-    $(document).ready(function () {
+        $(document).on("click", ".delete-post-btn", function () {
+            var postId = $(this).data("id");
+            if (confirm("Are you sure you want to delete this post?")) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Forum/DeletePost",
+                    data: { id: postId },
+                    success: function (response) {
+                        if (response.success) {
+                            showToast(response.message, "success");
+                            location.reload();
+                        } else {
+                            showToast("Error: " + response.message, "error");
+                        }
+                    },
+                    error: function () {
+                        showToast("An error occurred while deleting the post.", "error");
+                    }
+                });
+            }
+        });
+
         $(document).on("click", ".edit-post-btn", function () {
             let postID = $(this).data("id");
             let title = $(this).data("title");
@@ -295,7 +268,6 @@
             $("#editPostID").val(postID);
             $("#editPostTitle").val(title);
             $("#editPostContent").val(content);
-
 
             if (image) {
                 $("#editImagePreview").attr("src", "data:image/png;base64," + image).show();
@@ -308,32 +280,9 @@
             $("#editPostModal").modal("show");
         });
 
-        $("#removeImage").change(function () {
-            if ($(this).is(":checked")) {
-                $("#editImagePreview").hide();
-            } else {
-                $("#editImagePreview").show();
-            }
-        });
-
-        $("#editPostImage").change(function () {
-            var input = this;
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    $("#editImagePreview").attr("src", e.target.result).show();
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        });
-
         $("#editPostForm").submit(function (event) {
             event.preventDefault();
-
             var formData = new FormData(this);
-
-            var removeImage = $("#removeImage").is(":checked");
-            formData.append("RemoveImage", removeImage);
 
             $.ajax({
                 type: "POST",
@@ -343,28 +292,25 @@
                 contentType: false,
                 success: function (response) {
                     if (response.success) {
-                        alert("Post updated successfully!");
+                        showToast("Post updated successfully!", "success");
                         location.reload();
                     } else {
-                        alert("Error updating post.");
+                        showToast("Error updating post: " + response.message, "error");
                     }
                 },
                 error: function () {
-                    alert("An error occurred while updating the post.");
+                    showToast("An error occurred while updating the post.", "error");
                 }
             });
 
             $("#editPostModal").modal("hide");
         });
 
-    });
-
-    $(document).ready(function () {
-        $("#postsList").on("click", ".upvote-btn, .downvote-btn", function () {
+        // Upvote or downvote a post
+        $('#postsList').on('click', '.upvote-btn, .downvote-btn', function () {
             let button = $(this);
-            let postID = button.data("id");
-            let voteValue = button.hasClass("upvote-btn") ? 1 : -1;
-            let countSpan = button.find("span");
+            let postID = button.data('id');
+            let voteValue = button.hasClass('upvote-btn') ? 1 : -1;
 
             $.ajax({
                 url: '@Url.Action("VotePost", "Forum")',
@@ -372,83 +318,61 @@
                 data: { postID: postID, voteValue: voteValue },
                 success: function (response) {
                     if (response.success) {
-                        let oppositeButton = button.hasClass("upvote-btn")
-                            ? button.siblings(".downvote-btn")
-                            : button.siblings(".upvote-btn");
-                        let oppositeCountSpan = oppositeButton.find("span");
+                        let upvoteCount = button.closest('.post-card').find('.upvote-count');
+                        let downvoteCount = button.closest('.post-card').find('.downvote-count');
 
-                        if (response.message === "Vote removed.") {
-                            countSpan.text(parseInt(countSpan.text()) - 1);
-                        } else if (response.message === "Vote updated.") {
-                            countSpan.text(parseInt(countSpan.text()) + 1);
-                            oppositeCountSpan.text(
-                                Math.max(parseInt(oppositeCountSpan.text()) - 1, 0)
-                            ); // Remove opposite vote if exists
-                        } else {
-                            countSpan.text(parseInt(countSpan.text()) + 1);
-                        }
+                        upvoteCount.text(response.upvotes);
+                        downvoteCount.text(response.downvotes);
+
+                        showToast('Vote recorded successfully!', 'success');
                     } else {
-                        alert(response.message);
+                        showToast(response.message, 'error');
                     }
                 }
             });
         });
-    });
 
-
-    $(document).ready(function () {
-        $("#removeImage").change(function () {
-            if (this.checked) {
-                let postId = $("#deleteImageBtn").attr("data-id", postID).show();
-
-                $.ajax({
-                    type: "POST",
-                    url: "/Forum/RemoveImage",
-                    data: { postId: postId },
-                    success: function (response) {
-                        if (response.success) {
-                            alert(response.message);
-                            $("#editImagePreview").hide(); // Hide preview
-                        } else {
-                            alert("Error: " + response.message);
-                        }
-                    },
-                    error: function () {
-                        alert("Failed to remove image.");
-                    }
-                });
-            }
-        });
-    });
-    document.getElementById("deleteImageBtn").addEventListener("click", function () {
-        let postId = this.getAttribute("data-id");
-
-        console.log("Post ID to delete image:", postId); // Log the post ID
-
-        if (!postId) {
-            alert("Post ID not found.");
-            return;
-        }
-
-        if (confirm("Are you sure you want to delete this image?")) {
-            let formData = new FormData();
-            formData.append("postId", postId);
-
-            fetch("/Forum/DeletePostImage", {
-                method: "POST",
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        location.reload(); // Refresh the page to reflect changes
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch(error => console.error("Error:", error));
+        // Toast notification function
+        function showToast(message, type) {
+            const toast = $('<div>').addClass('toast ' + type).text(message);
+            $('#toastContainer').append(toast);
+            setTimeout(() => toast.addClass('show'), 100);
+            setTimeout(() => {
+                toast.removeClass('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
     });
-
 </script>
+
+<!-- Toast Notification -->
+<div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+
+<style>
+    /* Toast styles */
+    .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        color: white;
+        font-weight: 500;
+        transform: translateX(120%);
+        transition: transform 0.3s ease;
+        z-index: 9999;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .toast.show {
+        transform: translateX(0);
+    }
+
+    .toast.success {
+        background: linear-gradient(45deg, #4CAF50, #8BC34A);
+    }
+
+    .toast.error {
+        background: linear-gradient(45deg, #f44336, #e91e63);
+    }
+</style>

@@ -18,6 +18,8 @@ Homeowner Application (MVC/.NET8 PROJECT)
 | 2025-03-04 | v1.0.8  | Added Admin/Staff Side for Service Request  |
 | 2025-03-06 | v1.0.9  | Changed entire layout design, theme and etc. Not yet done, improved ui/ux forums|
 | 2025-03-07 | v1.0.4  | Continued improved layout design, not yet done |
+| 2025-03-10 | v1.1.0  | Improved UI design, added polls & survey, feedback & complain and contact directory (not uet done) functions |
+| YYYY-MM-DD | v1.0.4  | ===== |
 | YYYY-MM-DD | v1.0.4  | ===== |
 
 

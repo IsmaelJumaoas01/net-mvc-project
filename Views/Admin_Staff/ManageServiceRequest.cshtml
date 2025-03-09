@@ -6,98 +6,478 @@
     var historyRequests = ViewBag.HistoryRequests as List<homeowner.Models.ServiceRequestModel>;
 }
 
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+<div class="service-management">
+    <div class="dashboard-header">
+        <h1>Service Requests Management</h1>
+        <div class="header-actions">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search requests...">
+            </div>
+        </div>
+    </div>
 
-<div class="container mt-4">
-    <h1>Manage Service Requests</h1>
-    <ul class="nav nav-tabs" id="serviceRequestTabs" role="tablist">
-        <li class="nav-item">
-            <a class="nav-link active" id="pending-requests-tab" data-toggle="tab" href="#pending-requests" role="tab"
-                aria-controls="pending-requests" aria-selected="true">Pending Requests</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="in-progress-requests-tab" data-toggle="tab" href="#in-progress-requests" role="tab"
-                aria-controls="in-progress-requests" aria-selected="false">In Progress Requests</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="request-history-tab" data-toggle="tab" href="#request-history" role="tab"
-                aria-controls="request-history" aria-selected="false">Request History</a>
-        </li>
-    </ul>
-    <div class="tab-content" id="serviceRequestTabsContent">
-        <div class="tab-pane fade show active" id="pending-requests" role="tabpanel"
-            aria-labelledby="pending-requests-tab">
-            @Html.Partial("~/Views/Admin_Staff/_ServiceRequestTable.cshtml", pendingRequests)
+    <div class="service-tabs">
+        <div class="tab-buttons">
+            <button class="tab-btn active" data-tab="pending">
+                <i class="fas fa-clock"></i>
+                Pending
+                <span class="count">@(pendingRequests?.Count ?? 0)</span>
+            </button>
+            <button class="tab-btn" data-tab="in-progress">
+                <i class="fas fa-tools"></i>
+                In Progress
+                <span class="count">@(inProgressRequests?.Count ?? 0)</span>
+            </button>
+            <button class="tab-btn" data-tab="history">
+                <i class="fas fa-history"></i>
+                History
+                <span class="count">@(historyRequests?.Count ?? 0)</span>
+            </button>
         </div>
-        <div class="tab-pane fade" id="in-progress-requests" role="tabpanel" aria-labelledby="in-progress-requests-tab">
-            @Html.Partial("~/Views/Admin_Staff/_ServiceRequestTable.cshtml", inProgressRequests)
+
+        <div class="tab-content active" id="pending-tab">
+            <div class="request-grid">
+                @if (pendingRequests != null && pendingRequests.Any())
+                {
+                    foreach (var request in pendingRequests)
+                    {
+                        <div class="request-card pending" data-request-id="@request.RequestID">
+                            <div class="request-header">
+                                <span class="request-id">#@request.RequestID</span>
+                                <span class="status-badge pending">Pending</span>
+                            </div>
+                            <div class="request-body">
+                                <h3>@request.ServiceTypeName</h3>
+                                <p>@request.Description</p>
+                                <div class="request-meta">
+                                    <span><i class="fas fa-user"></i> User ID: @request.UserID</span>
+                                    <span><i class="fas fa-calendar"></i> @request.RequestDate.ToString("MMM dd, yyyy")</span>
+                                </div>
+                            </div>
+                            <div class="request-actions">
+                                <select class="status-select">
+                                    <option value="Pending" selected>Pending</option>
+                                    <option value="In Progress">Start Service</option>
+                                    <option value="Rejected">Reject</option>
+                                </select>
+                                <button class="btn btn-primary update-status">Update</button>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <i class="fas fa-clipboard-check"></i>
+                        <p>No pending requests</p>
+                    </div>
+                }
+            </div>
         </div>
-        <div class="tab-pane fade" id="request-history" role="tabpanel" aria-labelledby="request-history-tab">
-            @Html.Partial("~/Views/Admin_Staff/_ServiceRequestTable.cshtml", historyRequests)
+
+        <div class="tab-content" id="in-progress-tab">
+            <div class="request-grid">
+                @if (inProgressRequests != null && inProgressRequests.Any())
+                {
+                    foreach (var request in inProgressRequests)
+                    {
+                        <div class="request-card in-progress" data-request-id="@request.RequestID">
+                            <div class="request-header">
+                                <span class="request-id">#@request.RequestID</span>
+                                <span class="status-badge in-progress">In Progress</span>
+                            </div>
+                            <div class="request-body">
+                                <h3>@request.ServiceTypeName</h3>
+                                <p>@request.Description</p>
+                                <div class="request-meta">
+                                    <span><i class="fas fa-user"></i> User ID: @request.UserID</span>
+                                    <span><i class="fas fa-calendar"></i> @request.RequestDate.ToString("MMM dd, yyyy")</span>
+                                </div>
+                            </div>
+                            <div class="request-actions">
+                                <select class="status-select">
+                                    <option value="In Progress" selected>In Progress</option>
+                                    <option value="Resolved">Mark as Resolved</option>
+                                </select>
+                                <button class="btn btn-primary update-status">Update</button>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <i class="fas fa-tools"></i>
+                        <p>No requests in progress</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="tab-content" id="history-tab">
+            <div class="request-grid">
+                @if (historyRequests != null && historyRequests.Any())
+                {
+                    foreach (var request in historyRequests)
+                    {
+                        <div class="request-card @request.Status.ToLower()" data-request-id="@request.RequestID">
+                            <div class="request-header">
+                                <span class="request-id">#@request.RequestID</span>
+                                <span class="status-badge @request.Status.ToLower()">@request.Status</span>
+                            </div>
+                            <div class="request-body">
+                                <h3>@request.ServiceTypeName</h3>
+                                <p>@request.Description</p>
+                                <div class="request-meta">
+                                    <span><i class="fas fa-user"></i> User ID: @request.UserID</span>
+                                    <span><i class="fas fa-calendar"></i> @request.RequestDate.ToString("MMM dd, yyyy")</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <i class="fas fa-history"></i>
+                        <p>No request history</p>
+                    </div>
+                }
+            </div>
         </div>
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<script>
-    $(document).ready(function () {
-        $(".status-select").change(function () {
-            var $select = $(this);
-            var requestId = $select.data("request-id");
-            var status = $select.val();
-            var $row = $select.closest("tr");
+@section Styles {
+    <style>
+        /* Dashboard Layout */
+        .service-management {
+            padding: 2rem;
+            background: #1a1a1a;
+            min-height: 100vh;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-header h1 {
+            color: #fff;
+            font-size: 2rem;
+            margin: 0;
+            background: linear-gradient(45deg, #00bcd4, #2196f3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: none;
+            border-radius: 25px;
+            background: #222;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            background: #2a2a2a;
+            box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.25);
+            outline: none;
+        }
+
+        /* Tabs */
+        .service-tabs {
+            background: #222;
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 25px;
+            background: #2a2a2a;
+            color: #fff;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .tab-btn i {
+            font-size: 1.1rem;
+        }
+
+        .tab-btn .count {
+            background: #333;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .tab-btn.active {
+            background: #00bcd4;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 188, 212, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Request Grid */
+        .request-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .request-card {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .request-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .request-id {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-badge.pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+
+        .status-badge.in-progress {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196f3;
+        }
+
+        .status-badge.resolved {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+        }
+
+        .status-badge.rejected {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+        }
+
+        .request-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .request-body h3 {
+            color: #fff;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .request-body p {
+            color: #bbb;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .request-meta {
+            display: flex;
+            gap: 1rem;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .request-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .request-meta i {
+            color: #00bcd4;
+        }
+
+        .request-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .status-select {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #444;
+            border-radius: 8px;
+            background: #333;
+            color: #fff;
+        }
+
+        .btn-primary {
+            background: #00bcd4;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #008ba3;
+            transform: translateY(-2px);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            z-index: 9999;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+        }
+
+        .toast.error {
+            background: linear-gradient(45deg, #f44336, #e91e63);
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Tab switching
+            $('.tab-btn').click(function() {
+                $('.tab-btn').removeClass('active');
+                $(this).addClass('active');
+                
+                const tabId = $(this).data('tab');
+                $('.tab-content').removeClass('active');
+                $(`#${tabId}-tab`).addClass('active');
+            });
+
+            // Search functionality
+            $('#searchInput').on('keyup', function() {
+                const value = $(this).val().toLowerCase();
+                $('.request-card').filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+        });
+
+            // Update status
+            $('.update-status').click(function() {
+                const card = $(this).closest('.request-card');
+                const requestId = card.data('request-id');
+                const status = card.find('.status-select').val();
 
             $.ajax({
-                type: "POST",
-                url: "@Url.Action("UpdateRequestStatus", "ServiceRequests")",
-                data: { requestId: requestId, status: status },
-                success: function (response) {
+                    url: '@Url.Action("UpdateRequestStatus", "ServiceRequests")',
+                    type: 'POST',
+                    data: { requestId: requestId, status: status },
+                    success: function(response) {
                     if (response.success) {
-                        alert(response.message);
-
-                        // Remove "No service requests available." message if present
-                        $(".no-requests-message").remove();
-
-                        // Move row to the correct tab if necessary
-                        if (status === "Resolved" || status === "Rejected") {
-                            $("#request-history tbody").append($row);
-                        } else if (status === "Pending") {
-                            $("#pending-requests tbody").append($row);
-                        } else if (status === "In Progress") {
-                            $("#in-progress-requests tbody").append($row);
+                            showToast('Status updated successfully!', 'success');
+                            setTimeout(() => location.reload(), 1000);
+                    } else {
+                            showToast(response.message, 'error');
                         }
-                    } else {
-                        alert("Failed to update status.");
+                    },
+                    error: function() {
+                        showToast('An error occurred while updating the status.', 'error');
                     }
-                },
-                error: function () {
-                    alert("An error occurred while updating the status.");
-                }
+                });
             });
-        });
 
-        $(".update-schedule").click(function () {
-            var requestId = $(this).data("request-id");
-            var date = $(".scheduled-date[data-request-id='" + requestId + "']").val();
-            var time = $(".scheduled-time[data-request-id='" + requestId + "']").val();
-            var scheduledDateTime = date + " " + time;
-
-            $.ajax({
-                type: "POST",
-                url: "@Url.Action("UpdateScheduledDate", "ServiceRequests")",
-                data: { requestId: requestId, scheduledDateTime: scheduledDateTime },
-                success: function (response) {
-                    if (response.success) {
-                        alert(response.message);
-                    } else {
-                        alert("Error: " + response.message);
-                    }
-                },
-                error: function () {
-                    alert("An error occurred while updating the scheduled date.");
-                }
-            });
-        });
+            // Toast notification function
+            function showToast(message, type) {
+                const toast = $('<div>').addClass('toast ' + type).text(message);
+                $('body').append(toast);
+                setTimeout(() => toast.addClass('show'), 100);
+                setTimeout(() => {
+                    toast.removeClass('show');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
     });
 </script>
+}

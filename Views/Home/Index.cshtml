@@ -44,14 +44,14 @@
 
 
 <!-- Announcements Section -->
-<section class="announcements">
+<section class="announcements" style="margin-bottom: 50px;">
     <h2>Latest Announcements</h2>
     <div class="announcement-list">
         @if (ViewBag.Announcements != null && ViewBag.Announcements.Count > 0)
         {
             @foreach (var announcement in ViewBag.Announcements)
             {
-                <div class="announcement">
+                <div class="announcement" data-aos="fade-up">
                     <h3>@announcement.Title</h3>
                     <p>@announcement.Content</p>
                     <p><small>Posted on @announcement.CreatedAt</small></p>
@@ -69,27 +69,27 @@
 <section class="features">
     <h2>Explore Our Community Services</h2>
     <div class="feature-list">
-        <div class="feature">
+        <div class="feature" data-aos="fade-right">
             <i class="fas fa-newspaper fa-3x"></i>
             <h3>Community News</h3>
             <p>Stay updated with the latest announcements and events.</p>
             <a href="@Url.Action("Index", "News")" class="btn btn-primary" onclick="return checkLogin()">View News</a>
         </div>
-        <div class="feature">
+        <div class="feature" data-aos="fade-up">
             <i class="fas fa-credit-card fa-3x"></i>
             <h3>Online Payments</h3>
             <p>Pay your dues and fees securely through our portal.</p>
             <a href="@Url.Action("Index", "Payments")" class="btn btn-primary" onclick="return checkLogin()">Make a
                 Payment</a>
         </div>
-        <div class="feature">
+        <div class="feature" data-aos="fade-left">
             <i class="fas fa-calendar-alt fa-3x"></i>
             <h3>Facility Booking</h3>
             <p>Reserve function halls, sports courts, and other amenities.</p>
             <a href="@Url.Action("Index", "FacilityBooking")" class="btn btn-primary" onclick="return checkLogin()">Book
                 a Facility</a>
         </div>
-        <div class="feature">
+        <div class="feature" data-aos="fade-left">
             <i class="fas fa-tools fa-3x"></i>
             <h3>Service Requests</h3>
             <p>Request maintenance, security assistance, and other services.</p>
@@ -193,6 +193,12 @@
     background: #252525; /* Slightly lighter gray for contrast */
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.feature:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
 .feature i {
@@ -219,6 +225,12 @@
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     width: 80%;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.announcement:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
 .modal-content {

@@ -80,5 +80,24 @@ CREATE TABLE IF NOT EXISTS `forum_comment_votes` (
     CONSTRAINT `fk_forum_comment_votes_comments` FOREIGN KEY (`CommentID`) REFERENCES `forum_comments`(`CommentID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Indexes for table `forum_post_votes`
+
+-- Table structure for table `forum_post_votes`
+--
+
+CREATE TABLE `forum_post_votes` (
+  `VoteID` int(11) NOT NULL,
+  `UserID` int(11) NOT NULL,
+  `PostID` int(11) NOT NULL,
+  `VoteValue` tinyint(4) NOT NULL,
+  `CreatedAt` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+ALTER TABLE `forum_post_votes`
+  ADD PRIMARY KEY (`VoteID`),
+  ADD UNIQUE KEY `UniqueUserPostVote` (`UserID`,`PostID`),
+  ADD KEY `PostID_idx` (`PostID`);
+
 
 

@@ -3,6 +3,16 @@
     var facilities = ViewBag.Facilities as List<homeowner.Models.FacilityModel>;
     var reservations = ViewBag.UserReservations as List<homeowner.Models.FacilityReservationModel>;
 
+    // Pagination Logic
+    int itemsPerPage = 3;
+    int currentPage = Convert.ToInt32(Context.Request.Query["page"]) > 0 ? Convert.ToInt32(Context.Request.Query["page"]) : 1;
+    int totalItems = reservations.Count;
+    int totalPages = (int)Math.Ceiling((double)totalItems / itemsPerPage);
+    var paginatedReservations = reservations
+        .Skip((currentPage - 1) * itemsPerPage)
+        .Take(itemsPerPage)
+        .ToList();
+
     TimeSpan minTime = new TimeSpan(7, 30, 0);
     TimeSpan maxTime = new TimeSpan(22, 0, 0);
     var timeOptions = new List<string>();
@@ -11,45 +21,49 @@
         timeOptions.Add(t.ToString(@"hh\:mm"));
     }
     var today = DateTime.Now.ToString("yyyy-MM-dd");
-
-    int pageSize = 4;
-    int currentPage = ViewBag.CurrentPage ?? 1;
-    int totalReservations = reservations.Count;
-    int totalPages = (int)Math.Ceiling((double)totalReservations / pageSize);
-    var paginatedReservations = reservations; // Show all reservations
 }
 
 <head>
     <link rel="stylesheet" href="~/css/home.css" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 </head>
 
 <div class="container mt-4">
-    <h1 class="text-center text-white">Book a Facility</h1>
+    <div class="page-header" data-aos="fade-down">
+        <h1 class="text-center">Book a Facility</h1>
+        <p class="text-center text-muted">Reserve your preferred facility for your activities</p>
+    </div>
 
-    <div class="text-center mb-4">
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bookingModal">Book a Facility</button>
+    <div class="text-center mb-4" data-aos="fade-up">
+        <button class="btn btn-primary btn-lg pulse-button" data-bs-toggle="modal" data-bs-target="#bookingModal">
+            <i class="fas fa-calendar-plus"></i> Book Now
+        </button>
     </div>
 
     <!-- Booking Modal -->
     <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content bg-dark text-white">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="bookingModalLabel">Book a Facility</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <h5 class="modal-title" id="bookingModalLabel">
+                        <i class="fas fa-calendar-check"></i> Book a Facility
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="bookFacilityForm">
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label class="form-label">Select Facility</label>
-                            <div class="d-flex flex-wrap gap-3">
+                            <div class="facility-grid">
                                 @foreach (var facility in facilities)
                                 {
-                                    <div class="facility-card" data-id="@facility.FacilityID"
-                                        data-name="@facility.FacilityName">
+                                    <div class="facility-card" data-id="@facility.FacilityID" data-name="@facility.FacilityName">
                                         <div class="facility-image"
                                             style="background-image: url('/images/@(facility.FacilityName.ToLower().Contains("basketball") ? "basketball_court.jpg" : facility.FacilityName.ToLower().Contains("pool") ? "swimming_pool.jpg" : facility.FacilityName.ToLower().Contains("hall") ? "hall.jpg" : "default.jpg")');">
+                                            <div class="facility-overlay">
+                                                <i class="fas @(facility.FacilityName.ToLower().Contains("basketball") ? "fa-basketball-ball" : facility.FacilityName.ToLower().Contains("pool") ? "fa-swimming-pool" : "fa-building")"></i>
+                                            </div>
                                         </div>
                                         <p class="facility-name">@facility.FacilityName</p>
                                     </div>
@@ -57,32 +71,45 @@
                             </div>
                             <input type="hidden" id="facilitySelect" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="reservationDate" class="form-label">Reservation Date</label>
-                            <input type="date" id="reservationDate" class="form-control" required min="@today">
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="startTime" class="form-label">Start Time</label>
-                                <select id="startTime" class="form-select" required>
-                                    @foreach (var time in timeOptions)
-                                    {
-                                        <option value="@time">@time</option>
-                                    }
-                                </select>
+
+                        <div class="booking-details">
+                            <div class="mb-3">
+                                <label for="reservationDate" class="form-label">
+                                    <i class="fas fa-calendar"></i> Reservation Date
+                                </label>
+                                <input type="date" id="reservationDate" class="form-control custom-input" required min="@today">
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="endTime" class="form-label">End Time</label>
-                                <select id="endTime" class="form-select" required>
-                                    @foreach (var time in timeOptions)
-                                    {
-                                        <option value="@time">@time</option>
-                                    }
-                                </select>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="startTime" class="form-label">
+                                        <i class="fas fa-clock"></i> Start Time
+                                    </label>
+                                    <select id="startTime" class="form-select custom-input" required>
+                                        <option value="">Select time</option>
+                                        @foreach (var time in timeOptions)
+                                        {
+                                            <option value="@time">@time</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="endTime" class="form-label">
+                                        <i class="fas fa-clock"></i> End Time
+                                    </label>
+                                    <select id="endTime" class="form-select custom-input" required>
+                                        <option value="">Select time</option>
+                                        @foreach (var time in timeOptions)
+                                        {
+                                            <option value="@time">@time</option>
+                                        }
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary w-100">Book Facility</button>
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg w-100 submit-btn">
+                                    <i class="fas fa-check-circle"></i> Confirm Booking
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -90,131 +117,287 @@
         </div>
     </div>
 
-    <h2 class="text-center text-white mt-4">Reservation History</h2>
-    <div class="reservation-timeline">
-        @foreach (var res in paginatedReservations)
+    <h2 class="text-center mt-5 mb-4" data-aos="fade-up">Your Reservations</h2>
+    <div class="reservation-timeline" data-aos="fade-up">
+        @if (paginatedReservations.Any())
         {
-            <div class="timeline-item">
-                <div
-                    class="timeline-icon bg-@(res.Status == "Confirmed" ? "success" : res.Status == "Pending" ? "warning" : "danger")">
-                    <i
-                        class="@(res.Status == "Confirmed" ? "fas fa-check-circle" : res.Status == "Pending" ? "fas fa-clock" : "fas fa-times-circle")"></i>
-                </div>
-                <div class="timeline-content">
-                    <div class="facility-img"
-                        style="background-image: url('/images/@(res.FacilityName.ToLower().Contains("basketball") ? "basketball_court.jpg" : res.FacilityName.ToLower().Contains("pool") ? "swimming_pool.jpg" : res.FacilityName.ToLower().Contains("hall") ? "hall.jpg" : "default.jpg")');">
+            @foreach (var res in paginatedReservations)
+            {
+                <div class="timeline-item @res.Status.ToLower()">
+                    <div class="timeline-icon">
+                        <i class="@(res.Status == "Confirmed" ? "fas fa-check-circle" : res.Status == "Pending" ? "fas fa-clock" : "fas fa-times-circle")"></i>
                     </div>
-                    <div class="details">
-                        <h5>@res.FacilityName</h5>
-                        <p>
-                            <strong>Date:</strong> @res.ReservationDate.ToString("yyyy-MM-dd")<br>
-                            <strong>Time:</strong> @res.StartTime - @res.EndTime
-                        </p>
-                        <span
-                            class="badge bg-@(res.Status == "Confirmed" ? "success" : res.Status == "Pending" ? "warning" : "danger")">
-                            @res.Status
-                        </span>
+                    <div class="timeline-content">
+                        <div class="facility-img"
+                            style="background-image: url('/images/@(res.FacilityName.ToLower().Contains("basketball") ? "basketball_court.jpg" : res.FacilityName.ToLower().Contains("pool") ? "swimming_pool.jpg" : res.FacilityName.ToLower().Contains("hall") ? "hall.jpg" : "default.jpg")');">
+                        </div>
+                        <div class="details">
+                            <h5>@res.FacilityName</h5>
+                            <p>
+                                <i class="fas fa-calendar-day"></i> <strong>Date:</strong> @res.ReservationDate.ToString("MMM dd, yyyy")<br>
+                                <i class="fas fa-clock"></i> <strong>Time:</strong> @res.StartTime.ToString(@"hh\:mm") - @res.EndTime.ToString(@"hh\:mm")
+                            </p>
+                            <span class="status-badge @res.Status.ToLower()">
+                                @res.Status
+                            </span>
+                        </div>
                     </div>
                 </div>
+            }
+
+            @if (totalPages > 1)
+            {
+                <div class="pagination-container" data-aos="fade-up">
+                    <div class="pagination">
+                        @if (currentPage > 1)
+                        {
+                            <a href="?page=@(currentPage - 1)" class="page-link">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        }
+
+                        @for (int i = 1; i <= totalPages; i++)
+                        {
+                            <a href="?page=@i" class="page-link @(i == currentPage ? "active" : "")">@i</a>
+                        }
+
+                        @if (currentPage < totalPages)
+                        {
+                            <a href="?page=@(currentPage + 1)" class="page-link">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        }
+                    </div>
+                    <div class="page-info">
+                        Page @currentPage of @totalPages
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="no-reservations" data-aos="fade-up">
+                <i class="fas fa-calendar-times"></i>
+                <p>No reservations found</p>
             </div>
         }
     </div>
-
-
 </div>
 
 <style>
     body {
-        background-color: #121212;
+        background-color: #0a0a0a;
         color: #ffffff;
-        font-family: Arial, sans-serif;
+        font-family: 'Poppins', sans-serif;
     }
 
     .container {
-        background-color: #1e1e1e;
-        padding: 20px;
-        border-radius: 10px;
+        background-color: #151515;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
     }
 
-    .form-label {
-        color: #ffffff;
+    .page-header {
+        margin-bottom: 3rem;
     }
 
-    .form-control,
-    .form-select {
-        background-color: #2a2a2a;
-        color: #ffffff;
-        border: 1px solid #444;
+    .page-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: linear-gradient(45deg, #00bcd4, #2196f3);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
 
-    .form-control::placeholder,
-    .form-select option {
-        color: #b0b0b0;
+    .pulse-button {
+        position: relative;
+        background: linear-gradient(45deg, #00bcd4, #2196f3);
+        border: none;
+        border-radius: 50px;
+        padding: 15px 40px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        transform: scale(1);
     }
 
-    .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
-        transition: 0.3s;
+    .pulse-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(33, 150, 243, 0.4);
     }
 
-    .btn-primary:hover {
-        background-color: #0056b3;
+    .pulse-button::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 150%;
+        height: 150%;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        animation: pulse 2s infinite;
+    }
+
+    /* @*
+        CSS Animations
+    *@ */
+    @@keyframes pulse {
+        0% {
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 1;
+        }
+        100% {
+            transform: translate(-50%, -50%) scale(1.5);
+            opacity: 0;
+        }
+    }
+
+    /* Modal Styling */
+    .modal-content {
+        background: #1a1a1a;
+        border-radius: 20px;
+        border: 1px solid #333;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #333;
+        padding: 1.5rem;
+        background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+    }
+
+    .modal-title {
+        color: #fff;
+        font-size: 1.5rem;
+    }
+
+    .modal-body {
+        padding: 2rem;
+    }
+
+    /* Facility Grid */
+    .facility-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
     }
 
     .facility-card {
-        width: 150px;
-        height: 180px;
-        background: #333;
-        border-radius: 10px;
-        text-align: center;
-        padding: 10px;
+        background: #222;
+        border-radius: 15px;
+        overflow: hidden;
         cursor: pointer;
-        transition: transform 0.3s ease;
+        transition: all 0.3s ease;
     }
 
-    .facility-card:hover,
+    .facility-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
     .facility-card.selected {
-        transform: scale(1.05);
-        border: 2px solid #007bff;
+        border: 2px solid #00bcd4;
+        box-shadow: 0 0 20px rgba(0, 188, 212, 0.3);
     }
 
     .facility-image {
-        width: 100%;
-        height: 120px;
+        height: 150px;
         background-size: cover;
         background-position: center;
-        border-radius: 8px;
+        position: relative;
+    }
+
+    .facility-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .facility-card:hover .facility-overlay {
+        opacity: 1;
+    }
+
+    .facility-overlay i {
+        font-size: 2rem;
+        color: #fff;
     }
 
     .facility-name {
-        margin-top: 10px;
-        font-size: 14px;
-        color: white;
+        padding: 1rem;
+        margin: 0;
+        text-align: center;
+        font-weight: 500;
+        color: #fff;
     }
 
+    /* Form Controls */
+    .custom-input {
+        background: #2a2a2a;
+        border: 1px solid #444;
+        color: #fff;
+        padding: 0.8rem;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .custom-input:focus {
+        background: #333;
+        border-color: #00bcd4;
+        box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.2);
+    }
+
+    .submit-btn {
+        background: linear-gradient(45deg, #00bcd4, #2196f3);
+        border: none;
+        padding: 1rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
+    }
+
+    /* Timeline Styling */
     .reservation-timeline {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
-        margin-top: 20px;
+        position: relative;
+        max-width: 800px;
+        margin: 2rem auto;
     }
 
     .timeline-item {
         display: flex;
         align-items: center;
-        width: 90%;
-        max-width: 600px;
-        background: #333;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-        transition: 0.3s ease;
+        margin-bottom: 2rem;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.5s ease forwards;
     }
 
-    .timeline-item:hover {
-        transform: scale(1.02);
+    /* @*
+        Timeline Animation
+    *@ */
+    @@keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .timeline-icon {
@@ -224,64 +407,171 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
         font-size: 1.5rem;
-        margin-right: 15px;
+        margin-right: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .timeline-item.confirmed .timeline-icon {
+        background: linear-gradient(45deg, #4CAF50, #8BC34A);
+        box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+    }
+
+    .timeline-item.pending .timeline-icon {
+        background: linear-gradient(45deg, #FFC107, #FF9800);
+        box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+    }
+
+    .timeline-item.cancelled .timeline-icon {
+        background: linear-gradient(45deg, #f44336, #e91e63);
+        box-shadow: 0 0 20px rgba(244, 67, 54, 0.3);
     }
 
     .timeline-content {
+        background: #222;
+        border-radius: 15px;
+        padding: 1.5rem;
+        flex-grow: 1;
         display: flex;
         align-items: center;
-        width: 100%;
+        gap: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .timeline-content:hover {
+        transform: translateX(10px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     }
 
     .facility-img {
-        width: 80px;
-        height: 80px;
+        width: 100px;
+        height: 100px;
+        border-radius: 10px;
         background-size: cover;
         background-position: center;
-        border-radius: 8px;
-        margin-right: 15px;
+        flex-shrink: 0;
     }
 
     .details {
-        color: white;
+        flex-grow: 1;
     }
 
     .details h5 {
-        margin-bottom: 5px;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #fff;
     }
 
-    .badge {
-        padding: 5px 10px;
+    .details p {
+        margin-bottom: 0.5rem;
+        color: #bbb;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
         font-size: 0.9rem;
-        border-radius: 5px;
+        font-weight: 500;
     }
 
-    .pagination .page-link {
-        background-color: #2a2a2a;
-        color: #ffffff;
-        border: 1px solid #444;
+    .status-badge.confirmed {
+        background: linear-gradient(45deg, #4CAF50, #8BC34A);
     }
 
-    .pagination .page-link:hover {
-        background-color: #444;
+    .status-badge.pending {
+        background: linear-gradient(45deg, #FFC107, #FF9800);
     }
 
-    .pagination .page-item.active .page-link {
-        background-color: #007bff;
-        border-color: #007bff;
+    .status-badge.cancelled {
+        background: linear-gradient(45deg, #f44336, #e91e63);
+    }
+
+    /* Pagination Styling */
+    .pagination-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 2rem;
+        gap: 1rem;
+    }
+
+    .pagination {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        background: #222;
+        padding: 0.5rem;
+        border-radius: 50px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .page-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        color: #fff;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        background: #333;
+    }
+
+    .page-link:hover {
+        background: #444;
+        color: #00bcd4;
+        transform: translateY(-2px);
+    }
+
+    .page-link.active {
+        background: linear-gradient(45deg, #00bcd4, #2196f3);
+        color: white;
+        box-shadow: 0 0 15px rgba(0, 188, 212, 0.3);
+    }
+
+    .page-info {
+        color: #888;
+        font-size: 0.9rem;
+    }
+
+    .no-reservations {
+        text-align: center;
+        padding: 3rem;
+        background: #222;
+        border-radius: 15px;
+        color: #666;
+    }
+
+    .no-reservations i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .no-reservations p {
+        font-size: 1.2rem;
+        margin: 0;
     }
 </style>
 
 <script>
     $(document).ready(function () {
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        // Facility selection
         $(".facility-card").click(function () {
             $(".facility-card").removeClass("selected");
             $(this).addClass("selected");
             $("#facilitySelect").val($(this).data("id"));
         });
 
+        // Form submission
         $("#bookFacilityForm").submit(function (e) {
             e.preventDefault();
             var facilityID = $("#facilitySelect").val();
@@ -290,7 +580,7 @@
             var endTime = $("#endTime").val();
 
             if (!facilityID) {
-                alert("Please select a facility.");
+                showToast("Please select a facility", "error");
                 return;
             }
 
@@ -300,12 +590,51 @@
                 data: { facilityID: facilityID, reservationDate: reservationDate, startTime: startTime, endTime: endTime },
                 success: function (response) {
                     if (response.success) {
-                        location.reload();
+                        showToast(response.message, "success");
+                        setTimeout(() => location.reload(), 2000);
                     } else {
-                        alert(response.message);
+                        showToast(response.message, "error");
                     }
                 }
             });
         });
+
+        // Toast notification function
+        function showToast(message, type) {
+            const toast = $('<div>').addClass('toast ' + type).text(message);
+            $('body').append(toast);
+            setTimeout(() => toast.addClass('show'), 100);
+            setTimeout(() => {
+                toast.removeClass('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Add this to your existing styles
+        $('<style>')
+            .text(`
+                .toast {
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 1rem 2rem;
+                    border-radius: 10px;
+                    color: white;
+                    font-weight: 500;
+                    transform: translateX(120%);
+                    transition: transform 0.3s ease;
+                    z-index: 9999;
+                }
+                .toast.show {
+                    transform: translateX(0);
+                }
+                .toast.success {
+                    background: linear-gradient(45deg, #4CAF50, #8BC34A);
+                }
+                .toast.error {
+                    background: linear-gradient(45deg, #f44336, #e91e63);
+                }
+            `)
+            .appendTo('head');
     });
 </script>
