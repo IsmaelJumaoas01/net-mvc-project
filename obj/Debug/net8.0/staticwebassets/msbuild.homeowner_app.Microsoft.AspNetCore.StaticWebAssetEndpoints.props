@@ -24,17 +24,17 @@
       <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"fh62am8gh9"},{"Name":"integrity","Value":"sha256-U299L/NAYT9nNinM8eHl59XyXI\u002BSbYM\u002B6DRyeUD/TB8="},{"Name":"label","Value":"_content/homeowner_app/css/feedback.css"}]]]></EndpointProperties>
       <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"3516"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022U299L/NAYT9nNinM8eHl59XyXI\u002BSbYM\u002B6DRyeUD/TB8=\u0022"},{"Name":"Last-Modified","Value":"Sun, 09 Mar 2025 23:39:20 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
-    <StaticWebAssetEndpoint Include="_content/homeowner_app/css/home.1ph3a9qt59.css">
-      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\home.css'))</AssetFile>
-      <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"1ph3a9qt59"},{"Name":"integrity","Value":"sha256-q5XPHwucPEzD5LuKDb/S\u002BG6MRy48KUHbYDM8jtBUvlE="},{"Name":"label","Value":"_content/homeowner_app/css/home.css"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"5168"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022q5XPHwucPEzD5LuKDb/S\u002BG6MRy48KUHbYDM8jtBUvlE=\u0022"},{"Name":"Last-Modified","Value":"Wed, 12 Mar 2025 21:20:03 GMT"}]]]></ResponseHeaders>
-    </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/homeowner_app/css/home.css">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\home.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-q5XPHwucPEzD5LuKDb/S\u002BG6MRy48KUHbYDM8jtBUvlE="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"5168"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022q5XPHwucPEzD5LuKDb/S\u002BG6MRy48KUHbYDM8jtBUvlE=\u0022"},{"Name":"Last-Modified","Value":"Wed, 12 Mar 2025 21:20:03 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-Uv649pAR1xw7Uo56F8yljP0ThrSA7Jn4V9WndTAVw94="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"7124"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022Uv649pAR1xw7Uo56F8yljP0ThrSA7Jn4V9WndTAVw94=\u0022"},{"Name":"Last-Modified","Value":"Wed, 12 Mar 2025 21:36:13 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/homeowner_app/css/home.qek42zl3zd.css">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\home.css'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"qek42zl3zd"},{"Name":"integrity","Value":"sha256-Uv649pAR1xw7Uo56F8yljP0ThrSA7Jn4V9WndTAVw94="},{"Name":"label","Value":"_content/homeowner_app/css/home.css"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"7124"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022Uv649pAR1xw7Uo56F8yljP0ThrSA7Jn4V9WndTAVw94=\u0022"},{"Name":"Last-Modified","Value":"Wed, 12 Mar 2025 21:36:13 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/homeowner_app/css/homeowner_forum.css">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\homeowner_forum.css'))</AssetFile>

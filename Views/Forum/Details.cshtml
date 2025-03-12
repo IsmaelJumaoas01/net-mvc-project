@@ -291,14 +291,40 @@
     .form-control {
         background: #333;
         border: 1px solid #444;
-        color: #fff;
+        color: #fff !important;
         border-radius: 8px;
     }
 
     .form-control:focus {
-        background: #333;
+        background: #2a2a2a;
         border-color: #00bcd4;
         box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.25);
+        color: #fff !important;
+    }
+
+    .form-control::placeholder {
+        color: #888;
+    }
+
+    textarea.form-control {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    /* Modal Form Specific Styles */
+    .modal .form-control {
+        background: #333;
+        border: 1px solid #444;
+        color: #fff !important;
+    }
+
+    .modal .form-control:focus {
+        background: #2a2a2a;
+        color: #fff !important;
+    }
+
+    .modal textarea.form-control {
+        min-height: 120px;
     }
 
     .custom-file-upload {
