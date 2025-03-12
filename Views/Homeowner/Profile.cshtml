@@ -12,35 +12,67 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
-<button class="btn btn-secondary" onclick="history.back()">Back</button>
+<div class="header-container">
+    <button class="btn btn-back" onclick="history.back()">
+        <i class="fas fa-arrow-left"></i> Back
+    </button>
+
+    <div class="page-header">
+        <div class="header-content">
+            <h2><i class="fas fa-user-circle"></i> Profile Management</h2>
+            <p>View and manage your personal information</p>
+        </div>
+    </div>
+</div>
 
 <!-- Profile Section -->
 <section class="profile-container">
     <div class="profile-header">
-        <h2>@username's Profile</h2>
-        <button class="btn btn-primary" data-toggle="modal" data-target="#editProfileModal">Edit Profile</button>
+        <div class="profile-info">
+            <div class="profile-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="profile-details">
+                <h2>@username's Profile</h2>
+                <span class="role-badge">@Model.Role</span>
+            </div>
+        </div>
+        <button class="btn btn-primary edit-profile-btn" data-toggle="modal" data-target="#editProfileModal">
+            <i class="fas fa-edit"></i> Edit Profile
+        </button>
     </div>
     <div class="profile-content">
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <div class="alert alert-danger" role="alert">
-                @TempData["ErrorMessage"]
+        <div class="profile-stats">
+            <div class="stat-card">
+                <i class="fas fa-calendar-check"></i>
+                <div class="stat-info">
+                    <h4>Facility Bookings</h4>
+                    <p>0 Active</p>
+                </div>
             </div>
-        }
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <div class="alert alert-success" role="alert">
-                @TempData["SuccessMessage"]
+            <div class="stat-card">
+                <i class="fas fa-tools"></i>
+                <div class="stat-info">
+                    <h4>Service Requests</h4>
+                    <p>0 Pending</p>
+                </div>
             </div>
-        }
+            <div class="stat-card">
+                <i class="fas fa-comments"></i>
+                <div class="stat-info">
+                    <h4>Forum Posts</h4>
+                    <p>0 Posts</p>
+                </div>
+            </div>
+        </div>
         <div class="recent-activities">
-            <h3>Recent Activities</h3>
+            <h3><i class="fas fa-history"></i> Recent Activities</h3>
             <div class="activity-container">
                 <p>No recent activities available.</p>
             </div>
         </div>
         <div class="services-bookings">
-            <h3>Recent Service Requests & Bookings</h3>
+            <h3><i class="fas fa-bookmark"></i> Recent Service Requests & Bookings</h3>
             <div class="activity-container">
                 <p>No recent requests or bookings available.</p>
             </div>
@@ -50,41 +82,97 @@
 
 <!-- Edit Profile Modal -->
 <div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                <h5 class="modal-title" id="editProfileModalLabel">
+                    <i class="fas fa-user-edit"></i> Edit Profile
+                </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
+                <div id="modalAlert" class="alert" style="display: none;"></div>
                 <form id="editProfileForm" action="@Url.Action("EditProfile", "Homeowner")" method="POST">
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" placeholder="@Model.Username">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="username">
+                                <i class="fas fa-user"></i> Username
+                            </label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="@Model.Username">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="email">
+                                <i class="fas fa-envelope"></i> Email
+                            </label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="@Model.Email">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="firstName">
+                                <i class="fas fa-user-tag"></i> First Name
+                            </label>
+                            <input type="text" class="form-control" id="firstName" name="firstName" placeholder="@Model.FirstName">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="middleName">
+                                <i class="fas fa-user-tag"></i> Middle Name
+                            </label>
+                            <input type="text" class="form-control" id="middleName" name="middleName" placeholder="@Model.MiddleName">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="lastName">
+                                <i class="fas fa-user-tag"></i> Last Name
+                            </label>
+                            <input type="text" class="form-control" id="lastName" name="lastName" placeholder="@Model.LastName">
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="@Model.Email">
-                    </div>
-                    <div class="form-group">
-                        <label for="firstName">First Name</label>
-                        <input type="text" class="form-control" id="firstName" name="firstName" placeholder="@Model.FirstName">
-                    </div>
-                    <div class="form-group">
-                        <label for="middleName">Middle Name</label>
-                        <input type="text" class="form-control" id="middleName" name="middleName" placeholder="@Model.MiddleName">
-                    </div>
-                    <div class="form-group">
-                        <label for="lastName">Last Name</label>
-                        <input type="text" class="form-control" id="lastName" name="lastName" placeholder="@Model.LastName">
-                    </div>
-                    <div class="form-group">
-                        <label for="phoneNumber">Phone Number</label>
+                        <label for="phoneNumber">
+                            <i class="fas fa-phone"></i> Phone Number
+                        </label>
                         <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="@Model.PhoneNumber">
                     </div>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <div class="password-section">
+                        <h6 class="section-title">
+                            <i class="fas fa-lock"></i> Change Password
+                            <small class="text-muted">(leave blank to keep current password)</small>
+                        </h6>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="password">New Password</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter new password">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary toggle-password" type="button">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="confirmPassword">Confirm New Password</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary toggle-password" type="button">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -95,46 +183,406 @@
     .profile-container {
         background: #121212;
         color: white;
-        padding: 20px;
-        border-radius: 10px;
-        max-width: 800px;
-        margin: 0 auto;
+        padding: 2rem;
+        border-radius: 15px;
+        max-width: 1000px;
+        margin: 2rem auto;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
+
     .profile-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 2rem;
     }
-    .profile-content {
-        margin-top: 20px;
+
+    .profile-info {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
     }
-    .recent-activities, .services-bookings {
-        background: #1e1e1e;
-        padding: 15px;
-        border-radius: 8px;
-        margin-top: 20px;
-    }
-    .activity-container {
-        padding: 10px;
-        background: #2a2a2a;
-        border-radius: 5px;
-    }
-    .btn-primary {
-        background-color: #007bff;
-        border: none;
-        padding: 10px 20px;
-    }
-    .btn-primary:hover {
-        background-color: #0056b3;
-    }
-    .modal-content {
-        background: #2a2a2a;
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(45deg, #00bcd4, #2196f3);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
         color: white;
     }
+
+    .profile-details h2 {
+        margin: 0;
+        font-size: 2rem;
+        background: linear-gradient(45deg, #00bcd4, #2196f3);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .role-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background: rgba(33, 150, 243, 0.1);
+        color: #2196f3;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+
+    .profile-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: #1e1e1e;
+        padding: 1.5rem;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-card i {
+        font-size: 2rem;
+        color: #00bcd4;
+    }
+
+    .stat-info h4 {
+        margin: 0;
+        color: #fff;
+        font-size: 1.1rem;
+    }
+
+    .stat-info p {
+        margin: 0.5rem 0 0;
+        color: #888;
+    }
+
+    .recent-activities, .services-bookings {
+        background: #1e1e1e;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-top: 1.5rem;
+    }
+
+    .recent-activities h3, .services-bookings h3 {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #fff;
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+    }
+
+    .recent-activities i, .services-bookings i {
+        color: #00bcd4;
+    }
+
+    .activity-container {
+        padding: 1rem;
+        background: #2a2a2a;
+        border-radius: 8px;
+        color: #888;
+    }
+
+    .back-btn {
+        margin: 1rem;
+        background: #2a2a2a;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+        background: #333;
+        transform: translateX(-5px);
+    }
+
+    .edit-profile-btn {
+        background: linear-gradient(45deg, #00bcd4, #2196f3);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .edit-profile-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 188, 212, 0.3);
+    }
+
+    /* Modal Styles */
+    .modal-content {
+        background: #1e1e1e;
+        color: #fff;
+        border-radius: 15px;
+    }
+
     .modal-header {
-        border-bottom: 1px solid #444;
+        background: #2a2a2a;
+        border-bottom: 1px solid #333;
+        border-radius: 15px 15px 0 0;
+        padding: 1.5rem;
     }
+
+    .modal-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #00bcd4;
+    }
+
+    .modal-body {
+        padding: 2rem;
+    }
+
+    .form-control {
+        background: #2a2a2a;
+        border: 1px solid #333;
+        color: #fff;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+    }
+
+    .form-control:focus {
+        background: #2a2a2a;
+        border-color: #00bcd4;
+        box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.25);
+        color: #fff;
+    }
+
+    /* Profile Form Specific Styles */
+    #editProfileForm .form-group label {
+        color: #888;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    #editProfileForm .form-group label i {
+        color: #00bcd4;
+    }
+
+    .password-section {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #333;
+    }
+
+    .section-title {
+        color: #00bcd4;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .input-group-append .btn {
+        background: #333;
+        border: 1px solid #444;
+        color: #888;
+    }
+
+    .input-group-append .btn:hover {
+        background: #444;
+        color: #fff;
+    }
+
     .modal-footer {
-        border-top: 1px solid #444;
+        border-top: 1px solid #333;
+        padding: 1.5rem;
     }
+
+    .alert {
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+
+    .alert-danger {
+        background: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+        border: 1px solid rgba(220, 53, 69, 0.2);
+    }
+
+    .alert-success {
+        background: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+        border: 1px solid rgba(40, 167, 69, 0.2);
+    }
+
+    .custom-alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 300px;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        animation: slideIn 0.5s ease-out;
+    }
+
+    .alert-success {
+        background: rgba(40, 167, 69, 0.95);
+        color: white;
+        border: none;
+    }
+
+    .alert-danger {
+        background: rgba(220, 53, 69, 0.95);
+        color: white;
+        border: none;
+    }
+
+  
 </style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Toggle password visibility
+            $('.toggle-password').click(function() {
+                const input = $(this).closest('.input-group').find('input');
+                const icon = $(this).find('i');
+                
+                if (input.attr('type') === 'password') {
+                    input.attr('type', 'text');
+                    icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    input.attr('type', 'password');
+                    icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                }
+            });
+
+            // Form submission
+            $('#editProfileForm').submit(function(e) {
+                e.preventDefault();
+                
+                // Clear previous alerts
+                $('#modalAlert').hide();
+
+                // Only check if passwords match when both fields are filled
+                const password = $('#password').val();
+                const confirmPassword = $('#confirmPassword').val();
+
+                if (password && confirmPassword && password !== confirmPassword) {
+                    $('#modalAlert')
+                        .removeClass('alert-success')
+                        .addClass('alert alert-danger')
+                        .text('Passwords do not match')
+                        .show();
+                    return;
+                }
+
+                // Get form data
+                const formData = {};
+                const form = $(this);
+                form.find('input').each(function() {
+                    if ($(this).val()) {
+                        formData[$(this).attr('name')] = $(this).val();
+                    }
+                });
+
+                $.ajax({
+                    url: form.attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        if (response.success) {
+                            // Show success message in modal
+                            $('#modalAlert')
+                                .removeClass('alert-danger')
+                                .addClass('alert alert-success')
+                                .text(response.message)
+                                .show();
+
+                            // Create success toast
+                            const toast = $('<div>')
+                                .addClass('alert alert-success custom-alert')
+                                .text(response.message);
+                            $('body').append(toast);
+
+                            // Update username in the profile if it was changed
+                            if (response.newUsername) {
+                                $('h2').text(response.newUsername + "'s Profile");
+                            }
+
+                            // Close modal and reload after delay
+                            setTimeout(function() {
+                                $('#editProfileModal').modal('hide');
+                                window.location.reload();
+                            }, 1500);
+                        } else {
+                            // Show error message in modal
+                            $('#modalAlert')
+                                .removeClass('alert-success')
+                                .addClass('alert alert-danger')
+                                .text(response.message)
+                                .show();
+                        }
+                    },
+                    error: function(xhr) {
+                        // Show error message in modal
+                        const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred while updating your profile';
+                        $('#modalAlert')
+                            .removeClass('alert-success')
+                            .addClass('alert alert-danger')
+                            .text(errorMessage)
+                            .show();
+                    }
+                });
+            });
+
+            // Show temporary messages if they exist
+            @if (!string.IsNullOrEmpty(TempData["SuccessMessage"]?.ToString()))
+            {
+                <text>
+                    const successMessage = '@TempData["SuccessMessage"]';
+                    if (successMessage) {
+                        const alert = $('<div>')
+                            .addClass('alert alert-success custom-alert')
+                            .text(successMessage);
+                        $('body').append(alert);
+                        setTimeout(function() {
+                            alert.fadeOut('slow', function() { $(this).remove(); });
+                        }, 3000);
+                    }
+                </text>
+            }
+
+            @if (!string.IsNullOrEmpty(TempData["ErrorMessage"]?.ToString()))
+            {
+                <text>
+                    const errorMessage = '@TempData["ErrorMessage"]';
+                    if (errorMessage) {
+                        const alert = $('<div>')
+                            .addClass('alert alert-danger custom-alert')
+                            .text(errorMessage);
+                        $('body').append(alert);
+                        setTimeout(function() {
+                            alert.fadeOut('slow', function() { $(this).remove(); });
+                        }, 3000);
+                    }
+                </text>
+            }
+        });
+    </script>
+}

@@ -71,18 +71,15 @@ namespace homeowner.Controllers
             string userId = HttpContext.Session.GetString("UserID");
             if (string.IsNullOrEmpty(userId))
             {
-                TempData["ErrorMessage"] = "You must be logged in to update your profile.";
-                return RedirectToAction("Login", "Account");
+                return Json(new { success = false, message = "You must be logged in to update your profile." });
             }
 
             if (!string.IsNullOrEmpty(password) && password != confirmPassword)
             {
-                TempData["ErrorMessage"] = "Passwords do not match.";
-                return RedirectToAction("Profile");
+                return Json(new { success = false, message = "Passwords do not match." });
             }
 
             _logger.LogInformation("User {UserId} is attempting to update their profile.", userId);
-            _logger.LogInformation("New details: Username={Username}, Email={Email}, FirstName={FirstName}, MiddleName={MiddleName}, LastName={LastName}, PhoneNumber={PhoneNumber}", username, email, firstName, middleName, lastName, phoneNumber);
 
             try
             {
@@ -100,8 +97,7 @@ namespace homeowner.Controllers
                         var result = checkCmd.ExecuteScalar();
                         if (result != null)
                         {
-                            TempData["ErrorMessage"] = "Username already exists.";
-                            return RedirectToAction("Profile");
+                            return Json(new { success = false, message = "Username already exists." });
                         }
                     }
 
@@ -115,8 +111,7 @@ namespace homeowner.Controllers
                         var result = checkCmd.ExecuteScalar();
                         if (result != null)
                         {
-                            TempData["ErrorMessage"] = "Email already exists.";
-                            return RedirectToAction("Profile");
+                            return Json(new { success = false, message = "Email already exists." });
                         }
                     }
 
@@ -130,50 +125,49 @@ namespace homeowner.Controllers
                         var result = checkCmd.ExecuteScalar();
                         if (result != null)
                         {
-                            TempData["ErrorMessage"] = "Phone number already exists.";
-                            return RedirectToAction("Profile");
+                            return Json(new { success = false, message = "Phone number already exists." });
                         }
                     }
 
-                    // Update user details
+                    // Build update query dynamically based on provided values
                     var updateFields = new List<string>();
-                    var updateParameters = new List<MySqlParameter>();
+                    var parameters = new List<MySqlParameter>();
 
                     if (!string.IsNullOrEmpty(username))
                     {
                         updateFields.Add("Username = @Username");
-                        updateParameters.Add(new MySqlParameter("@Username", username));
+                        parameters.Add(new MySqlParameter("@Username", username));
                     }
                     if (!string.IsNullOrEmpty(email))
                     {
                         updateFields.Add("Email = @Email");
-                        updateParameters.Add(new MySqlParameter("@Email", email));
+                        parameters.Add(new MySqlParameter("@Email", email));
                     }
                     if (!string.IsNullOrEmpty(firstName))
                     {
                         updateFields.Add("FirstName = @FirstName");
-                        updateParameters.Add(new MySqlParameter("@FirstName", firstName));
+                        parameters.Add(new MySqlParameter("@FirstName", firstName));
                     }
                     if (!string.IsNullOrEmpty(middleName))
                     {
                         updateFields.Add("MiddleName = @MiddleName");
-                        updateParameters.Add(new MySqlParameter("@MiddleName", middleName));
+                        parameters.Add(new MySqlParameter("@MiddleName", middleName));
                     }
                     if (!string.IsNullOrEmpty(lastName))
                     {
                         updateFields.Add("LastName = @LastName");
-                        updateParameters.Add(new MySqlParameter("@LastName", lastName));
+                        parameters.Add(new MySqlParameter("@LastName", lastName));
                     }
                     if (!string.IsNullOrEmpty(phoneNumber))
                     {
                         updateFields.Add("PhoneNumber = @PhoneNumber");
-                        updateParameters.Add(new MySqlParameter("@PhoneNumber", phoneNumber));
+                        parameters.Add(new MySqlParameter("@PhoneNumber", phoneNumber));
                     }
                     if (!string.IsNullOrEmpty(password))
                     {
                         string hashedPassword = HashPassword(password);
                         updateFields.Add("PasswordHash = @PasswordHash");
-                        updateParameters.Add(new MySqlParameter("@PasswordHash", hashedPassword));
+                        parameters.Add(new MySqlParameter("@PasswordHash", hashedPassword));
                     }
 
                     if (updateFields.Count > 0)
@@ -181,25 +175,32 @@ namespace homeowner.Controllers
                         string query = $"UPDATE USERS SET {string.Join(", ", updateFields)} WHERE UserID = @UserID";
                         MySqlCommand cmd = new MySqlCommand(query, conn);
                         cmd.Parameters.AddWithValue("@UserID", userId);
-                        cmd.Parameters.AddRange(updateParameters.ToArray());
-                        cmd.ExecuteNonQuery();
+                        cmd.Parameters.AddRange(parameters.ToArray());
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            // Update session if username was changed
+                            if (!string.IsNullOrEmpty(username))
+                            {
+                                HttpContext.Session.SetString("Username", username);
+                            }
+
+                            return Json(new { 
+                                success = true, 
+                                message = "Profile updated successfully!",
+                                newUsername = username // Send back the new username if it was changed
+                            });
+                        }
                     }
-                }
 
-                // Update session data
-                if (!string.IsNullOrEmpty(username))
-                {
-                    HttpContext.Session.SetString("Username", username);
+                    return Json(new { success = true, message = "No changes were made." });
                 }
-
-                TempData["SuccessMessage"] = "Profile updated successfully.";
-                return RedirectToAction("Profile");
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while updating the profile.");
-                TempData["ErrorMessage"] = "An error occurred while updating the profile. Please try again.";
-                return RedirectToAction("Profile");
+                return Json(new { success = false, message = "An error occurred while updating the profile: " + ex.Message });
             }
         }
 

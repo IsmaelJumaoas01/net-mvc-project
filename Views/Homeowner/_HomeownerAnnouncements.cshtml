@@ -12,91 +12,97 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
-<!-- Back Button and Title Section -->
-<div class="page-header">
-    <button class="btn btn-back" onclick="history.back()">
-        <i class="fas fa-arrow-left"></i>
-        <span>Back</span>
-    </button>
-    <h2>Latest Announcements</h2>
-</div>
+<div class="container mt-4">
+    <div class="header-container">
+        <button class="btn btn-back" onclick="history.back()">
+            <i class="fas fa-arrow-left"></i> Back
+        </button>
 
-<!-- Sort Controls -->
-<div class="controls-container">
-    <div class="sort-control">
-        <i class="fas fa-sort"></i>
-        <select id="sortSelect" class="form-control">
-            <option value="newest">Newest First</option>
-            <option value="oldest">Oldest First</option>
-        </select>
+        <div class="page-header">
+            <div class="header-content">
+                <h2><i class="fas fa-bullhorn"></i> Latest Announcements</h2>
+                <p>Stay updated with community news and updates</p>
+            </div>
+        </div>
     </div>
-</div>
 
-<!-- Announcements Section -->
-<section class="announcements-container">
-    <div id="announcementContainer" class="announcement-grid">
-        @foreach (var announcement in Model)
-        {
-            <div class="announcement-card" data-created-at="@announcement.CreatedAt.ToString("o")"
-                data-title="@announcement.Title" data-content="@announcement.Content"
-                data-date="@announcement.CreatedAt.ToString("MMMM dd, yyyy hh:mm tt")" 
-                onclick="openAnnouncementModal(this)">
-                <div class="card-content">
-                    <div class="announcement-icon">
-                        <i class="fas fa-bullhorn"></i>
+    <!-- Sort Controls -->
+    <div class="controls-container">
+        <div class="sort-control">
+            <i class="fas fa-sort"></i>
+            <select id="sortSelect" class="form-control">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Announcements Section -->
+    <section class="announcements-container">
+        <div id="announcementContainer" class="announcement-grid">
+            @foreach (var announcement in Model)
+            {
+                <div class="announcement-card" data-created-at="@announcement.CreatedAt.ToString("o")"
+                    data-title="@announcement.Title" data-content="@announcement.Content"
+                    data-date="@announcement.CreatedAt.ToString("MMMM dd, yyyy hh:mm tt")" 
+                    onclick="openAnnouncementModal(this)">
+                    <div class="card-content">
+                        <div class="announcement-icon">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        <h3>@announcement.Title</h3>
+                        <div class="announcement-preview">
+                            @if (announcement.Content.Length > 150)
+                            {
+                                @(announcement.Content.Substring(0, 150) + "...")
+                            }
+                            else
+                            {
+                                @announcement.Content
+                            }
+                        </div>
+                        <div class="announcement-footer">
+                            <span class="date">
+                                <i class="far fa-calendar-alt"></i>
+                                @announcement.CreatedAt.ToString("MMM dd, yyyy")
+                            </span>
+                            <span class="time">
+                                <i class="far fa-clock"></i>
+                                @announcement.CreatedAt.ToString("hh:mm tt")
+                            </span>
+                        </div>
                     </div>
-                    <h3>@announcement.Title</h3>
-                    <div class="announcement-preview">
-                        @if (announcement.Content.Length > 150)
-                        {
-                            @(announcement.Content.Substring(0, 150) + "...")
-                        }
-                        else
-                        {
-                            @announcement.Content
-                        }
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- Enhanced Modal for Viewing Full Announcement -->
+    <div class="modal fade" id="announcementModal" tabindex="-1" role="dialog" aria-labelledby="announcementModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title-container">
+                        <i class="fas fa-bullhorn modal-icon"></i>
+                        <h5 class="modal-title" id="announcementModalLabel">Announcement Title</h5>
                     </div>
-                    <div class="announcement-footer">
-                        <span class="date">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="announcementContent"></p>
+                    <div class="modal-footer-info">
+                        <span id="announcementDate" class="text-muted">
                             <i class="far fa-calendar-alt"></i>
-                            @announcement.CreatedAt.ToString("MMM dd, yyyy")
-                        </span>
-                        <span class="time">
-                            <i class="far fa-clock"></i>
-                            @announcement.CreatedAt.ToString("hh:mm tt")
+                            <span class="date-text"></span>
                         </span>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
-</section>
-
-<!-- Enhanced Modal for Viewing Full Announcement -->
-<div class="modal fade" id="announcementModal" tabindex="-1" role="dialog" aria-labelledby="announcementModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title-container">
-                    <i class="fas fa-bullhorn modal-icon"></i>
-                    <h5 class="modal-title" id="announcementModalLabel">Announcement Title</h5>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                 </div>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p id="announcementContent"></p>
-                <div class="modal-footer-info">
-                    <span id="announcementDate" class="text-muted">
-                        <i class="far fa-calendar-alt"></i>
-                        <span class="date-text"></span>
-                    </span>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -108,46 +114,6 @@ body {
     background-color: #121212;
     color: #ffffff;
     font-family: 'Poppins', sans-serif;
-}
-
-/* Page Header */
-.page-header {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    padding: 2rem;
-    background: linear-gradient(145deg, #1a1a1a, #222);
-    border-radius: 15px;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.btn-back {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: linear-gradient(45deg, #007bff, #00d2ff);
-    color: white;
-    border: none;
-    padding: 0.8rem 1.5rem;
-    border-radius: 50px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.btn-back:hover {
-    transform: translateX(-5px);
-    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
-    color: white;
-}
-
-.page-header h2 {
-    margin: 0;
-    font-size: 2.2rem;
-    font-weight: 700;
-    background: linear-gradient(45deg, #fff, #e0e0e0);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
 }
 
 /* Controls Container */

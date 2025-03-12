@@ -49,27 +49,40 @@ namespace homeowner.Controllers
 
                         if (!string.IsNullOrEmpty(storedHashedPassword) && VerifyPassword(password, storedHashedPassword))
                         {
-                            HttpContext.Session.SetString("UserID", reader["UserID"].ToString());
-                            HttpContext.Session.SetString("Username", reader["Username"].ToString());
-                            HttpContext.Session.SetString("Role", reader["Role"].ToString());
-                            _logger.LogInformation("Login successful for user: {Username}", username);
+                            // Convert values to string and ensure they're not null
+                            string userId = reader["UserID"]?.ToString() ?? "";
+                            string userName = reader["Username"]?.ToString() ?? "";
+                            string role = reader["Role"]?.ToString() ?? "Homeowner"; // Default to Homeowner if null
 
-                            // Redirect based on role
-                            string role = reader["Role"].ToString();
-                            if (role == "Staff")
+                            if (!string.IsNullOrEmpty(userId) && !string.IsNullOrEmpty(userName))
                             {
-                                TempData["SuccessMessage"] = "Login successful. Welcome back! Our dear Staff~.";
-                                return Json(new { success = true, redirectUrl = Url.Action("StaffDashboard", "Home") });
-                            }
-                            else if (role == "Administrator")
-                            {
-                                TempData["SuccessMessage"] = "Login successful. Welcome back! Admin~.";
-                                return Json(new { success = true, redirectUrl = Url.Action("AdminDashboard", "Home") });
+                                HttpContext.Session.SetString("UserID", userId);
+                                HttpContext.Session.SetString("Username", userName);
+                                HttpContext.Session.SetString("Role", role);
+                                _logger.LogInformation("Login successful for user: {Username}", username);
+
+                                // Redirect based on role
+                                string redirectUrl = role switch
+                                {
+                                    "Staff" => Url.Action("StaffDashboard", "Home"),
+                                    "Administrator" => Url.Action("AdminDashboard", "Home"),
+                                    _ => Url.Action("Index", "Home")
+                                };
+
+                                string welcomeMessage = role switch
+                                {
+                                    "Staff" => "Login successful. Welcome back! Our dear Staff~.",
+                                    "Administrator" => "Login successful. Welcome back! Admin~.",
+                                    _ => "Login successful. Welcome back! Our dear User~."
+                                };
+
+                                TempData["SuccessMessage"] = welcomeMessage;
+                                return Json(new { success = true, redirectUrl });
                             }
                             else
                             {
-                                TempData["SuccessMessage"] = "Login successful. Welcome back! Our dear User~.";
-                                return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
+                                _logger.LogWarning("Invalid user data for user: {Username}", username);
+                                return Json(new { success = false, message = "Invalid user data." });
                             }
                         }
                         else

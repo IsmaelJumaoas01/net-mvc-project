@@ -30,15 +30,20 @@
 </head>
 
 <div class="container mt-4">
-    <div class="page-header" data-aos="fade-down">
-        <h1 class="text-center">Book a Facility</h1>
-        <p class="text-center text-muted">Reserve your preferred facility for your activities</p>
-    </div>
-
-    <div class="text-center mb-4" data-aos="fade-up">
-        <button class="btn btn-primary btn-lg pulse-button" data-bs-toggle="modal" data-bs-target="#bookingModal">
-            <i class="fas fa-calendar-plus"></i> Book Now
+    <div class="header-container">
+        <button class="btn btn-back" onclick="history.back()">
+            <i class="fas fa-arrow-left"></i> Back
         </button>
+
+        <div class="page-header">
+            <div class="header-content">
+                <h2><i class="fas fa-calendar-check"></i> Facility Booking</h2>
+                <p>Reserve and manage your facility bookings</p>
+            </div>
+            <button class="btn btn-primary pulse-button" data-bs-toggle="modal" data-bs-target="#bookingModal">
+                <i class="fas fa-plus"></i> New Booking
+            </button>
+        </div>
     </div>
 
     <!-- Booking Modal -->

@@ -146,9 +146,91 @@ body {
     .modal-dialog {
         margin: 1rem;
     }
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+
+    .profile-info {
+        flex-direction: column;
+    }
+
+    .profile-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .form-row {
+        margin-right: 0;
+        margin-left: 0;
+    }
 }
 
+/* Page Header Container */
+.header-container {
+    position: relative;
+    margin-bottom: 2rem;
+    padding-left: 1rem;
+}
 
+/* Back Button */
+.btn-back {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(45deg, #2196f3, #00bcd4);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    z-index: 1;
+    margin: 0;
+}
+
+.btn-back:hover {
+    transform: translateY(-50%) translateX(-5px);
+    box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+    color: white;
+}
+
+/* Page Header */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 2rem 1.5rem 7rem;
+    background: linear-gradient(145deg, #1a1a1a, #222);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    margin: 0;
+}
+
+.page-header .header-content {
+    flex: 1;
+}
+
+.page-header h2 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.page-header p {
+    color: #888;
+    margin: 0.3rem 0 0 0;
+    font-size: 0.9rem;
+}
 
 /* Alert Box (Circular & Modern) */
 .custom-alert {
@@ -214,6 +296,17 @@ body {
     }
 }
 
+/* HOMEOWNER PROFILE */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
 
 .logout-modal {
     background-color: #222;
@@ -258,4 +351,40 @@ body {
 
 .logout-modal .modal-title i {
     margin-right: 8px;
+}
+
+.form-group label {
+    color: #888;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-group label i {
+    color: #00bcd4;
+}
+
+/* Logout Modal Specific Styles */
+.logout-modal label {
+    color: #fff !important;
+}
+
+.logout-modal .modal-title {
+    color: #fff !important;
+}
+
+.logout-modal .modal-body {
+    color: #fff !important;
+}
+
+.logout-modal .modal-header {
+    background-color: #333;
+    border-bottom: 1px solid #444;
+    color: #fff;
+}
+
+.logout-modal .modal-content {
+    background-color: #222;
+    color: #fff;
 }
