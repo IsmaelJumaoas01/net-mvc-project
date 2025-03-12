@@ -17,91 +17,125 @@
 
 
 
-<!-- Hero Section -->
-<div class="hero"
-    style="background-image: url('/images/hero-bg.jpg'); background-size: cover; background-position: center;">
-    <div class="overlay">
-        <h1>Welcome to Our Subdivision</h1>
-        <p>Your community portal for announcements, payments, reservations, and more.</p>
-        <div class="hero-buttons">
-            @if (!isLoggedIn)
-            {
-                <a data-toggle="modal" data-target="#loginModal" class="btn btn-primary">Login</a>
-                <a data-toggle="modal" data-target="#registerModal" class="btn btn-secondary">Register</a>
-            }
-            else
-            {
-                <div class="dashboard">
-                    <p>Welcome back, @username!</p>
-                    <a class="btn btn-danger" asp-controller="Homeowner" asp-action="Profile">Go to Dashboard</a>
+<!-- Hero Section with Image Slider -->
+<div class="hero-slider">
+    <div class="slider-container">
+        <div class="slide fade">
+            <img src="/images/subdivision.jpg" alt="Subdivision View 1">
+            <div class="slide-overlay">
+                <div class="slide-content">
+                    <h1>Welcome to Our Subdivision</h1>
+                    <p>Your community portal for announcements, payments, reservations, and more.</p>
+                    <div class="hero-buttons">
+                        @if (!isLoggedIn)
+                        {
+                            <a data-toggle="modal" data-target="#loginModal" class="btn btn-primary">Login</a>
+                            <a data-toggle="modal" data-target="#registerModal" class="btn btn-secondary">Register</a>
+                        }
+                        else
+                        {
+                            <div class="dashboard">
+                                <p>Welcome back, @username!</p>
+                                <a class="btn btn-danger" asp-controller="Homeowner" asp-action="Profile">Go to Dashboard</a>
+                            </div>
+                        }
+                        <a data-toggle="modal" data-target="#readmeModal" class="btn btn-info ml-2">Changelog</a>
+                    </div>
                 </div>
-            }
-            <!-- Changelog Button: visible for everyone -->
-            <a data-toggle="modal" data-target="#readmeModal" class="btn btn-info ml-2">Changelog</a>
+            </div>
+        </div>
+        <div class="slide fade">
+            <img src="/images/subdivision2.jpg" alt="Subdivision View 2">
+            <div class="slide-overlay">
+                <div class="slide-content">
+                    <h1>Modern Living</h1>
+                    <p>Experience comfort and security in our well-maintained community.</p>
+                </div>
+            </div>
+        </div>
+        <div class="slide fade">
+            <img src="/images/subdivision3.jpg" alt="Subdivision View 3">
+            <div class="slide-overlay">
+                <div class="slide-content">
+                    <h1>Community First</h1>
+                    <p>Join our thriving neighborhood of families and professionals.</p>
+                </div>
+            </div>
+        </div>
+        <a class="prev" onclick="changeSlide(-1)">&#10094;</a>
+        <a class="next" onclick="changeSlide(1)">&#10095;</a>
+        <div class="dots-container">
+            <span class="dot" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+            <span class="dot" onclick="currentSlide(3)"></span>
         </div>
     </div>
 </div>
 
-
 <!-- Announcements Section -->
-<section class="announcements" style="margin-bottom: 50px;">
-    <h2>Latest Announcements</h2>
-    <div class="announcement-list">
-        @if (ViewBag.Announcements != null && ViewBag.Announcements.Count > 0)
-        {
-            @foreach (var announcement in ViewBag.Announcements)
+<section class="announcements-section">
+    <div class="container">
+        <h2 class="section-title">Latest Announcements</h2>
+        <div class="announcement-grid">
+            @if (ViewBag.Announcements != null && ViewBag.Announcements.Count > 0)
             {
-                <div class="announcement" data-aos="fade-up">
-                    <h3>@announcement.Title</h3>
-                    <p>@announcement.Content</p>
-                    <p><small>Posted on @announcement.CreatedAt</small></p>
+                @foreach (var announcement in ViewBag.Announcements)
+                {
+                    <div class="announcement-card" data-aos="fade-up">
+                        <div class="announcement-content">
+                            <h3>@announcement.Title</h3>
+                            <p>@announcement.Content</p>
+                            <span class="announcement-date">Posted on @announcement.CreatedAt</span>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="no-announcements">
+                    <i class="fas fa-bullhorn"></i>
+                    <p>No announcements available at this time.</p>
                 </div>
             }
-        }
-        else
-        {
-            <p>No announcements available.</p>
-        }
+        </div>
     </div>
 </section>
 
 <!-- Features Section -->
-<section class="features">
-    <h2>Explore Our Community Services</h2>
-    <div class="feature-list">
-        <div class="feature" data-aos="fade-right">
-            <i class="fas fa-newspaper fa-3x"></i>
-            <h3>Community News</h3>
-            <p>Stay updated with the latest announcements and events.</p>
-            <a href="@Url.Action("Index", "News")" class="btn btn-primary" onclick="return checkLogin()">View News</a>
-        </div>
-        <div class="feature" data-aos="fade-up">
-            <i class="fas fa-credit-card fa-3x"></i>
-            <h3>Online Payments</h3>
-            <p>Pay your dues and fees securely through our portal.</p>
-            <a href="@Url.Action("Index", "Payments")" class="btn btn-primary" onclick="return checkLogin()">Make a
-                Payment</a>
-        </div>
-        <div class="feature" data-aos="fade-left">
-            <i class="fas fa-calendar-alt fa-3x"></i>
-            <h3>Facility Booking</h3>
-            <p>Reserve function halls, sports courts, and other amenities.</p>
-            <a href="@Url.Action("Index", "FacilityBooking")" class="btn btn-primary" onclick="return checkLogin()">Book
-                a Facility</a>
-        </div>
-        <div class="feature" data-aos="fade-left">
-            <i class="fas fa-tools fa-3x"></i>
-            <h3>Service Requests</h3>
-            <p>Request maintenance, security assistance, and other services.</p>
-            <a href="@Url.Action("Index", "ServiceRequest")" class="btn btn-primary"
-                onclick="return checkLogin()">Request a Service</a>
+<section class="features-section">
+    <div class="container">
+        <h2 class="section-title">Explore Our Community Services</h2>
+        <div class="features-grid">
+            <div class="feature-card" data-aos="fade-right">
+                <i class="fas fa-newspaper"></i>
+                <h3>Community News</h3>
+                <p>Stay updated with the latest announcements and events.</p>
+                <a href="@Url.Action("Index", "News")" class="feature-btn" onclick="return checkLogin()">View News</a>
+            </div>
+            <div class="feature-card" data-aos="fade-up">
+                <i class="fas fa-credit-card"></i>
+                <h3>Online Payments</h3>
+                <p>Pay your dues and fees securely through our portal.</p>
+                <a href="@Url.Action("Index", "Payments")" class="feature-btn" onclick="return checkLogin()">Make a Payment</a>
+            </div>
+            <div class="feature-card" data-aos="fade-left">
+                <i class="fas fa-calendar-alt"></i>
+                <h3>Facility Booking</h3>
+                <p>Reserve function halls, sports courts, and other amenities.</p>
+                <a href="@Url.Action("Index", "FacilityBooking")" class="feature-btn" onclick="return checkLogin()">Book a Facility</a>
+            </div>
+            <div class="feature-card" data-aos="fade-right">
+                <i class="fas fa-tools"></i>
+                <h3>Service Requests</h3>
+                <p>Request maintenance, security assistance, and other services.</p>
+                <a href="@Url.Action("Index", "ServiceRequest")" class="feature-btn" onclick="return checkLogin()">Request a Service</a>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- Login & Register Modals (if applicable) -->
-<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel"
-    aria-hidden="true">
+<!-- Login & Register Modals -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-body p-0">
@@ -111,8 +145,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel"
-    aria-hidden="true">
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-body p-0">
@@ -124,173 +157,526 @@
 
 <p>@TempData["ShowLoginRequiredModal"]</p>
 
-
 <!-- Include the Readme Modal Partial -->
 @await Html.PartialAsync("_ReadmeModal")
 
-<script>
-
-    $(document).ready(function () {
-        var showModal = '@(TempData["ShowLoginRequiredModal"]?.ToString().ToLower() ?? "false")';
-        if (showModal === 'true') {
-            $('#loginRequiredModal').modal('show');
-        }
-    });
-
-    function checkLogin() {
-        var isLoggedIn = @Html.Raw(isLoggedIn.ToString().ToLower());
-        if (!isLoggedIn) {
-            alert("You need to be logged in to access this service.");
-            return false;
-        }
-        return true;
-    }
-</script>
-
 <style>
-   body {
-  
-    color: #ffffff; /* White text for readability */
-}
-
-.navbar {
-    background: #121212; /* Slightly lighter black for navbar */
-}
-
-.hero {
+/* Hero Slider Styles */
+.hero-slider {
     position: relative;
-    color: white;
-    text-align: center;
-    padding: 100px 20px;
-}
-
-.hero .overlay {
-    background: rgba(43, 49, 55, 0.8); /* Dark gray with transparency */
-    padding: 50px;
-}
-
-.auth-buttons .btn,
-.dashboard .btn {
-    margin: 10px;
-}
-
-.features {
-    padding: 50px 20px;
-    text-align: center;
-    background: #1a1a1a; /* Dark gray for features section */
-}
-
-.feature-list {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-}
-
-.feature {
-    flex: 1 1 200px;
-    margin: 20px;
-    padding: 20px;
-    background: #252525; /* Slightly lighter gray for contrast */
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.feature:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-}
-
-.feature i {
-    color: #007bff;
-    margin-bottom: 10px;
-}
-
-.announcements {
-    padding: 50px 20px;
-    text-align: center;
-    background: #1e1e1e; /* Dark gray */
-}
-
-.announcement-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.announcement {
-    background: #2c2c2c; /* Slightly lighter than section */
-    padding: 20px;
-    margin: 10px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    width: 80%;
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.announcement:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-}
-
-.modal-content {
-    background: #222831; /* Dark Blue-Gray for modals */
-}
-
-.btn-primary {
-    background: #007bff;
-    border-color: #007bff;
-}
-
-.btn-secondary {
-    background: #6c757d;
-    border-color: #6c757d;
-}
-
-.btn-danger {
-    background: #dc3545;
-    border-color: #dc3545;
-}
-table {
     width: 100%;
-    border-collapse: collapse;
-    background-color: #1a1a1a; /* Dark gray for blending */
-    color: white;
-    border-radius: 8px;
+    height: 100vh;
     overflow: hidden;
 }
 
-th {
-    background-color: #2b2b2b; /* Slightly lighter dark gray */
+.slider-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.slide.active {
+    opacity: 1;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1);
+    transition: transform 6s ease-in-out;
+}
+
+.slide.active img {
+    transform: scale(1.1);
+}
+
+.slide-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.slide-content {
+    text-align: center;
     color: white;
-    padding: 10px;
-    text-align: left;
+    padding: 2rem;
+    max-width: 800px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 1s ease-in-out;
+    position: relative;
+    z-index: 3;
 }
 
-tr {
-    background-color: #1f1f1f; /* Blended dark gray */
-    color: white; /* Keep text readable */
-    transition: background 0.3s;
+.slide.active .slide-content {
+    opacity: 1;
+    transform: translateY(0);
 }
 
-tr:nth-child(even) {
-    background-color: #292929; /* Slightly lighter gray for alternating rows */
+.slide-content h1 {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-weight: bold;
 }
 
-tr:hover {
-    background-color: #333; /* Highlight effect on hover */
+.slide-content p {
+    font-size: 1.8rem;
+    margin-bottom: 2.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-td {
-    padding: 10px;
-    border: 1px solid #444;
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
-small, p small {
-    color: #a0a0a0; /* Light gray for timestamps and small text */
+.hero-buttons .btn {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    cursor: pointer;
+    position: relative;
+    z-index: 5;
+    margin: 0.5rem;
+    min-width: 160px;
 }
 
+.hero-buttons .btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.hero-buttons .btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.hero-buttons .btn-info {
+    background: #17a2b8;
+    color: white;
+}
+
+.hero-buttons .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.dashboard {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.dashboard p {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Announcements Section Styles */
+.announcements-section {
+    padding: 5rem 0;
+    background: linear-gradient(to bottom, #121212, #1a1a1a);
+}
+
+.section-title {
+    text-align: center;
+    color: white;
+    font-size: 3rem;
+    margin-bottom: 4rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    position: relative;
+    padding-bottom: 1.5rem;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(45deg, #007bff, #00d2ff);
+    border-radius: 2px;
+}
+
+.announcement-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 0 1rem;
+}
+
+.announcement-card {
+    background: linear-gradient(145deg, #1a1a1a, #222);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.announcement-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #007bff22, transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.announcement-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.announcement-card:hover::before {
+    opacity: 1;
+}
+
+.announcement-content {
+    padding: 2rem;
+    position: relative;
+}
+
+.announcement-content h3 {
+    color: #fff;
+    font-size: 1.8rem;
+    margin-bottom: 1.2rem;
+    font-weight: 600;
+}
+
+.announcement-content p {
+    color: #e0e0e0;
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+.announcement-date {
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+.no-announcements {
+    text-align: center;
+    color: #666666;
+    grid-column: 1 / -1;
+    padding: 2rem;
+}
+
+.no-announcements i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+/* Features Section Styles */
+.features-section {
+    padding: 5rem 0;
+    background: linear-gradient(to top, #121212, #1a1a1a);
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    padding: 0 1rem;
+}
+
+.feature-card {
+    background: linear-gradient(145deg, #222, #2a2a2a);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #007bff15, transparent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.feature-card:hover::before {
+    opacity: 1;
+}
+
+.feature-card i {
+    font-size: 3.5rem;
+    background: linear-gradient(45deg, #007bff, #00d2ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 2rem;
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover i {
+    transform: scale(1.2);
+}
+
+.feature-card h3 {
+    color: #fff;
+    font-size: 1.8rem;
+    margin-bottom: 1.2rem;
+    font-weight: 600;
+}
+
+.feature-card p {
+    color: #e0e0e0;
+    margin-bottom: 2rem;
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+.feature-btn {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: linear-gradient(45deg, #007bff, #00d2ff);
+    color: white;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    border: none;
+    position: relative;
+    z-index: 1;
+}
+
+.feature-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,123,255,0.4);
+    color: white;
+    text-decoration: none;
+}
+
+
+/* Fix for modal z-index */
+.modal {
+    z-index: 1060;
+}
+
+.modal-backdrop {
+    z-index: 1050;
+}
+
+.prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 1.5rem;
+    color: white;
+    font-size: 2.5rem;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.3);
+    border: none;
+    z-index: 4;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    opacity: 0;
+    text-decoration: none;
+}
+
+.hero-slider:hover .prev,
+.hero-slider:hover .next {
+    opacity: 1;
+}
+
+.prev:hover, .next:hover {
+    background: rgba(0, 0, 0, 0.8);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.prev {
+    left: 20px;
+}
+
+.next {
+    right: 20px;
+}
+
+.dots-container {
+    position: absolute;
+    bottom: 30px;
+    width: 100%;
+    text-align: center;
+    z-index: 4;
+}
+
+.dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin: 0 8px;
+    background: rgba(255, 255, 255, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dot:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: scale(1.2);
+}
+
+.dot.active {
+    background: white;
+    transform: scale(1.2);
+    border-color: white;
+}
 </style>
+
+<script>
+let slideIndex = 1;
+let isAnimating = false;
+
+function showSlides(n) {
+    if (isAnimating) return;
+    isAnimating = true;
+    
+    let slides = document.getElementsByClassName("slide");
+    let dots = document.getElementsByClassName("dot");
+    
+    if (n > slides.length) {slideIndex = 1}
+    if (n < 1) {slideIndex = slides.length}
+    
+    // First remove active class and set opacity to 0
+    for (let i = 0; i < slides.length; i++) {
+        slides[i].style.opacity = "0";
+        slides[i].classList.remove("active");
+        if (dots[i]) dots[i].classList.remove("active");
+    }
+    
+    // Add active class and set opacity to 1
+    slides[slideIndex-1].style.opacity = "1";
+    slides[slideIndex-1].classList.add("active");
+    if (dots[slideIndex-1]) dots[slideIndex-1].classList.add("active");
+    
+    // Reset animation flag after transition
+    setTimeout(() => {
+        isAnimating = false;
+    }, 1000);
+}
+
+function changeSlide(n) {
+    if (!isAnimating) {
+        showSlides(slideIndex += n);
+    }
+}
+
+function currentSlide(n) {
+    if (!isAnimating) {
+        showSlides(slideIndex = n);
+    }
+}
+
+// Initialize the slider
+document.addEventListener('DOMContentLoaded', function() {
+    showSlides(slideIndex);
+    
+    // Add click event listeners
+    document.querySelector('.prev').addEventListener('click', function(e) {
+        e.preventDefault();
+        changeSlide(-1);
+    });
+    
+    document.querySelector('.next').addEventListener('click', function(e) {
+        e.preventDefault();
+        changeSlide(1);
+    });
+    
+    // Add click events for dots
+    let dots = document.getElementsByClassName('dot');
+    for (let i = 0; i < dots.length; i++) {
+        dots[i].addEventListener('click', function() {
+            currentSlide(i + 1);
+        });
+    }
+    
+    // Auto slide with check for animation
+    setInterval(() => {
+        if (!isAnimating) {
+            changeSlide(1);
+        }
+    }, 5000);
+});
+
+// Keep existing scripts
+$(document).ready(function () {
+    var showModal = '@(TempData["ShowLoginRequiredModal"]?.ToString().ToLower() ?? "false")';
+    if (showModal === 'true') {
+        $('#loginRequiredModal').modal('show');
+    }
+});
+
+function checkLogin() {
+    var isLoggedIn = @Html.Raw(isLoggedIn.ToString().ToLower());
+    if (!isLoggedIn) {
+        alert("You need to be logged in to access this service.");
+        return false;
+    }
+    return true;
+}
+</script>
 
 <script>
 

@@ -12,29 +12,41 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
-    <button class="btn btn-primary" onclick="history.back()">Back</button>
+<!-- Back Button and Title Section -->
+<div class="page-header">
+    <button class="btn btn-back" onclick="history.back()">
+        <i class="fas fa-arrow-left"></i>
+        <span>Back</span>
+    </button>
+    <h2>Latest Announcements</h2>
+</div>
 
-<!-- Announcements Section -->
-<section class="announcements container">
-    <h2 class="mb-4">Latest Announcements</h2>
-
-    <div class="mb-3 mt-3">
-        <label for="sortSelect">Sort By:</label>
-        <select id="sortSelect" class="form-control d-inline-block w-auto ml-2">
+<!-- Sort Controls -->
+<div class="controls-container">
+    <div class="sort-control">
+        <i class="fas fa-sort"></i>
+        <select id="sortSelect" class="form-control">
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
         </select>
     </div>
+</div>
 
-    <div id="announcementContainer" class="announcement-list">
+<!-- Announcements Section -->
+<section class="announcements-container">
+    <div id="announcementContainer" class="announcement-grid">
         @foreach (var announcement in Model)
         {
-            <div class="announcement card mb-3" data-created-at="@announcement.CreatedAt.ToString("o")"
+            <div class="announcement-card" data-created-at="@announcement.CreatedAt.ToString("o")"
                 data-title="@announcement.Title" data-content="@announcement.Content"
-                data-date="@announcement.CreatedAt.ToString("MMMM dd, yyyy hh:mm tt")">
-                <div class="card-body" onclick="openAnnouncementModal(this)">
-                    <h3 class="card-title">@announcement.Title</h3>
-                    <div class="announcement-content">
+                data-date="@announcement.CreatedAt.ToString("MMMM dd, yyyy hh:mm tt")" 
+                onclick="openAnnouncementModal(this)">
+                <div class="card-content">
+                    <div class="announcement-icon">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <h3>@announcement.Title</h3>
+                    <div class="announcement-preview">
                         @if (announcement.Content.Length > 150)
                         {
                             @(announcement.Content.Substring(0, 150) + "...")
@@ -44,42 +56,282 @@
                             @announcement.Content
                         }
                     </div>
-                    <p class="card-text">
-                        <small class="text-muted">
-                            Posted on @announcement.CreatedAt.ToString("MMMM dd, yyyy hh:mm tt")
-                        </small>
-                    </p>
+                    <div class="announcement-footer">
+                        <span class="date">
+                            <i class="far fa-calendar-alt"></i>
+                            @announcement.CreatedAt.ToString("MMM dd, yyyy")
+                        </span>
+                        <span class="time">
+                            <i class="far fa-clock"></i>
+                            @announcement.CreatedAt.ToString("hh:mm tt")
+                        </span>
+                    </div>
                 </div>
             </div>
         }
     </div>
 </section>
 
-<!-- Modal for Viewing Full Announcement -->
+<!-- Enhanced Modal for Viewing Full Announcement -->
 <div class="modal fade" id="announcementModal" tabindex="-1" role="dialog" aria-labelledby="announcementModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="announcementModalLabel">Announcement Title</h5>
+                <div class="modal-title-container">
+                    <i class="fas fa-bullhorn modal-icon"></i>
+                    <h5 class="modal-title" id="announcementModalLabel">Announcement Title</h5>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
-                <p id="announcementContent">Announcement content goes here.</p>
+                <p id="announcementContent"></p>
+                <div class="modal-footer-info">
+                    <span id="announcementDate" class="text-muted">
+                        <i class="far fa-calendar-alt"></i>
+                        <span class="date-text"></span>
+                    </span>
+                </div>
             </div>
             <div class="modal-footer">
-                <small id="announcementDate" class="text-muted"></small>
-                <button type="button" class="btn btn-primary"
-                    onclick="$('#announcementModal').modal('hide');">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
 
+<style>
+/* Global Styles */
+body {
+    background-color: #121212;
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Page Header */
+.page-header {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem;
+    background: linear-gradient(145deg, #1a1a1a, #222);
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-back {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(45deg, #007bff, #00d2ff);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+    transform: translateX(-5px);
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+    color: white;
+}
+
+.page-header h2 {
+    margin: 0;
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(45deg, #fff, #e0e0e0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Controls Container */
+.controls-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+}
+
+.sort-control {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: #1a1a1a;
+    padding: 0.8rem 1.2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.sort-control i {
+    color: #007bff;
+}
+
+.sort-control select {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    padding-right: 1.5rem;
+}
+
+.sort-control select:focus {
+    outline: none;
+}
+
+/* Announcements Grid */
+.announcements-container {
+    padding: 0 1rem;
+}
+
+.announcement-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
+}
+
+.announcement-card {
+    background: linear-gradient(145deg, #1a1a1a, #222);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.announcement-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.2);
+}
+
+.card-content {
+    padding: 2rem;
+}
+
+.announcement-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(45deg, #007bff, #00d2ff);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.announcement-icon i {
+    font-size: 1.5rem;
+    color: white;
+}
+
+.announcement-card h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #fff;
+}
+
+.announcement-preview {
+    color: #e0e0e0;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+.announcement-footer {
+    display: flex;
+    gap: 1.5rem;
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.announcement-footer span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Modal Styles */
+.modal-content {
+    background: #1a1a1a;
+    border: none;
+    border-radius: 15px;
+}
+
+.modal-header {
+    background: linear-gradient(145deg, #222, #2a2a2a);
+    border-bottom: 1px solid #333;
+    padding: 1.5rem;
+}
+
+.modal-title-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.modal-icon {
+    font-size: 1.8rem;
+    color: #007bff;
+}
+
+.modal-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+}
+
+.modal-body {
+    padding: 2rem;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #e0e0e0;
+}
+
+.modal-footer-info {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #333;
+    color: #888;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modal-footer {
+    border-top: 1px solid #333;
+    padding: 1.5rem;
+}
+
+.close {
+    color: #fff;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.close:hover {
+    color: #fff;
+    opacity: 1;
+}
+
+/* Responsive Design */
+
+</style>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const sortSelect = document.getElementById("sortSelect");
         const container = document.getElementById("announcementContainer");
-        const cards = Array.from(container.getElementsByClassName("announcement"));
+        const cards = Array.from(container.getElementsByClassName("announcement-card"));
 
         function sortAnnouncements(order) {
             const sorted = cards.sort((a, b) => {
@@ -87,164 +339,36 @@
                 const dateB = new Date(b.getAttribute("data-created-at"));
                 return order === "newest" ? dateB - dateA : dateA - dateB;
             });
+            
+            // Clear container
             container.innerHTML = "";
-            sorted.forEach(card => container.appendChild(card));
+            
+            // Add animation classes to cards
+            sorted.forEach((card, index) => {
+                card.style.animation = `fadeInUp 0.5s ease forwards ${index * 0.1}s`;
+                container.appendChild(card);
+            });
         }
 
         sortSelect.addEventListener("change", function () {
             sortAnnouncements(this.value);
         });
+
+        // Initial sort
         sortAnnouncements("newest");
     });
 
-    // Open modal and populate with announcement details
     function openAnnouncementModal(element) {
-        // The parent element (card) holds our data attributes
-        const card = element.parentElement;
-        const title = card.getAttribute("data-title");
-        const content = card.getAttribute("data-content");
-        const date = card.getAttribute("data-date");
+        const title = element.getAttribute("data-title");
+        const content = element.getAttribute("data-content");
+        const date = element.getAttribute("data-date");
 
         document.getElementById("announcementModalLabel").innerText = title;
         document.getElementById("announcementContent").innerText = content;
-        document.getElementById("announcementDate").innerText = date;
+        document.querySelector("#announcementDate .date-text").innerText = date;
 
-        // Show the modal using Bootstrap's jQuery API
         $('#announcementModal').modal('show');
     }
 </script>
 
-<style>
 
-/* Global Styles */
-body {
-    background-color: #121212;
-    color: #ffffff;
-    font-family: "Poppins", sans-serif;
-}
-
-/* Announcements Section */
-.announcements {
-    padding: 60px 20px;
-    text-align: center;
-    background: #1e1e1e;
-}
-
-.announcements h2 {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: white;
-}
-
-/* Sorting Dropdown */
-.sort-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-#sortSelect {
-    background: #292929;
-    color: white;
-    border: 1px solid #444;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-/* Announcement Cards */
-.announcement-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    justify-content: center;
-    max-width: 1000px;
-    margin: auto;
-}
-
-    .announcement {
-        background: #242424;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
-        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-        cursor: pointer;
-    }
-
-    .announcement:hover {
-        transform: translateY(-5px);
-        box-shadow: 0px 8px 20px rgba(0, 188, 212, 0.3);
-    }
-
-.announcement .card-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: white;
-}
-
-.announcement-content {
-    color: #e0e0e0;
-    margin-top: 10px;
-    font-size: 0.95rem;
-    line-height: 1.5;
-}
-
-.announcement p {
-    margin-top: 15px;
-    font-size: 0.85rem;
-    color: #bbb;
-}
-
-/* Modal Styles */
-.modal-content {
-    background: #222831;
-    border-radius: 12px;
-    color: white;
-    padding: 20px;
-}
-
-.modal-header {
-    border-bottom: 1px solid #444;
-    background: #1a1a1a;
-    border-radius: 12px 12px 0 0;
-}
-
-.modal-title {
-    font-weight: bold;
-    color: white;
-}
-
-.modal-footer {
-    border-top: 1px solid #444;
-}
-
-/* Buttons */
-.btn-primary {
-    background: #00bcd4;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    transition: all 0.3s ease-in-out;
-}
-
-.btn-primary:hover {
-    background: #008ba3;
-}
-
-.btn-secondary {
-    background: #6c757d;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-}
-
-.btn-danger {
-    background: #dc3545;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-}
-
-</style>

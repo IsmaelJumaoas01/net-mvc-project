@@ -37,6 +37,18 @@
       "PackagePath": "staticwebassets\\images\\basketball_court.jpg"
     },
     {
+      "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\images\\subdivision.jpg",
+      "PackagePath": "staticwebassets\\images\\subdivision.jpg"
+    },
+    {
+      "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\images\\subdivision2.jpg",
+      "PackagePath": "staticwebassets\\images\\subdivision2.jpg"
+    },
+    {
+      "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\images\\subdivision3.jpg",
+      "PackagePath": "staticwebassets\\images\\subdivision3.jpg"
+    },
+    {
       "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\images\\swimming_pool.jpg",
       "PackagePath": "staticwebassets\\images\\swimming_pool.jpg"
     },

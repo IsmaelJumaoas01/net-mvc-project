@@ -19,31 +19,10 @@ Homeowner Application (MVC/.NET8 PROJECT)
 | 2025-03-06 | v1.0.9  | Changed entire layout design, theme and etc. Not yet done, improved ui/ux forums|
 | 2025-03-07 | v1.0.4  | Continued improved layout design, not yet done |
 | 2025-03-10 | v1.1.0  | Improved UI design, added polls & survey, feedback & complain and contact directory (not uet done) functions |
+| 2025-03-12 | v1.1.1  | UI/UX Changes, fixed functionalities on user management and announcmenet |
 | YYYY-MM-DD | v1.0.4  | ===== |
 | YYYY-MM-DD | v1.0.4  | ===== |
 
-
----
-
-## 🔧 Features & Fixes Needed Before next week (Extended til 2025-02-24)
-
-| Feature/Fix | Description | Status |
-|-------------|-------------|--------|
-| ==== | ==== | 🔄 In Progress |
-| ==== | ===== | ✅ Completed |
-| ==== | ==== | ❌ Pending |
-
----
-
-## 📅 Deadlines & Target Completion
-
-| Task | Deadline | Priority |
-|------|---------|----------|
-| === | YYYY-MM-DD | 🔥 High |
-| === | YYYY-MM-DD | ⚠️ Medium |
-| === | YYYY-MM-DD | ✅ Low |
-
----
 
 ## 📜 Notes
 
@@ -52,6 +31,8 @@ Homeowner Application (MVC/.NET8 PROJECT)
 ---
 
 ✍ **Maintained by: ayaya_07.
+
+
 *open terminal on desktop
 
 *git clone (repo link)

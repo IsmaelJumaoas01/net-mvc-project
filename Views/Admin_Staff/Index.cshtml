@@ -1,15 +1,12 @@
 @model IEnumerable<homeowner.Models.AnnouncementModel>
 
 @{
-    ViewBag.Title = "Announcements";
+    ViewBag.Title = "Announcements Management";
     bool isLoggedIn = ViewBag.IsLoggedIn;
     string username = ViewBag.username;
 }
-<!-- Add these in your _Layout.cshtml or Index.cshtml -->
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
 @if (ViewBag.Role == "Homeowner")
 {
@@ -17,69 +14,93 @@
 }
 else
 {
-    <!-- Original Index View for Admins & Staff -->
-    <h1>Announcements</h1>
-    @if (ViewBag.Role == "Administrator" || ViewBag.Role == "Staff")
-    {
-        <button class="btn btn-primary" data-toggle="modal" data-target="#createModal">Create New Announcement</button>
-    }
+    <div class="announcements-management">
+        <div class="dashboard-header">
+            <h1>Announcements Management</h1>
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search announcements...">
+                </div>
+                @if (ViewBag.Role == "Administrator" || ViewBag.Role == "Staff")
+                {
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#createModal">
+                        <i class="fas fa-plus"></i> Create Announcement
+                    </button>
+                }
+            </div>
+        </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Content</th>
-                <th>Created At</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
+        <div class="announcements-grid">
             @foreach (var announcement in Model)
             {
-                <tr>
-                    <td>@announcement.AnnouncementID</td>
-                    <td>@announcement.Title</td>
-                    <td>@announcement.Content</td>
-                    <td>@announcement.CreatedAt</td>
-                    <td>
-                        @if (ViewBag.Role == "Administrator" || ViewBag.Role == "Staff")
-                        {
-                            <button class="btn btn-warning"
-                                onclick="showEditModal(@announcement.AnnouncementID, '@announcement.Title', '@announcement.Content')">Edit</button>
-                            <button class="btn btn-danger"
-                                onclick="showDeleteModal(@announcement.AnnouncementID, '@announcement.Title')">Delete</button>
-
-
-                        }
-                    </td>
-                </tr>
+                <div class="announcement-card">
+                    <div class="announcement-header">
+                        <h3>@announcement.Title</h3>
+                        <div class="announcement-actions">
+                            <button class="btn btn-icon edit-announcement" 
+                                    onclick="showEditModal(@announcement.AnnouncementID, '@announcement.Title', '@announcement.Content')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-icon delete-announcement" 
+                                    onclick="showDeleteModal(@announcement.AnnouncementID, '@announcement.Title')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="announcement-content">
+                        <p>@announcement.Content</p>
+                    </div>
+                    <div class="announcement-footer">
+                        <span class="date">
+                            <i class="far fa-calendar-alt"></i>
+                            @announcement.CreatedAt.ToString("MMM dd, yyyy")
+                        </span>
+                        <span class="time">
+                            <i class="far fa-clock"></i>
+                            @announcement.CreatedAt.ToString("hh:mm tt")
+                        </span>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
+            @if (!Model.Any())
+            {
+                <div class="empty-state">
+                    <i class="fas fa-bullhorn"></i>
+                    <p>No announcements available</p>
+                </div>
+            }
+        </div>
+    </div>
 }
+
 <!-- Create Modal -->
-<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="createModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="createModalLabel">Create Announcement</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <h5 class="modal-title">Create Announcement</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <form id="createForm">
                     <div class="form-group">
                         <label for="createTitle">Title</label>
-                        <input type="text" class="form-control" id="createTitle" name="Title" required>
+                        <input type="text" class="form-control" id="createTitle" name="Title" required
+                               minlength="5" maxlength="100">
+                        <small class="form-text text-muted">Title must be between 5 and 100 characters</small>
                     </div>
                     <div class="form-group">
                         <label for="createContent">Content</label>
-                        <textarea class="form-control" id="createContent" name="Content" required></textarea>
+                        <textarea class="form-control" id="createContent" name="Content" required
+                                  minlength="10" maxlength="1000" rows="5"></textarea>
+                        <small class="form-text text-muted">Content must be between 10 and 1000 characters</small>
                     </div>
-                    <button type="submit" class="btn btn-primary">Create</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Create Announcement
+                    </button>
                 </form>
             </div>
         </div>
@@ -87,27 +108,33 @@ else
 </div>
 
 <!-- Edit Modal -->
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Announcement</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <h5 class="modal-title">Edit Announcement</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <form id="editForm">
-                    <input type="hidden" id="editAnnouncementID" name="AnnouncementID" required>
+                    <input type="hidden" id="editAnnouncementID" name="AnnouncementID">
                     <div class="form-group">
                         <label for="editTitle">Title</label>
-                        <input type="text" class="form-control" id="editTitle" name="Title">
+                        <input type="text" class="form-control" id="editTitle" name="Title" required
+                               minlength="5" maxlength="100">
+                        <small class="form-text text-muted">Title must be between 5 and 100 characters</small>
                     </div>
                     <div class="form-group">
                         <label for="editContent">Content</label>
-                        <textarea class="form-control" id="editContent" name="Content"></textarea>
+                        <textarea class="form-control" id="editContent" name="Content" required
+                                  minlength="10" maxlength="1000" rows="5"></textarea>
+                        <small class="form-text text-muted">Content must be between 10 and 1000 characters</small>
                     </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
                 </form>
             </div>
         </div>
@@ -115,31 +142,423 @@ else
 </div>
 
 <!-- Delete Modal -->
-<!-- Delete Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Delete Announcement</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <h5 class="modal-title">Delete Announcement</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete this announcement?</p>
+                <p class="delete-message">Are you sure you want to delete this announcement?</p>
                 <form id="deleteForm">
                     <input type="hidden" id="deleteAnnouncementID" name="AnnouncementID">
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
+<style>
+    /* Dashboard Layout */
+    .announcements-management {
+        padding: 2rem;
+        background: #1a1a1a;
+        min-height: 100vh;
+    }
+
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .dashboard-header h1 {
+        color: #fff;
+        font-size: 2rem;
+        margin: 0;
+        background: linear-gradient(45deg, #00bcd4, #2196f3);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    /* Search Box */
+    .search-box {
+        position: relative;
+        width: 300px;
+    }
+
+    .search-box i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #666;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        border: none;
+        border-radius: 25px;
+        background: #222;
+        color: #fff;
+        transition: all 0.3s ease;
+    }
+
+    .search-box input:focus {
+        background: #2a2a2a;
+        box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.25);
+        outline: none;
+    }
+
+    /* Announcements Grid */
+    .announcements-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+
+    .announcement-card {
+        background: linear-gradient(145deg, #1a1a1a, #222);
+        border-radius: 15px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .announcement-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .announcement-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .announcement-header h3 {
+        color: #fff;
+        font-size: 1.3rem;
+        margin: 0;
+        flex: 1;
+        margin-right: 1rem;
+    }
+
+    .announcement-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-icon {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background: #333;
+        color: #fff;
+        transition: all 0.3s ease;
+    }
+
+    .btn-icon:hover {
+        transform: translateY(-2px);
+    }
+
+    .edit-announcement:hover {
+        background: #00bcd4;
+    }
+
+    .delete-announcement:hover {
+        background: #f44336;
+    }
+
+    .announcement-content {
+        color: #e0e0e0;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .announcement-footer {
+        display: flex;
+        gap: 1.5rem;
+        color: #888;
+        font-size: 0.9rem;
+    }
+
+    .announcement-footer span {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .announcement-footer i {
+        color: #00bcd4;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        background: #222;
+        border-radius: 15px;
+        color: #666;
+        grid-column: 1 / -1;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+        font-size: 1.2rem;
+        margin: 0;
+    }
+
+    /* Modal Styles */
+    .modal-content {
+        background: #2a2a2a;
+        color: #fff;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #333;
+        padding: 1.5rem;
+    }
+
+    .modal-header .close {
+        color: #fff;
+    }
+
+    .form-group label {
+        color: #00bcd4;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        background: #333;
+        border: 1px solid #444;
+        color: #fff;
+        border-radius: 8px;
+    }
+
+    .form-control:focus {
+        background: #333;
+        border-color: #00bcd4;
+        box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.25);
+        color: #fff;
+    }
+
+    .form-text {
+        color: #888;
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .delete-message {
+        color: #f44336;
+        font-size: 1.1rem;
+        text-align: center;
+        margin: 1rem 0;
+    }
+
+    /* Button Styles */
+    .btn-primary {
+        background: #00bcd4;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        color: #fff;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background: #008ba3;
+        transform: translateY(-2px);
+    }
+
+    .btn-danger {
+        background: #f44336;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        color: #fff;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-danger:hover {
+        background: #d32f2f;
+        transform: translateY(-2px);
+    }
+
+    /* Toast Notification */
+    .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        color: white;
+        font-weight: 500;
+        transform: translateX(120%);
+        transition: transform 0.3s ease;
+        z-index: 9999;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .toast.show {
+        transform: translateX(0);
+    }
+
+    .toast.success {
+        background: linear-gradient(45deg, #4CAF50, #8BC34A);
+    }
+
+    .toast.error {
+        background: linear-gradient(45deg, #f44336, #e91e63);
+    }
+</style>
+
 @section Scripts {
     <script>
+        $(document).ready(function() {
+            // Search functionality
+            $('#searchInput').on('keyup', function() {
+                const value = $(this).val().toLowerCase();
+                $('.announcement-card').filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            });
+
+            // Form validation
+            function validateForm(title, content) {
+                let errors = [];
+                if (title.length < 5 || title.length > 100) {
+                    errors.push("Title must be between 5 and 100 characters");
+                }
+                if (content.length < 10 || content.length > 1000) {
+                    errors.push("Content must be between 10 and 1000 characters");
+                }
+                return errors;
+            }
+
+            // Create announcement
+            $('#createForm').submit(function(e) {
+                e.preventDefault();
+                const title = $('#createTitle').val();
+                const content = $('#createContent').val();
+                
+                const errors = validateForm(title, content);
+                if (errors.length > 0) {
+                    showToast(errors.join("\\n"), 'error');
+                    return;
+                }
+
+                $.ajax({
+                    url: '@Url.Action("Create", "Announcement")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.success) {
+                            showToast('Announcement created successfully!', 'success');
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            showToast(response.message || 'Error creating announcement', 'error');
+                        }
+                    }
+                });
+            });
+
+            // Edit announcement
+            $('#editForm').submit(function(e) {
+                e.preventDefault();
+                const title = $('#editTitle').val();
+                const content = $('#editContent').val();
+                
+                const errors = validateForm(title, content);
+                if (errors.length > 0) {
+                    showToast(errors.join("\\n"), 'error');
+                    return;
+                }
+
+                $.ajax({
+                    url: '@Url.Action("Edit", "Announcement")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.success) {
+                            showToast('Announcement updated successfully!', 'success');
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            showToast(response.message || 'Error updating announcement', 'error');
+                        }
+                    }
+                });
+            });
+
+            // Delete announcement
+            $('#deleteForm').submit(function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '@Url.Action("Delete", "Announcement")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.success) {
+                            showToast('Announcement deleted successfully!', 'success');
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            showToast(response.message || 'Error deleting announcement', 'error');
+                        }
+                    }
+                });
+            });
+
+            // Toast notification function
+            function showToast(message, type) {
+                const toast = $('<div>').addClass('toast ' + type).text(message);
+                $('body').append(toast);
+                setTimeout(() => toast.addClass('show'), 100);
+                setTimeout(() => {
+                    toast.removeClass('show');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+        });
+
         function showEditModal(id, title, content) {
             $('#editAnnouncementID').val(id);
             $('#editTitle').val(title);
@@ -149,64 +568,8 @@ else
 
         function showDeleteModal(id, title) {
             $('#deleteAnnouncementID').val(id);
-            $('#deleteModal .modal-body p').text(`Are you sure you want to delete the announcement titled "${title}"?`);
+            $('.delete-message').text(`Are you sure you want to delete the announcement titled "${title}"?`);
             $('#deleteModal').modal('show');
         }
-
-        $(document).ready(function () {
-            // Handle create form submission
-            $('#createForm').submit(function (e) {
-                e.preventDefault();
-                $.ajax({
-                    url: '@Url.Action("Create", "Announcement")',
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function (response) {
-                        console.log(response);
-                        if (response.success) {
-                            location.reload();
-                        } else {
-                            alert(response.message);
-                        }
-                    }
-                });
-            });
-
-            // Handle edit form submission
-            $('#editForm').submit(function (e) {
-                e.preventDefault();
-                $.ajax({
-                    url: '@Url.Action("Edit", "Announcement")',
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function (response) {
-                        console.log(response);
-                        if (response.success) {
-                            location.reload();
-                        } else {
-                            alert(response.message);
-                        }
-                    }
-                });
-            });
-
-            // Handle delete form submission
-            $('#deleteForm').submit(function (e) {
-                e.preventDefault();
-                $.ajax({
-                    url: '@Url.Action("Delete", "Announcement")',
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function (response) {
-                        console.log(response);
-                        if (response.success) {
-                            location.reload();
-                        } else {
-                            alert(response.message);
-                        }
-                    }
-                });
-            });
-        });
     </script>
 }
