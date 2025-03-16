@@ -5,65 +5,73 @@
     bool isStaff = ViewBag.IsStaff;
 }
 
-<div class="poll-management">
-    <div class="dashboard-header">
-        <h1>Polls & Surveys</h1>
-        @if (isAdmin || isStaff)
-        {
-            <div class="header-actions">
-                <button class="btn btn-primary" data-toggle="modal" data-target="#createPollModal">
-                    <i class="fas fa-plus"></i> Create New Poll
-                </button>
-            </div>
-        }
+<div class="container mt-4">
+    <div class="page-header">
+        <div class="header-content">
+            <h2><i class="fas fa-poll"></i> Polls & Surveys</h2>
+            <p>View and participate in community polls</p>
+        </div>
     </div>
 
-    <div class="polls-grid">
-        @if (Model != null && Model.Any())
-        {
-            foreach (var poll in Model)
+    <div class="poll-management">
+        <div class="header-container">
+            @if (isAdmin || isStaff)
             {
-                <div class="poll-card" data-poll-id="@poll.PollID">
-                    <div class="poll-header">
-                        <h3>@poll.Title</h3>
-                        <div class="poll-meta">
-                            <span><i class="fas fa-calendar"></i> @poll.StartDate.ToString("MMM dd, yyyy")</span>
-                            <span><i class="fas fa-users"></i> @poll.ResponseCount votes</span>
-                        </div>
-                    </div>
-                    <div class="poll-body">
-                        <p class="poll-description">@poll.Description</p>
-                        <div class="poll-options">
-                            @foreach (var option in poll.Options)
-                            {
-                                <div class="poll-option">
-                                    <button class="vote-btn" data-option-id="@option.OptionID">
-                                        <span class="option-text">@option.OptionText</span>
-                                        <div class="vote-progress" style="width: @(poll.ResponseCount > 0 ? (option.VoteCount * 100 / poll.ResponseCount) : 0)%"></div>
-                                        <span class="vote-count">@option.VoteCount votes</span>
-                                    </button>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                    @if (isAdmin || isStaff)
-                    {
-                        <div class="poll-actions">
-                            <button class="btn btn-danger delete-poll" data-poll-id="@poll.PollID">
-                                <i class="fas fa-trash"></i> Delete Poll
-                            </button>
-                        </div>
-                    }
+                <div class="header-actions">
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#createPollModal">
+                        <i class="fas fa-plus"></i> Create New Poll
+                    </button>
                 </div>
             }
-        }
-        else
-        {
-            <div class="empty-state">
-                <i class="fas fa-poll"></i>
-                <p>No polls available</p>
-            </div>
-        }
+        </div>
+
+        <div class="polls-grid">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var poll in Model)
+                {
+                    <div class="poll-card" data-poll-id="@poll.PollID">
+                        <div class="poll-header">
+                            <h3>@poll.Title</h3>
+                            <div class="poll-meta">
+                                <span><i class="fas fa-calendar"></i> @poll.StartDate.ToString("MMM dd, yyyy")</span>
+                                <span><i class="fas fa-users"></i> @poll.ResponseCount votes</span>
+                            </div>
+                        </div>
+                        <div class="poll-body">
+                            <p class="poll-description">@poll.Description</p>
+                            <div class="poll-options">
+                                @foreach (var option in poll.Options)
+                                {
+                                    <div class="poll-option">
+                                        <button class="vote-btn" data-option-id="@option.OptionID">
+                                            <span class="option-text">@option.OptionText</span>
+                                            <div class="vote-progress" style="width: @(poll.ResponseCount > 0 ? (option.VoteCount * 100 / poll.ResponseCount) : 0)%"></div>
+                                            <span class="vote-count">@option.VoteCount votes</span>
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        @if (isAdmin || isStaff)
+                        {
+                            <div class="poll-actions">
+                                <button class="btn btn-danger delete-poll" data-poll-id="@poll.PollID">
+                                    <i class="fas fa-trash"></i> Delete Poll
+                                </button>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty-state">
+                    <i class="fas fa-poll"></i>
+                    <p>No polls available</p>
+                </div>
+            }
+        </div>
     </div>
 </div>
 
@@ -121,11 +129,56 @@
 
 @section Styles {
     <style>
+        body {
+            background-color: #0d1117; /* GitHub dark theme background */
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .container {
+            position: relative;
+            padding: 2rem;
+            background-color: #161b22; /* GitHub dark theme container */
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #21262d; /* GitHub dark theme header */
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        .page-header h2 {
+            color: #fff;
+            font-size: 1.8rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .page-header p {
+            color: #8b949e; /* GitHub dark theme text */
+            margin: 0.5rem 0 0 0;
+            font-size: 1rem;
+        }
+
         /* Dashboard Layout */
         .poll-management {
             padding: 2rem;
-            background: #1a1a1a;
+            background: #21262d; /* GitHub dark theme section */
+            border-radius: 15px;
             min-height: 100vh;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .dashboard-header {
@@ -152,10 +205,11 @@
         }
 
         .poll-card {
-            background: #222;
+            background: #2d333b; /* GitHub dark theme card */
             border-radius: 15px;
             padding: 1.5rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease;
+            border: 1px solid #30363d;
         }
 
         .poll-card:hover {
@@ -165,6 +219,8 @@
 
         .poll-header {
             margin-bottom: 1.5rem;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 1rem;
         }
 
         .poll-header h3 {
@@ -174,26 +230,15 @@
         }
 
         .poll-meta {
-            display: flex;
-            gap: 1rem;
-            color: #888;
-            font-size: 0.9rem;
-        }
-
-        .poll-meta span {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            color: #8b949e;
         }
 
         .poll-meta i {
-            color: #00bcd4;
+            color: #58a6ff; /* GitHub blue */
         }
 
         .poll-description {
-            color: #bbb;
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
+            color: #c9d1d9; /* GitHub dark theme text */
         }
 
         /* Poll Options */
@@ -209,10 +254,10 @@
         .vote-btn {
             width: 100%;
             padding: 1rem;
-            background: #2a2a2a;
-            border: 1px solid #333;
+            background: #21262d;
+            border: 1px solid #30363d;
             border-radius: 8px;
-            color: #fff;
+            color: #c9d1d9;
             text-align: left;
             position: relative;
             overflow: hidden;
@@ -221,8 +266,7 @@
         }
 
         .vote-btn:hover {
-            background: #333;
-            transform: translateX(5px);
+            background: #30363d;
         }
 
         .vote-progress {
@@ -230,7 +274,7 @@
             left: 0;
             top: 0;
             bottom: 0;
-            background: rgba(0, 188, 212, 0.1);
+            background: rgba(88, 166, 255, 0.2); /* GitHub blue with opacity */
             transition: width 0.3s ease;
             z-index: 1;
         }
@@ -259,30 +303,34 @@
 
         /* Modal Styles */
         .modal-content {
-            background: #2a2a2a;
+            background: #21262d;
             color: #fff;
+            border: 1px solid #30363d;
         }
 
         .modal-header {
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid #30363d;
         }
 
         .modal-header .close {
             color: #fff;
         }
 
+        .modal-footer {
+            border-top: 1px solid #30363d;
+        }
+
         .form-control {
-            background: #333;
-            border: 1px solid #444;
-            color: #fff;
+            background: #2d333b;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
             border-radius: 8px;
         }
 
         .form-control:focus {
-            background: #333;
-            border-color: #00bcd4;
-            box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.25);
-            color: #fff;
+            background: #2d333b;
+            border-color: #58a6ff;
+            color: #c9d1d9;
         }
 
         /* Option Inputs */

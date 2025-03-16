@@ -13,69 +13,65 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 <div class="container mt-4">
-    <div class="header-container">
-        <button class="btn btn-back" onclick="history.back()">
-            <i class="fas fa-arrow-left"></i> Back
-        </button>
+    <div class="page-header">
+        <div class="header-content">
+            <h2><i class="fas fa-bullhorn"></i> Latest Announcements</h2>
+            <p>Stay updated with community news and updates</p>
+        </div>
+    </div>
 
-        <div class="page-header">
-            <div class="header-content">
-                <h2><i class="fas fa-bullhorn"></i> Latest Announcements</h2>
-                <p>Stay updated with community news and updates</p>
+    <div class="announcements-dashboard">
+        <!-- Sort Controls -->
+        <div class="controls-container">
+            <div class="sort-control">
+                <i class="fas fa-sort"></i>
+                <select id="sortSelect" class="form-control">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Announcements Section -->
+        <div class="content-section">
+            <div id="announcementContainer" class="announcement-grid">
+                @foreach (var announcement in Model)
+                {
+                    <div class="announcement-card" data-created-at="@announcement.CreatedAt.ToString("o")"
+                        data-title="@announcement.Title" data-content="@announcement.Content"
+                        data-date="@announcement.CreatedAt.ToString("MMMM dd, yyyy hh:mm tt")" 
+                        onclick="openAnnouncementModal(this)">
+                        <div class="card-content">
+                            <div class="announcement-icon">
+                                <i class="fas fa-bullhorn"></i>
+                            </div>
+                            <h3>@announcement.Title</h3>
+                            <div class="announcement-preview">
+                                @if (announcement.Content.Length > 150)
+                                {
+                                    @(announcement.Content.Substring(0, 150) + "...")
+                                }
+                                else
+                                {
+                                    @announcement.Content
+                                }
+                            </div>
+                            <div class="announcement-footer">
+                                <span class="date">
+                                    <i class="far fa-calendar-alt"></i>
+                                    @announcement.CreatedAt.ToString("MMM dd, yyyy")
+                                </span>
+                                <span class="time">
+                                    <i class="far fa-clock"></i>
+                                    @announcement.CreatedAt.ToString("hh:mm tt")
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </div>
-
-    <!-- Sort Controls -->
-    <div class="controls-container">
-        <div class="sort-control">
-            <i class="fas fa-sort"></i>
-            <select id="sortSelect" class="form-control">
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- Announcements Section -->
-    <section class="announcements-container">
-        <div id="announcementContainer" class="announcement-grid">
-            @foreach (var announcement in Model)
-            {
-                <div class="announcement-card" data-created-at="@announcement.CreatedAt.ToString("o")"
-                    data-title="@announcement.Title" data-content="@announcement.Content"
-                    data-date="@announcement.CreatedAt.ToString("MMMM dd, yyyy hh:mm tt")" 
-                    onclick="openAnnouncementModal(this)">
-                    <div class="card-content">
-                        <div class="announcement-icon">
-                            <i class="fas fa-bullhorn"></i>
-                        </div>
-                        <h3>@announcement.Title</h3>
-                        <div class="announcement-preview">
-                            @if (announcement.Content.Length > 150)
-                            {
-                                @(announcement.Content.Substring(0, 150) + "...")
-                            }
-                            else
-                            {
-                                @announcement.Content
-                            }
-                        </div>
-                        <div class="announcement-footer">
-                            <span class="date">
-                                <i class="far fa-calendar-alt"></i>
-                                @announcement.CreatedAt.ToString("MMM dd, yyyy")
-                            </span>
-                            <span class="time">
-                                <i class="far fa-clock"></i>
-                                @announcement.CreatedAt.ToString("hh:mm tt")
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-    </section>
 
     <!-- Enhanced Modal for Viewing Full Announcement -->
     <div class="modal fade" id="announcementModal" tabindex="-1" role="dialog" aria-labelledby="announcementModalLabel"
@@ -109,188 +105,195 @@
 </div>
 
 <style>
-/* Global Styles */
-body {
-    background-color: #121212;
-    color: #ffffff;
-    font-family: 'Poppins', sans-serif;
-}
+    body {
+        background-color: #0d1117; /* GitHub dark theme background */
+        color: #ffffff;
+        font-family: 'Poppins', sans-serif;
+    }
 
-/* Controls Container */
-.controls-container {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 2rem;
-    padding: 0 1rem;
-}
+    .container {
+        position: relative;
+        padding: 2rem;
+        background-color: #161b22; /* GitHub dark theme container */
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+    }
 
-.sort-control {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    background: #1a1a1a;
-    padding: 0.8rem 1.2rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
+    .page-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #21262d; /* GitHub dark theme header */
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
 
-.sort-control i {
-    color: #007bff;
-}
+    .header-content {
+        flex: 1;
+    }
 
-.sort-control select {
-    background: transparent;
-    border: none;
-    color: #fff;
-    font-size: 1rem;
-    cursor: pointer;
-    padding-right: 1.5rem;
-}
+    .page-header h2 {
+        color: #fff;
+        font-size: 1.8rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
 
-.sort-control select:focus {
-    outline: none;
-}
+    .page-header p {
+        color: #8b949e; /* GitHub dark theme text */
+        margin: 0.5rem 0 0 0;
+        font-size: 1rem;
+    }
 
-/* Announcements Grid */
-.announcements-container {
-    padding: 0 1rem;
-}
+    .announcements-dashboard {
+        padding: 1rem 0;
+    }
 
-.announcement-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 2rem;
-    padding: 1rem;
-}
+    .content-section {
+        background: #21262d; /* GitHub dark theme section */
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
 
-.announcement-card {
-    background: linear-gradient(145deg, #1a1a1a, #222);
-    border-radius: 15px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    position: relative;
-}
+    .controls-container {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 2rem;
+    }
 
-.announcement-card:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.2);
-}
+    .sort-control {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: #2d333b;
+        padding: 0.8rem 1.2rem;
+        border-radius: 12px;
+        border: 1px solid #30363d;
+    }
 
-.card-content {
-    padding: 2rem;
-}
+    .sort-control i {
+        color: #58a6ff; /* GitHub blue */
+    }
 
-.announcement-icon {
-    width: 50px;
-    height: 50px;
-    background: linear-gradient(45deg, #007bff, #00d2ff);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1.5rem;
-}
+    .sort-control select {
+        background: transparent;
+        border: none;
+        color: #c9d1d9;
+        font-size: 1rem;
+        cursor: pointer;
+    }
 
-.announcement-icon i {
-    font-size: 1.5rem;
-    color: white;
-}
+    .announcement-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2rem;
+    }
 
-.announcement-card h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: #fff;
-}
+    .announcement-card {
+        background: #2d333b;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: 1px solid #30363d;
+    }
 
-.announcement-preview {
-    color: #e0e0e0;
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-    font-size: 1rem;
-}
+    .announcement-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
 
-.announcement-footer {
-    display: flex;
-    gap: 1.5rem;
-    color: #888;
-    font-size: 0.9rem;
-}
+    .card-content {
+        padding: 2rem;
+    }
 
-.announcement-footer span {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
+    .announcement-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(45deg, #58a6ff, #238636);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
 
-/* Modal Styles */
-.modal-content {
-    background: #1a1a1a;
-    border: none;
-    border-radius: 15px;
-}
+    .announcement-icon i {
+        font-size: 1.5rem;
+        color: white;
+    }
 
-.modal-header {
-    background: linear-gradient(145deg, #222, #2a2a2a);
-    border-bottom: 1px solid #333;
-    padding: 1.5rem;
-}
+    .announcement-card h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #fff;
+    }
 
-.modal-title-container {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
+    .announcement-preview {
+        color: #c9d1d9;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
 
-.modal-icon {
-    font-size: 1.8rem;
-    color: #007bff;
-}
+    .announcement-footer {
+        display: flex;
+        gap: 1.5rem;
+        color: #8b949e;
+        font-size: 0.9rem;
+    }
 
-.modal-title {
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: #fff;
-    margin: 0;
-}
+    .announcement-footer span {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
 
-.modal-body {
-    padding: 2rem;
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: #e0e0e0;
-}
+    /* Modal Styles */
+    .modal-content {
+        background: #21262d;
+        border: 1px solid #30363d;
+        color: #fff;
+    }
 
-.modal-footer-info {
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid #333;
-    color: #888;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
+    .modal-header {
+        background: #2d333b;
+        border-bottom: 1px solid #30363d;
+        padding: 1.5rem;
+    }
 
-.modal-footer {
-    border-top: 1px solid #333;
-    padding: 1.5rem;
-}
+    .modal-title {
+        color: #fff;
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
 
-.close {
-    color: #fff;
-    opacity: 0.8;
-    transition: all 0.3s ease;
-}
+    .modal-body {
+        padding: 2rem;
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #c9d1d9;
+    }
 
-.close:hover {
-    color: #fff;
-    opacity: 1;
-}
+    .modal-footer {
+        border-top: 1px solid #30363d;
+        padding: 1.5rem;
+    }
 
-/* Responsive Design */
+    .close {
+        color: #8b949e;
+        opacity: 0.8;
+        transition: all 0.3s ease;
+    }
 
+    .close:hover {
+        color: #fff;
+        opacity: 1;
+    }
 </style>
 
 <script>

@@ -1,0 +1,793 @@
+@model IEnumerable<homeowner.Models.ContactDirectoryModel>
+@{
+    ViewData["Title"] = "Manage Contact Directory";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="admin-contact-directory">
+    <div class="page-header">
+        <div class="header-content">
+            <h1><i class="fas fa-address-book"></i> Contact Directory Management</h1>
+            <p class="text-muted">Manage staff and department contacts</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addContactModal">
+                <i class="fas fa-plus"></i> Add New Contact
+            </button>
+            <button class="btn btn-outline-secondary" id="exportContacts">
+                <i class="fas fa-file-export"></i> Export to Excel
+            </button>
+        </div>
+    </div>
+
+    <div class="management-tools">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search contacts...">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select id="departmentFilter" class="form-select">
+                    <option value="">All Departments</option>
+                    @{
+                        var departments = Model.Select(c => c.Department).Distinct().OrderBy(d => d);
+                        foreach (var dept in departments)
+                        {
+                            <option value="@dept">@dept</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select id="sortBy" class="form-select">
+                    <option value="name">Sort by Name</option>
+                    <option value="department">Sort by Department</option>
+                    <option value="position">Sort by Position</option>
+                    <option value="recent">Sort by Recently Added</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select id="displayCount" class="form-select">
+                    <option value="10">10 per page</option>
+                    <option value="25">25 per page</option>
+                    <option value="50">50 per page</option>
+                    <option value="100">100 per page</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive mt-4">
+        <table class="table table-hover contact-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Department</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Office Location</th>
+                    <th>Office Hours</th>
+                    <th>Last Updated</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="contactTableBody">
+                @foreach (var contact in Model)
+                {
+                    <tr data-contact-id="@contact.ContactID">
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-sm">@contact.Name[0]</div>
+                                <span class="ms-2">@contact.Name</span>
+                            </div>
+                        </td>
+                        <td>@contact.Position</td>
+                        <td><span class="badge bg-primary">@contact.Department</span></td>
+                        <td><a href="tel:@contact.PhoneNumber">@contact.PhoneNumber</a></td>
+                        <td><a href="mailto:@contact.Email">@contact.Email</a></td>
+                        <td>@contact.OfficeLocation</td>
+                        <td>@contact.OfficeHours</td>
+                        <td>@(contact.UpdatedAt?.ToString("MM/dd/yyyy HH:mm") ?? contact.CreatedAt.ToString("MM/dd/yyyy HH:mm"))</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-outline-primary edit-contact" 
+                                        data-contact-id="@contact.ContactID"
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#editContactModal">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger delete-contact" 
+                                        data-contact-id="@contact.ContactID">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination-container">
+        <nav aria-label="Contact directory pagination">
+            <ul class="pagination" id="pagination">
+                <!-- Pagination will be dynamically populated -->
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- Add Contact Modal -->
+<div class="modal fade" id="addContactModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Contact</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addContactForm" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" name="Name" required
+                               pattern="^[a-zA-Z\s]{2,100}$">
+                        <div class="invalid-feedback">
+                            Please enter a valid name (2-100 characters, letters only)
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Position</label>
+                        <input type="text" class="form-control" name="Position" required>
+                        <div class="invalid-feedback">
+                            Position is required
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Department</label>
+                        <select class="form-select" name="Department" required>
+                            <option value="">Select Department</option>
+                            @foreach (var dept in departments)
+                            {
+                                <option value="@dept">@dept</option>
+                            }
+                            <option value="other">Other</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Please select a department
+                        </div>
+                    </div>
+                    <div class="mb-3 other-department-input d-none">
+                        <label class="form-label">New Department Name</label>
+                        <input type="text" class="form-control" name="NewDepartment">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" name="PhoneNumber" required
+                               pattern="^\+?[\d\s-\(\)]+$">
+                        <div class="invalid-feedback">
+                            Please enter a valid phone number
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="Email" required>
+                        <div class="invalid-feedback">
+                            Please enter a valid email address
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Office Location</label>
+                        <input type="text" class="form-control" name="OfficeLocation" required>
+                        <div class="invalid-feedback">
+                            Office location is required
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Office Hours</label>
+                        <input type="text" class="form-control" name="OfficeHours" required
+                               placeholder="e.g., 9:00 AM - 5:00 PM">
+                        <div class="invalid-feedback">
+                            Office hours are required
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="submitAddContact">Add Contact</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Contact Modal -->
+<div class="modal fade" id="editContactModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Contact</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editContactForm" class="needs-validation" novalidate>
+                    <input type="hidden" name="ContactID" id="editContactId">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" name="Name" id="editName" required
+                               pattern="^[a-zA-Z\s]{2,100}$">
+                        <div class="invalid-feedback">
+                            Please enter a valid name (2-100 characters, letters only)
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Position</label>
+                        <input type="text" class="form-control" name="Position" id="editPosition" required>
+                        <div class="invalid-feedback">
+                            Position is required
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Department</label>
+                        <select class="form-select" name="Department" id="editDepartment" required>
+                            <option value="">Select Department</option>
+                            @foreach (var dept in departments)
+                            {
+                                <option value="@dept">@dept</option>
+                            }
+                            <option value="other">Other</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Please select a department
+                        </div>
+                    </div>
+                    <div class="mb-3 other-department-input d-none">
+                        <label class="form-label">New Department Name</label>
+                        <input type="text" class="form-control" name="NewDepartment" id="editNewDepartment">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" name="PhoneNumber" id="editPhoneNumber" required
+                               pattern="^\+?[\d\s-\(\)]+$">
+                        <div class="invalid-feedback">
+                            Please enter a valid phone number
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="Email" id="editEmail" required>
+                        <div class="invalid-feedback">
+                            Please enter a valid email address
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Office Location</label>
+                        <input type="text" class="form-control" name="OfficeLocation" id="editOfficeLocation" required>
+                        <div class="invalid-feedback">
+                            Office location is required
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Office Hours</label>
+                        <input type="text" class="form-control" name="OfficeHours" id="editOfficeHours" required>
+                        <div class="invalid-feedback">
+                            Office hours are required
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="submitEditContact">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .admin-contact-directory {
+            padding: 2rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #2d2d2d;
+        }
+
+        .header-content h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: #fff;
+        }
+
+        .header-content p {
+            margin: 0.5rem 0 0 0;
+        }
+
+        .management-tools {
+            background: #2d2d2d;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .search-box input {
+            padding-left: 2.5rem;
+        }
+
+        .contact-table {
+            background: #2d2d2d;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .contact-table th {
+            background: #222;
+            color: #fff;
+            font-weight: 600;
+            border-bottom: 2px solid #007bff;
+        }
+
+        .contact-table td {
+            vertical-align: middle;
+            color: #e0e0e0;
+        }
+
+        .avatar-sm {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #007bff, #00d2ff);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .badge {
+            font-weight: 500;
+            padding: 0.5em 0.8em;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-buttons .btn {
+            padding: 0.25rem 0.5rem;
+        }
+
+        .pagination-container {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pagination .page-link {
+            background: #2d2d2d;
+            border-color: #444;
+            color: #fff;
+        }
+
+        .pagination .page-link:hover {
+            background: #444;
+        }
+
+        .pagination .active .page-link {
+            background: #007bff;
+            border-color: #007bff;
+        }
+
+        .form-control, .form-select {
+            background: #2d2d2d;
+            border-color: #444;
+            color: #fff;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: #2d2d2d;
+            border-color: #007bff;
+            color: #fff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .modal-content {
+            background: #222;
+            color: #fff;
+        }
+
+        .modal-header {
+            border-bottom-color: #2d2d2d;
+        }
+
+        .modal-footer {
+            border-top-color: #2d2d2d;
+        }
+
+        .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            let currentPage = 1;
+            const itemsPerPage = 10;
+            let filteredContacts = [];
+
+            // Initialize Bootstrap validation
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+
+            // Department select handling
+            $('select[name="Department"]').change(function() {
+                const otherDeptInput = $(this).closest('form').find('.other-department-input');
+                if ($(this).val() === 'other') {
+                    otherDeptInput.removeClass('d-none');
+                    otherDeptInput.find('input').prop('required', true);
+                } else {
+                    otherDeptInput.addClass('d-none');
+                    otherDeptInput.find('input').prop('required', false);
+                }
+            });
+
+            // Search and filter functionality
+            function filterAndDisplayContacts() {
+                const searchQuery = $('#searchInput').val().toLowerCase();
+                const departmentFilter = $('#departmentFilter').val();
+                const sortBy = $('#sortBy').val();
+                const displayCount = parseInt($('#displayCount').val());
+
+                $.get('/ContactDirectory/Search', { 
+                    query: searchQuery, 
+                    department: departmentFilter 
+                }, function(contacts) {
+                    // Sort contacts
+                    contacts.sort((a, b) => {
+                        switch(sortBy) {
+                            case 'name':
+                                return a.name.localeCompare(b.name);
+                            case 'department':
+                                return a.department.localeCompare(b.department);
+                            case 'position':
+                                return a.position.localeCompare(b.position);
+                            case 'recent':
+                                const dateA = a.updatedAt || a.createdAt;
+                                const dateB = b.updatedAt || b.createdAt;
+                                return new Date(dateB) - new Date(dateA);
+                            default:
+                                return 0;
+                        }
+                    });
+
+                    filteredContacts = contacts;
+                    updatePagination(contacts.length, displayCount);
+                    displayContacts(contacts, currentPage, displayCount);
+                });
+            }
+
+            // Update display when filters change
+            $('#searchInput, #departmentFilter, #sortBy, #displayCount').on('change input', function() {
+                currentPage = 1;
+                filterAndDisplayContacts();
+            });
+
+            function displayContacts(contacts, page, perPage) {
+                const start = (page - 1) * perPage;
+                const end = start + perPage;
+                const pageContacts = contacts.slice(start, end);
+
+                const tbody = $('#contactTableBody');
+                tbody.empty();
+
+                pageContacts.forEach(contact => {
+                    const row = `
+                        <tr data-contact-id="${contact.contactID}">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm">${contact.name[0]}</div>
+                                    <span class="ms-2">${contact.name}</span>
+                                </div>
+                            </td>
+                            <td>${contact.position}</td>
+                            <td><span class="badge bg-primary">${contact.department}</span></td>
+                            <td><a href="tel:${contact.phoneNumber}">${contact.phoneNumber}</a></td>
+                            <td><a href="mailto:${contact.email}">${contact.email}</a></td>
+                            <td>${contact.officeLocation}</td>
+                            <td>${contact.officeHours}</td>
+                            <td>${formatDate(contact.updatedAt || contact.createdAt)}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm btn-outline-primary edit-contact" 
+                                            data-contact-id="${contact.contactID}"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#editContactModal">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger delete-contact" 
+                                            data-contact-id="${contact.contactID}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.append(row);
+                });
+            }
+
+            function updatePagination(totalItems, perPage) {
+                const totalPages = Math.ceil(totalItems / perPage);
+                const pagination = $('#pagination');
+                pagination.empty();
+
+                if (totalPages <= 1) return;
+
+                const maxPages = 5;
+                let startPage = Math.max(1, currentPage - Math.floor(maxPages / 2));
+                let endPage = Math.min(totalPages, startPage + maxPages - 1);
+
+                if (endPage - startPage + 1 < maxPages) {
+                    startPage = Math.max(1, endPage - maxPages + 1);
+                }
+
+                // Previous button
+                pagination.append(`
+                    <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                        <a class="page-link" href="#" data-page="${currentPage - 1}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                `);
+
+                // Page numbers
+                for (let i = startPage; i <= endPage; i++) {
+                    pagination.append(`
+                        <li class="page-item ${i === currentPage ? 'active' : ''}">
+                            <a class="page-link" href="#" data-page="${i}">${i}</a>
+                        </li>
+                    `);
+                }
+
+                // Next button
+                pagination.append(`
+                    <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                        <a class="page-link" href="#" data-page="${currentPage + 1}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                `);
+
+                // Add page click handlers
+                $('.page-link').click(function(e) {
+                    e.preventDefault();
+                    const newPage = parseInt($(this).data('page'));
+                    if (newPage >= 1 && newPage <= totalPages) {
+                        currentPage = newPage;
+                        displayContacts(filteredContacts, currentPage, perPage);
+                        updatePagination(totalItems, perPage);
+                    }
+                });
+            }
+
+            // Add Contact
+            $('#submitAddContact').click(function() {
+                const form = document.getElementById('addContactForm');
+                if (!form.checkValidity()) {
+                    form.classList.add('was-validated');
+                    return;
+                }
+
+                const formData = getFormData('#addContactForm');
+                if (formData.Department === 'other') {
+                    formData.Department = formData.NewDepartment;
+                }
+                delete formData.NewDepartment;
+
+                $.ajax({
+                    url: '/ContactDirectory/Create',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        if (response.success) {
+                            $('#addContactModal').modal('hide');
+                            form.reset();
+                            form.classList.remove('was-validated');
+                            
+                            // Add the new contact to the list and refresh display
+                            filteredContacts.unshift(response.contact);
+                            updateDepartmentFilter();
+                            displayContacts(filteredContacts, currentPage, parseInt($('#displayCount').val()));
+                            updatePagination(filteredContacts.length, parseInt($('#displayCount').val()));
+                            
+                            // Show success message
+                            showHeaderAlert('success', response.message);
+                        } else {
+                            showHeaderAlert('error', response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        showHeaderAlert('error', 'An error occurred while adding the contact');
+                    }
+                });
+            });
+
+            // Edit Contact
+            $(document).on('click', '.edit-contact', function() {
+                const contactId = $(this).data('contact-id');
+                const row = $(this).closest('tr');
+                
+                $('#editContactId').val(contactId);
+                $('#editName').val(row.find('.ms-2').text());
+                $('#editPosition').val(row.find('td:eq(1)').text());
+                $('#editDepartment').val(row.find('.badge').text());
+                $('#editPhoneNumber').val(row.find('td:eq(3) a').text());
+                $('#editEmail').val(row.find('td:eq(4) a').text());
+                $('#editOfficeLocation').val(row.find('td:eq(5)').text());
+                $('#editOfficeHours').val(row.find('td:eq(6)').text());
+            });
+
+            $('#submitEditContact').click(function() {
+                const form = document.getElementById('editContactForm');
+                if (!form.checkValidity()) {
+                    form.classList.add('was-validated');
+                    return;
+                }
+
+                const formData = getFormData('#editContactForm');
+                if (formData.Department === 'other') {
+                    formData.Department = formData.NewDepartment;
+                }
+                delete formData.NewDepartment;
+
+                $.ajax({
+                    url: '/ContactDirectory/Edit',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        if (response.success) {
+                            $('#editContactModal').modal('hide');
+                            form.classList.remove('was-validated');
+                            
+                            // Update the contact in the list and refresh display
+                            const index = filteredContacts.findIndex(c => c.contactID === response.contact.contactID);
+                            if (index !== -1) {
+                                filteredContacts[index] = response.contact;
+                            }
+                            updateDepartmentFilter();
+                            displayContacts(filteredContacts, currentPage, parseInt($('#displayCount').val()));
+                            
+                            // Show success message
+                            showHeaderAlert('success', response.message);
+                        } else {
+                            showHeaderAlert('error', response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        showHeaderAlert('error', 'An error occurred while updating the contact');
+                    }
+                });
+            });
+
+            // Delete Contact
+            $(document).on('click', '.delete-contact', function() {
+                const contactId = $(this).data('contact-id');
+                const contactName = $(this).closest('tr').find('.ms-2').text();
+                
+                if (confirm(`Are you sure you want to delete ${contactName}?`)) {
+                    $.ajax({
+                        url: '/ContactDirectory/Delete',
+                        type: 'POST',
+                        data: { id: contactId },
+                        success: function(response) {
+                            if (response.success) {
+                                // Remove the contact from the list and refresh display
+                                filteredContacts = filteredContacts.filter(c => c.contactID !== contactId);
+                                updateDepartmentFilter();
+                                displayContacts(filteredContacts, currentPage, parseInt($('#displayCount').val()));
+                                updatePagination(filteredContacts.length, parseInt($('#displayCount').val()));
+                                
+                                // Show success message
+                                showHeaderAlert('success', response.message);
+                            } else {
+                                showHeaderAlert('error', response.message);
+                            }
+                        },
+                        error: function(xhr) {
+                            showHeaderAlert('error', 'An error occurred while deleting the contact');
+                        }
+                    });
+                }
+            });
+
+            // Export to Excel
+            $('#exportContacts').click(function() {
+                const table = document.querySelector('.contact-table');
+                const ws = XLSX.utils.table_to_sheet(table);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Contacts');
+                XLSX.writeFile(wb, 'contact_directory.xlsx');
+            });
+
+            // Helper functions
+            function getFormData(formId) {
+                const formData = {};
+                $(formId).serializeArray().forEach(item => {
+                    formData[item.name] = item.value;
+                });
+                return formData;
+            }
+
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+            }
+
+            // Helper function to show header alerts
+            function showHeaderAlert(type, message) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `custom-alert ${type}`;
+                alertDiv.textContent = message;
+                document.body.appendChild(alertDiv);
+
+                setTimeout(function() {
+                    alertDiv.style.opacity = '0';
+                    setTimeout(() => alertDiv.remove(), 500);
+                }, 5000);
+            }
+
+            // Helper function to update department filter options
+            function updateDepartmentFilter() {
+                const departments = [...new Set(filteredContacts.map(c => c.department))].sort();
+                const departmentFilter = $('#departmentFilter');
+                const currentValue = departmentFilter.val();
+                
+                departmentFilter.empty();
+                departmentFilter.append('<option value="">All Departments</option>');
+                departments.forEach(dept => {
+                    departmentFilter.append(`<option value="${dept}">${dept}</option>`);
+                });
+                
+                if (departments.includes(currentValue)) {
+                    departmentFilter.val(currentValue);
+                }
+            }
+
+            // Initial load
+            filterAndDisplayContacts();
+        });
+    </script>
+} 

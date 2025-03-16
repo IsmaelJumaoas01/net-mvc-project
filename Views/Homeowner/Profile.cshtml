@@ -12,73 +12,69 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
-<div class="header-container">
-    <button class="btn btn-back" onclick="history.back()">
-        <i class="fas fa-arrow-left"></i> Back
-    </button>
-
+<div class="container mt-4">
     <div class="page-header">
         <div class="header-content">
             <h2><i class="fas fa-user-circle"></i> Profile Management</h2>
             <p>View and manage your personal information</p>
         </div>
     </div>
-</div>
 
-<!-- Profile Section -->
-<section class="profile-container">
-    <div class="profile-header">
-        <div class="profile-info">
-            <div class="profile-avatar">
-                <i class="fas fa-user"></i>
-            </div>
-            <div class="profile-details">
-                <h2>@username's Profile</h2>
-                <span class="role-badge">@Model.Role</span>
-            </div>
-        </div>
-        <button class="btn btn-primary edit-profile-btn" data-toggle="modal" data-target="#editProfileModal">
-            <i class="fas fa-edit"></i> Edit Profile
-        </button>
-    </div>
-    <div class="profile-content">
-        <div class="profile-stats">
-            <div class="stat-card">
-                <i class="fas fa-calendar-check"></i>
-                <div class="stat-info">
-                    <h4>Facility Bookings</h4>
-                    <p>0 Active</p>
+    <!-- Profile Section -->
+    <section class="profile-container">
+        <div class="profile-header">
+            <div class="profile-info">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-details">
+                    <h2>@username's Profile</h2>
+                    <span class="role-badge">@Model.Role</span>
                 </div>
             </div>
-            <div class="stat-card">
-                <i class="fas fa-tools"></i>
-                <div class="stat-info">
-                    <h4>Service Requests</h4>
-                    <p>0 Pending</p>
+            <button class="btn btn-primary edit-profile-btn" data-toggle="modal" data-target="#editProfileModal">
+                <i class="fas fa-edit"></i> Edit Profile
+            </button>
+        </div>
+        <div class="profile-content">
+            <div class="profile-stats">
+                <div class="stat-card">
+                    <i class="fas fa-calendar-check"></i>
+                    <div class="stat-info">
+                        <h4>Facility Bookings</h4>
+                        <p>0 Active</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-tools"></i>
+                    <div class="stat-info">
+                        <h4>Service Requests</h4>
+                        <p>0 Pending</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-comments"></i>
+                    <div class="stat-info">
+                        <h4>Forum Posts</h4>
+                        <p>0 Posts</p>
+                    </div>
                 </div>
             </div>
-            <div class="stat-card">
-                <i class="fas fa-comments"></i>
-                <div class="stat-info">
-                    <h4>Forum Posts</h4>
-                    <p>0 Posts</p>
+            <div class="recent-activities">
+                <h3><i class="fas fa-history"></i> Recent Activities</h3>
+                <div class="activity-container">
+                    <p>No recent activities available.</p>
+                </div>
+            </div>
+            <div class="services-bookings">
+                <h3><i class="fas fa-bookmark"></i> Recent Service Requests & Bookings</h3>
+                <div class="activity-container">
+                    <p>No recent requests or bookings available.</p>
                 </div>
             </div>
         </div>
-        <div class="recent-activities">
-            <h3><i class="fas fa-history"></i> Recent Activities</h3>
-            <div class="activity-container">
-                <p>No recent activities available.</p>
-            </div>
-        </div>
-        <div class="services-bookings">
-            <h3><i class="fas fa-bookmark"></i> Recent Service Requests & Bookings</h3>
-            <div class="activity-container">
-                <p>No recent requests or bookings available.</p>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
+</div>
 
 <!-- Edit Profile Modal -->
 <div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="editProfileModalLabel" aria-hidden="true">
@@ -137,8 +133,7 @@
                     </div>
                     <div class="password-section">
                         <h6 class="section-title">
-                            <i class="fas fa-lock"></i> Change Password
-                            <small class="text-muted">(leave blank to keep current password)</small>
+                          
                         </h6>
                         <div class="form-row">
                             <div class="form-group col-md-6">
@@ -180,14 +175,57 @@
 </div>
 
 <style>
+    body {
+        background-color: #0d1117; /* GitHub dark theme background */
+        color: #ffffff;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .container {
+        position: relative;
+        padding: 2rem;
+        background-color: #161b22; /* GitHub dark theme container */
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #21262d; /* GitHub dark theme header */
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-content {
+        flex: 1;
+    }
+
+    .page-header h2 {
+        color: #fff;
+        font-size: 1.8rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .page-header p {
+        color: #8b949e; /* GitHub dark theme text */
+        margin: 0.5rem 0 0 0;
+        font-size: 1rem;
+    }
+
     .profile-container {
-        background: #121212;
+        background: #21262d;
         color: white;
         padding: 2rem;
         border-radius: 15px;
-        max-width: 1000px;
         margin: 2rem auto;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 1px solid #30363d;
     }
 
     .profile-header {
@@ -451,8 +489,6 @@
         color: white;
         border: none;
     }
-
-  
 </style>
 
 @section Scripts {

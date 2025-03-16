@@ -21,6 +21,7 @@ Homeowner Application (MVC/.NET8 PROJECT)
 | 2025-03-10 | v1.1.0  | Improved UI design, added polls & survey, feedback & complain and contact directory (not uet done) functions |
 | 2025-03-12 | v1.1.1  | UI/UX Changes, fixed functionalities on user management and announcmenet |
 | 2025-03-13 | v1.1.2  | Small changes |
+| 2025-03-16 | v1.1.3  | Added Billing function (fully functional), changed color them UI, contact directory usable now |
 | YYYY-MM-DD | v1.0.4  | ===== |
 | YYYY-MM-DD | v1.0.4  | ===== |
 

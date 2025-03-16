@@ -20,10 +20,6 @@
 </head>
 
 <div class="container mt-4">
-    <button class="btn btn-back" onclick="history.back()">
-        <i class="fas fa-arrow-left"></i> Back
-    </button>
-
     <div class="page-header">
         <div class="header-content">
             <h2><i class="fas fa-tools"></i> Service Requests</h2>
@@ -144,37 +140,54 @@
 
 <style>
     body {
-        background-color: #0a0a0a;
+        background-color: #0d1117; /* GitHub dark theme background */
         color: #ffffff;
         font-family: 'Poppins', sans-serif;
     }
 
     .container {
-        background-color: #151515;
+        position: relative;
         padding: 2rem;
+        background-color: #161b22; /* GitHub dark theme container */
         border-radius: 20px;
         box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
     }
 
     .page-header {
-        margin-bottom: 3rem;
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #21262d; /* GitHub dark theme header */
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
-    .page-header h1 {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        background: linear-gradient(45deg, #00bcd4, #2196f3);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+    .header-content {
+        flex: 1;
+    }
+
+    .page-header h2 {
+        color: #fff;
+        font-size: 1.8rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .page-header p {
+        color: #8b949e; /* GitHub dark theme text */
+        margin: 0.5rem 0 0 0;
+        font-size: 1rem;
     }
 
     .request-form-container, .requests-history-container {
-        background: #1a1a1a;
+        background: #21262d;
         padding: 2rem;
         border-radius: 15px;
         height: 100%;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
     .form-title, .history-title {
@@ -185,7 +198,7 @@
     }
 
     .form-label {
-        color: #fff;
+        color: #c9d1d9;
         font-weight: 500;
         margin-bottom: 0.5rem;
         display: block;
@@ -193,13 +206,13 @@
 
     .form-label i {
         margin-right: 0.5rem;
-        color: #00bcd4;
+        color: #58a6ff;
     }
 
     .custom-input {
-        background: #2a2a2a;
-        border: 2px solid #444;
-        color: #fff;
+        background: #2d333b;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
         padding: 1rem;
         border-radius: 10px;
         transition: all 0.3s ease;
@@ -208,11 +221,11 @@
     }
 
     .custom-input:focus {
-        background: #2a2a2a;
-        border-color: #00bcd4;
-        box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.2);
+        background: #2d333b;
+        border-color: #58a6ff;
+        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
         outline: none;
-        color: #fff;
+        color: #c9d1d9;
     }
 
     .custom-input:hover {
@@ -227,27 +240,15 @@
     textarea.custom-input {
         min-height: 120px;
         resize: vertical;
-        background: #2a2a2a;
-        color: #fff;
-    }
-
-    textarea.custom-input:focus {
-        background: #2a2a2a;
-        color: #fff;
-    }
-
-    textarea.custom-input:hover {
-        background: #2a2a2a;
-        color: #fff;
     }
 
     .submit-btn {
-        background: linear-gradient(45deg, #00bcd4, #2196f3);
-        border: none;
+        background: #238636;
+        border: 1px solid rgba(240,246,252,0.1);
         padding: 1rem 2.5rem;
         font-weight: 600;
         letter-spacing: 1px;
-        border-radius: 10px;
+        border-radius: 6px;
         transition: all 0.3s ease;
         color: white;
         font-size: 1.1rem;
@@ -256,8 +257,8 @@
     }
 
     .submit-btn:hover {
+        background: #2ea043;
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
     }
 
     .submit-btn i {
@@ -265,12 +266,12 @@
     }
 
     .request-card {
-        background: #222;
+        background: #2d333b;
         border-radius: 15px;
         padding: 1.5rem;
         margin-bottom: 1.5rem;
         transition: all 0.3s ease;
-        border: 1px solid #333;
+        border: 1px solid #30363d;
         min-height: 200px;
         display: flex;
         flex-direction: column;
@@ -278,7 +279,7 @@
 
     .request-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     }
 
     .request-header {
@@ -286,7 +287,7 @@
         align-items: center;
         margin-bottom: 1rem;
         padding-bottom: 1rem;
-        border-bottom: 1px solid #333;
+        border-bottom: 1px solid #30363d;
     }
 
     .request-icon {
@@ -298,6 +299,7 @@
         justify-content: center;
         font-size: 1.5rem;
         margin-right: 1rem;
+        background: linear-gradient(45deg, #58a6ff, #238636);
         color: white;
     }
 
@@ -344,7 +346,7 @@
     }
 
     .request-id {
-        color: #888;
+        color: #8b949e;
         font-size: 0.9rem;
         display: block;
         margin-top: 0.2rem;
@@ -355,7 +357,7 @@
     }
 
     .request-description {
-        color: #ddd;
+        color: #c9d1d9;
         margin-bottom: 1rem;
         line-height: 1.6;
         font-size: 1rem;
@@ -372,17 +374,17 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        color: #bbb;
+        color: #8b949e;
         font-size: 0.95rem;
     }
 
     .detail-item i {
-        color: #00bcd4;
+        color: #58a6ff;
     }
 
     .request-footer {
         padding-top: 1rem;
-        border-top: 1px solid #333;
+        border-top: 1px solid #30363d;
     }
 
     .status-badge {
@@ -395,25 +397,46 @@
     }
 
     .status-badge.pending {
-        background: linear-gradient(45deg, #FFC107, #FF9800);
+        background: rgba(249, 168, 37, 0.1);
+        color: #f9a825;
     }
 
     .status-badge.in-progress {
-        background: linear-gradient(45deg, #2196f3, #00bcd4);
+        background: rgba(88, 166, 255, 0.1);
+        color: #58a6ff;
     }
 
     .status-badge.resolved {
-        background: linear-gradient(45deg, #4CAF50, #8BC34A);
+        background: rgba(35, 134, 54, 0.1);
+        color: #238636;
     }
 
     .status-badge.rejected {
-        background: linear-gradient(45deg, #f44336, #e91e63);
+        background: rgba(248, 81, 73, 0.1);
+        color: #f85149;
+    }
+
+    .filter-container {
+        background: #2d333b;
+        padding: 1rem;
+        border-radius: 12px;
+        border: 1px solid #30363d;
+        margin-bottom: 2rem;
+    }
+
+    .filter-container select {
+        background: transparent;
+        border: none;
+        color: #c9d1d9;
+        width: 100%;
+        font-size: 1rem;
+        cursor: pointer;
     }
 
     .alert-danger {
-        background: linear-gradient(45deg, #f44336, #e91e63);
-        border: none;
-        color: white;
+        background: rgba(248, 81, 73, 0.1);
+        border: 1px solid #f85149;
+        color: #f85149;
         padding: 1rem;
         border-radius: 10px;
         margin-bottom: 2rem;
@@ -473,11 +496,11 @@
     }
 
     .toast.success {
-        background: linear-gradient(45deg, #4CAF50, #8BC34A);
+        background: linear-gradient(45deg, #238636, #2ea043);
     }
 
     .toast.error {
-        background: linear-gradient(45deg, #f44336, #e91e63);
+        background: linear-gradient(45deg, #f85149, #f85149);
     }
 </style>
 

@@ -15,10 +15,7 @@
 
 <div class="container mt-4">
     <div class="header-container">
-        <button class="btn btn-back" onclick="history.back()">
-            <i class="fas fa-arrow-left"></i> Back
-        </button>
-
+     
         <div class="page-header">
             <div class="header-content">
                 <h2><i class="fas fa-comments"></i> Community Forum</h2>
@@ -486,7 +483,235 @@
 <div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
 
 <style>
-    /* Toast styles */
+    body {
+        background-color: #0d1117; /* GitHub dark theme background */
+        color: #ffffff;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .container {
+        position: relative;
+        padding: 2rem;
+        background-color: #161b22; /* GitHub dark theme container */
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #21262d; /* GitHub dark theme header */
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-content {
+        flex: 1;
+    }
+
+    .page-header h2 {
+        color: #fff;
+        font-size: 1.8rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .page-header p {
+        color: #8b949e; /* GitHub dark theme text */
+        margin: 0.5rem 0 0 0;
+        font-size: 1rem;
+    }
+
+    /* Modal Styles */
+    .modal-content {
+        background: #21262d;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+    }
+
+    .modal-header {
+        background: #2d333b;
+        border-bottom: 1px solid #30363d;
+        padding: 1.5rem;
+    }
+
+    .modal-title {
+        color: #fff;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .modal-body {
+        background: #21262d;
+        padding: 1.5rem;
+    }
+
+    .modal-footer {
+        background: #2d333b;
+        border-top: 1px solid #30363d;
+        padding: 1rem;
+    }
+
+    .form-label {
+        color: #c9d1d9;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        background: #2d333b;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+        border-radius: 6px;
+    }
+
+    .form-control:focus {
+        background: #2d333b;
+        border-color: #58a6ff;
+        color: #c9d1d9;
+        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
+    }
+
+    .form-select {
+        background-color: #2d333b;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+    }
+
+    .form-select:focus {
+        border-color: #58a6ff;
+        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
+    }
+
+    .btn-close {
+        color: #8b949e;
+        opacity: 0.8;
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+
+    .btn-close:hover {
+        color: #fff;
+        opacity: 1;
+    }
+
+    .btn-primary {
+        background: #238636;
+        border: 1px solid rgba(240,246,252,0.1);
+        color: #fff;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+        background: #2ea043;
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background: #21262d;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+    }
+
+    .btn-secondary:hover {
+        background: #2d333b;
+        border-color: #58a6ff;
+        color: #fff;
+    }
+
+    /* Post Cards */
+    .post-card {
+        background: #2d333b;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+        border: 1px solid #30363d;
+        margin-bottom: 1.5rem;
+    }
+
+    .post-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-header {
+        background: #2d333b;
+        border-bottom: 1px solid #30363d;
+        padding: 1.2rem;
+    }
+
+    .card-title {
+        color: #fff;
+        font-size: 1.2rem;
+        margin: 0;
+    }
+
+    .text-muted {
+        color: #8b949e !important;
+    }
+
+    .card-body {
+        padding: 1.2rem;
+        background: #2d333b;
+    }
+
+    .card-text {
+        color: #c9d1d9;
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+
+    /* Vote Buttons */
+    .upvote-btn, .downvote-btn {
+        background: #21262d;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+
+    .upvote-btn:hover {
+        background: #238636;
+        border-color: #238636;
+        color: #fff;
+    }
+
+    .downvote-btn:hover {
+        background: #f85149;
+        border-color: #f85149;
+        color: #fff;
+    }
+
+    /* Edit/Delete Buttons */
+    .edit-post-btn, .delete-post-btn {
+        background: #21262d;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        margin-right: 0.5rem;
+    }
+
+    .edit-post-btn:hover {
+        background: #58a6ff;
+        border-color: #58a6ff;
+        color: #fff;
+    }
+
+    .delete-post-btn:hover {
+        background: #f85149;
+        border-color: #f85149;
+        color: #fff;
+    }
+
+    /* Toast Notification */
     .toast {
         position: fixed;
         top: 20px;
@@ -506,76 +731,25 @@
     }
 
     .toast.success {
-        background: linear-gradient(45deg, #4CAF50, #8BC34A);
+        background: linear-gradient(45deg, #238636, #2ea043);
     }
 
     .toast.error {
-        background: linear-gradient(45deg, #f44336, #e91e63);
+        background: linear-gradient(45deg, #f85149, #f85149);
     }
 
-    /* Delete Confirmation Modal Styles */
-    #deleteConfirmModal .modal-content {
-        background-color: #222;
-        color: #fff;
-        border-radius: 8px;
-        border: none;
+    /* Filter Dropdown */
+    #filterOptions {
+        background: #2d333b;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        margin-right: 1rem;
     }
 
-    #deleteConfirmModal .modal-header {
-        background-color: #333;
-        border-bottom: 1px solid #444;
-        color: #fff;
-    }
-
-    #deleteConfirmModal .modal-footer {
-        border-top: 1px solid #444;
-    }
-
-    #deleteConfirmModal .btn-secondary {
-        background-color: #555;
-        border: none;
-        transition: 0.3s;
-    }
-
-    #deleteConfirmModal .btn-secondary:hover {
-        background-color: #777;
-    }
-
-    #deleteConfirmModal .btn-danger {
-        background-color: #dc3545;
-        border: none;
-        transition: 0.3s;
-    }
-
-    #deleteConfirmModal .btn-danger:hover {
-        background-color: #c82333;
-    }
-
-    #deleteConfirmModal .modal-body p {
-        margin-bottom: 0;
-        font-size: 1.1rem;
-    }
-
-    #deleteConfirmModal .modal-title {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: #fff;
-    }
-
-    #deleteConfirmModal .modal-title i {
-        font-size: 1.2rem;
-    }
-
-    #deleteConfirmModal .btn {
-        padding: 0.5rem 1.5rem;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    #deleteConfirmModal .btn i {
-        font-size: 1rem;
+    #filterOptions:focus {
+        border-color: #58a6ff;
+        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
     }
 </style>

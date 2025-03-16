@@ -31,9 +31,7 @@
 
 <div class="container mt-4">
     <div class="header-container">
-        <button class="btn btn-back" onclick="history.back()">
-            <i class="fas fa-arrow-left"></i> Back
-        </button>
+
 
         <div class="page-header">
             <div class="header-content">
@@ -191,29 +189,46 @@
 
 <style>
     body {
-        background-color: #0a0a0a;
+        background-color: #0d1117; /* GitHub dark theme background */
         color: #ffffff;
         font-family: 'Poppins', sans-serif;
     }
 
     .container {
-        background-color: #151515;
+        position: relative;
         padding: 2rem;
+        background-color: #161b22; /* GitHub dark theme container */
         border-radius: 20px;
         box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
     }
 
     .page-header {
-        margin-bottom: 3rem;
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #21262d; /* GitHub dark theme header */
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
-    .page-header h1 {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        background: linear-gradient(45deg, #00bcd4, #2196f3);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+    .header-content {
+        flex: 1;
+    }
+
+    .page-header h2 {
+        color: #fff;
+        font-size: 1.8rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .page-header p {
+        color: #8b949e; /* GitHub dark theme text */
+        margin: 0.5rem 0 0 0;
+        font-size: 1rem;
     }
 
     .pulse-button {
@@ -262,26 +277,104 @@
         }
     }
 
-    /* Modal Styling */
+    /* Modal Styles */
     .modal-content {
-        background: #1a1a1a;
-        border-radius: 20px;
-        border: 1px solid #333;
+        background: #21262d;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
     }
 
     .modal-header {
-        border-bottom: 1px solid #333;
+        background: #2d333b;
+        border-bottom: 1px solid #30363d;
         padding: 1.5rem;
-        background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
     }
 
     .modal-title {
         color: #fff;
         font-size: 1.5rem;
+        font-weight: 600;
     }
 
     .modal-body {
-        padding: 2rem;
+        background: #21262d;
+        padding: 1.5rem;
+    }
+
+    .modal-footer {
+        background: #2d333b;
+        border-top: 1px solid #30363d;
+        padding: 1rem;
+    }
+
+    .form-label {
+        color: #c9d1d9;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        background: #2d333b;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+        border-radius: 6px;
+    }
+
+    .form-control:focus {
+        background: #2d333b;
+        border-color: #58a6ff;
+        color: #c9d1d9;
+        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
+    }
+
+    .form-select {
+        background-color: #2d333b;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+    }
+
+    .form-select:focus {
+        background-color: #2d333b;
+        border-color: #58a6ff;
+        color: #c9d1d9;
+        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
+    }
+
+    .btn-close {
+        color: #8b949e;
+        opacity: 0.8;
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+
+    .btn-close:hover {
+        color: #fff;
+        opacity: 1;
+    }
+
+    .btn-primary {
+        background: #238636;
+        border: 1px solid rgba(240,246,252,0.1);
+        color: #fff;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+        background: #2ea043;
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background: #21262d;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+    }
+
+    .btn-secondary:hover {
+        background: #2d333b;
+        border-color: #58a6ff;
+        color: #fff;
     }
 
     /* Facility Grid */
@@ -293,21 +386,22 @@
     }
 
     .facility-card {
-        background: #222;
-        border-radius: 15px;
+        background: #2d333b;
+        border-radius: 10px;
         overflow: hidden;
         cursor: pointer;
         transition: all 0.3s ease;
+        border: 1px solid #30363d;
     }
 
     .facility-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     }
 
     .facility-card.selected {
-        border: 2px solid #00bcd4;
-        box-shadow: 0 0 20px rgba(0, 188, 212, 0.3);
+        border: 2px solid #58a6ff;
+        box-shadow: 0 0 20px rgba(88, 166, 255, 0.3);
     }
 
     .facility-image {
@@ -387,22 +481,11 @@
     }
 
     .timeline-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 2rem;
-        opacity: 0;
-        transform: translateY(20px);
-        animation: fadeInUp 0.5s ease forwards;
-    }
-
-    /* @*
-        Timeline Animation
-    *@ */
-    @@keyframes fadeInUp {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        background: #2d333b;
+        border-radius: 10px;
+        padding: 1.2rem;
+        margin-bottom: 1rem;
+        border: 1px solid #30363d;
     }
 
     .timeline-icon {
@@ -433,19 +516,19 @@
     }
 
     .timeline-content {
-        background: #222;
-        border-radius: 15px;
-        padding: 1.5rem;
+        background: #2d333b;
+        border-radius: 10px;
+        padding: 1.2rem;
         flex-grow: 1;
         display: flex;
         align-items: center;
         gap: 1.5rem;
-        transition: all 0.3s ease;
+        border: 1px solid #30363d;
     }
 
     .timeline-content:hover {
-        transform: translateX(10px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     }
 
     .facility-img {
@@ -473,23 +556,25 @@
     }
 
     .status-badge {
-        display: inline-block;
-        padding: 0.5rem 1rem;
-        border-radius: 50px;
-        font-size: 0.9rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
         font-weight: 500;
     }
 
     .status-badge.confirmed {
-        background: linear-gradient(45deg, #4CAF50, #8BC34A);
+        background: rgba(35, 134, 54, 0.1);
+        color: #238636;
     }
 
     .status-badge.pending {
-        background: linear-gradient(45deg, #FFC107, #FF9800);
+        background: rgba(249, 168, 37, 0.1);
+        color: #f9a825;
     }
 
     .status-badge.cancelled {
-        background: linear-gradient(45deg, #f44336, #e91e63);
+        background: rgba(248, 81, 73, 0.1);
+        color: #f85149;
     }
 
     /* Pagination Styling */
@@ -558,6 +643,33 @@
     .no-reservations p {
         font-size: 1.2rem;
         margin: 0;
+    }
+
+    /* Toast Notification */
+    .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        color: white;
+        font-weight: 500;
+        transform: translateX(120%);
+        transition: transform 0.3s ease;
+        z-index: 9999;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .toast.show {
+        transform: translateX(0);
+    }
+
+    .toast.success {
+        background: linear-gradient(45deg, #238636, #2ea043);
+    }
+
+    .toast.error {
+        background: linear-gradient(45deg, #f85149, #f85149);
     }
 </style>
 

@@ -178,18 +178,26 @@
 </div>
 
 <style>
+    body {
+        background-color: #0d1117; /* GitHub dark theme background */
+        color: #ffffff;
+        font-family: 'Poppins', sans-serif;
+    }
+
     .forum-details {
         padding: 2rem;
-        background: #1a1a1a;
-        min-height: 100vh;
-        color: #fff;
+        background-color: #161b22; /* GitHub dark theme container */
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
     }
 
     .post-container {
-        background: #222;
-        border-radius: 15px;
+        background: #21262d; /* GitHub dark theme section */
+        border-radius: 12px;
         padding: 2rem;
         margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        border: 1px solid #30363d;
     }
 
     .post-header h1 {
@@ -202,7 +210,7 @@
     .post-meta {
         display: flex;
         gap: 1rem;
-        color: #888;
+        color: #8b949e;
         margin-bottom: 1.5rem;
     }
 
@@ -213,11 +221,11 @@
     }
 
     .post-meta i {
-        color: #00bcd4;
+        color: #58a6ff;
     }
 
     .post-content {
-        color: #ddd;
+        color: #c9d1d9;
         line-height: 1.6;
         margin-bottom: 1.5rem;
     }
@@ -226,6 +234,7 @@
         max-width: 100%;
         border-radius: 10px;
         margin-top: 1rem;
+        border: 1px solid #30363d;
     }
 
     .post-actions {
@@ -234,7 +243,7 @@
         align-items: center;
         margin-top: 1.5rem;
         padding-top: 1.5rem;
-        border-top: 1px solid #333;
+        border-top: 1px solid #30363d;
     }
 
     .vote-section {
@@ -243,15 +252,15 @@
     }
 
     .vote-btn {
+        background: #21262d;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 20px;
-        background: #333;
-        color: #fff;
-        transition: all 0.3s ease;
     }
 
     .vote-btn:hover {
@@ -259,21 +268,27 @@
     }
 
     .vote-btn.active {
-        background: #00bcd4;
+        background: #238636;
+        color: #fff;
     }
 
     .upvote-btn:hover {
-        background: #4caf50;
+        background: #238636;
+        border-color: #238636;
+        color: #fff;
     }
 
     .downvote-btn:hover {
-        background: #f44336;
+        background: #f85149;
+        border-color: #f85149;
+        color: #fff;
     }
 
     .comments-section {
-        background: #222;
-        border-radius: 15px;
+        background: #21262d;
+        border-radius: 12px;
         padding: 2rem;
+        border: 1px solid #30363d;
     }
 
     .comments-section h2 {
@@ -282,28 +297,29 @@
     }
 
     .comment-form {
-        background: #2a2a2a;
+        background: #2d333b;
         padding: 1.5rem;
         border-radius: 10px;
         margin-bottom: 2rem;
+        border: 1px solid #30363d;
     }
 
     .form-control {
-        background: #333;
-        border: 1px solid #444;
-        color: #fff !important;
-        border-radius: 8px;
+        background: #2d333b;
+        border: 1px solid #30363d;
+        color: #c9d1d9 !important;
+        border-radius: 6px;
     }
 
     .form-control:focus {
-        background: #2a2a2a;
-        border-color: #00bcd4;
-        box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.25);
-        color: #fff !important;
+        background: #2d333b;
+        border-color: #58a6ff;
+        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
+        color: #c9d1d9 !important;
     }
 
     .form-control::placeholder {
-        color: #888;
+        color: #8b949e;
     }
 
     textarea.form-control {
@@ -311,44 +327,18 @@
         resize: vertical;
     }
 
-    /* Modal Form Specific Styles */
-    .modal .form-control {
-        background: #333;
-        border: 1px solid #444;
-        color: #fff !important;
-    }
-
-    .modal .form-control:focus {
-        background: #2a2a2a;
-        color: #fff !important;
-    }
-
-    .modal textarea.form-control {
-        min-height: 120px;
-    }
-
-    .custom-file-upload {
-        display: inline-block;
-        padding: 0.75rem 1.5rem;
-        background: #333;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .custom-file-upload:hover {
-        background: #444;
-    }
-
-    .custom-file-upload input[type="file"] {
-        display: none;
-    }
-
     .comment-card {
-        background: #2a2a2a;
+        background: #2d333b;
         border-radius: 10px;
         padding: 1.5rem;
         margin-bottom: 1rem;
+        border: 1px solid #30363d;
+        transition: transform 0.3s ease;
+    }
+
+    .comment-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     }
 
     .comment-header {
@@ -358,19 +348,24 @@
     }
 
     .comment-author {
-        color: #00bcd4;
+        color: #58a6ff;
         font-weight: 500;
     }
 
     .comment-date {
-        color: #888;
+        color: #8b949e;
         font-size: 0.9rem;
+    }
+
+    .comment-content {
+        color: #c9d1d9;
     }
 
     .comment-image {
         max-width: 100%;
         border-radius: 8px;
         margin-top: 1rem;
+        border: 1px solid #30363d;
     }
 
     .comment-actions {
@@ -379,47 +374,82 @@
         align-items: center;
         margin-top: 1rem;
         padding-top: 1rem;
-        border-top: 1px solid #333;
+        border-top: 1px solid #30363d;
     }
 
     .modal-content {
-        background: #2a2a2a;
-        color: #fff;
+        background: #21262d;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
     }
 
     .modal-header {
-        border-bottom: 1px solid #333;
+        background: #2d333b;
+        border-bottom: 1px solid #30363d;
+        padding: 1.5rem;
     }
 
-    .modal-header .close {
+    .modal-title {
         color: #fff;
+        font-size: 1.5rem;
+        font-weight: 600;
     }
 
-    .btn {
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-        font-weight: 500;
-        transition: all 0.3s ease;
+    .modal-body {
+        background: #21262d;
+        padding: 1.5rem;
+    }
+
+    .modal-footer {
+        background: #2d333b;
+        border-top: 1px solid #30363d;
+        padding: 1rem;
     }
 
     .btn-primary {
-        background: #00bcd4;
-        border: none;
+        background: #238636;
+        border: 1px solid rgba(240,246,252,0.1);
+        color: #fff;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
     }
 
     .btn-primary:hover {
-        background: #008ba3;
-        transform: translateY(-2px);
+        background: #2ea043;
+        transform: translateY(-1px);
     }
 
     .btn-danger {
-        background: #f44336;
-        border: none;
+        background: #f85149;
+        border: 1px solid rgba(240,246,252,0.1);
+        color: #fff;
     }
 
     .btn-danger:hover {
-        background: #d32f2f;
-        transform: translateY(-2px);
+        background: #f85149;
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+
+    .custom-file-upload {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background: #2d333b;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        color: #c9d1d9;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .custom-file-upload:hover {
+        background: #444;
+        border-color: #58a6ff;
+    }
+
+    .custom-file-upload input[type="file"] {
+        display: none;
     }
 
     .toast {
@@ -441,11 +471,11 @@
     }
 
     .toast.success {
-        background: linear-gradient(45deg, #4CAF50, #8BC34A);
+        background: linear-gradient(45deg, #238636, #2ea043);
     }
 
     .toast.error {
-        background: linear-gradient(45deg, #f44336, #e91e63);
+        background: linear-gradient(45deg, #f85149, #f85149);
     }
 </style>
 

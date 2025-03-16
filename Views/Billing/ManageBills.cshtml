@@ -1,0 +1,3241 @@
+@model List<homeowner.Models.Bill>
+@{
+    ViewData["Title"] = "Manage Bills";
+}
+
+<div class="billing-management">
+    <div class="page-header">
+        <div class="header-content">
+            <h1><i class="fas fa-file-invoice"></i> Manage Bills</h1>
+            <p>Generate and manage bills for homeowners</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#generateBillsModal">
+                <i class="fas fa-plus"></i> Generate Bills
+            </button>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#billTypeModal">
+                <i class="fas fa-list"></i> Manage Bill Types
+            </button>
+            <button class="btn btn-warning" id="markOverdueBills">
+                <i class="fas fa-exclamation-circle"></i> Mark Overdue
+            </button>
+            <button class="btn btn-outline-primary" id="exportBills">
+                <i class="fas fa-file-export"></i> Export
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <ul class="nav nav-tabs mb-4" id="billsTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="bills-tab" data-bs-toggle="tab" data-bs-target="#bills" type="button" role="tab">
+                <i class="fas fa-file-invoice"></i> Bills List
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="payments-tab" data-bs-toggle="tab" data-bs-target="#payments" type="button" role="tab">
+                <i class="fas fa-money-bill-wave"></i> Incoming Payments
+                <span class="badge bg-warning pending-count"></span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab">
+                <i class="fas fa-history"></i> Payment History
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="homeowner-tab" data-bs-toggle="tab" data-bs-target="#homeowner" type="button" role="tab">
+                <i class="fas fa-user"></i> Homeowner Details
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="billsTabContent">
+        <!-- Bills List Tab -->
+        <div class="tab-pane fade show active" id="bills" role="tabpanel">
+            <!-- Management Tools -->
+            <div class="management-tools">
+                <div class="search-filters">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search bills...">
+                    </div>
+                    <select id="statusFilter" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Overdue">Overdue</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                    <select id="billTypeFilter" class="form-select">
+                        <option value="">All Bill Types</option>
+                        @foreach (var type in ViewBag.BillTypes)
+                        {
+                            <option value="@type.BillTypeID">@type.Name</option>
+                        }
+                    </select>
+                    <select id="sortBy" class="form-select">
+                        <option value="dueDate">Sort by Due Date</option>
+                        <option value="amount">Sort by Amount</option>
+                        <option value="status">Sort by Status</option>
+                        <option value="name">Sort by Name</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Bills Table -->
+            <div class="table-responsive">
+                <table class="table bills-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="selectAll">
+                            </th>
+                            <th>Homeowner</th>
+                            <th>Bill Type</th>
+                            <th>Amount</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var bill in Model)
+                        {
+                            <tr data-bill-id="@bill.BillID">
+                                <td>
+                                    <input type="checkbox" class="bill-checkbox">
+                                </td>
+                                <td>@bill.User.Username</td>
+                                <td>@bill.BillType.Name</td>
+                                <td>₱@bill.Amount.ToString("N2")</td>
+                                <td>@bill.DueDate.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <span class="status-badge @bill.Status.ToLower()">@bill.Status</span>
+                                </td>
+                                <td>@bill.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-sm btn-outline-primary view-bill" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-warning edit-status" title="Update Status">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger delete-bill" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bulk Actions -->
+            <div class="bulk-actions" style="display: none;">
+                <button class="btn btn-primary" id="verifySelected">
+                    <i class="fas fa-check-double"></i> Verify Selected
+                </button>
+                <button class="btn btn-warning" id="markOverdue">
+                    <i class="fas fa-exclamation-circle"></i> Mark as Overdue
+                </button>
+                <button class="btn btn-danger" id="deleteSelected">
+                    <i class="fas fa-trash"></i> Delete Selected
+                </button>
+            </div>
+        </div>
+
+        <!-- Incoming Payments Tab -->
+        <div class="tab-pane fade" id="payments" role="tabpanel">
+            <div class="pending-payments-section">
+                <div class="section-header mb-4">
+                    <div class="header-title">
+                        <h2><i class="fas fa-clock"></i> Pending Payment Verifications</h2>
+                        <p>Review and verify submitted payments from homeowners</p>
+                    </div>
+                </div>
+                <div class="pending-payments-list">
+                    <!-- Payments will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment History Tab -->
+        <div class="tab-pane fade" id="history" role="tabpanel">
+            <div class="payment-history-section">
+                <div class="section-header mb-4">
+                    <div class="header-title">
+                        <h2><i class="fas fa-history"></i> Payment History</h2>
+                        <p>Track all verified and rejected payments</p>
+                    </div>
+                    <div class="history-filters mt-4">
+                        <div class="filter-group">
+                            <label class="filter-label">Status</label>
+                            <select class="form-select" id="historyStatusFilter">
+                                <option value="all">All Status</option>
+                                <option value="Verified">Verified</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Payment Method</label>
+                            <select class="form-select" id="historyMethodFilter">
+                                <option value="all">All Methods</option>
+                                <option value="GCash">GCash</option>
+                                <option value="Bank Transfer">Bank Transfer</option>
+                                <option value="Cash">Cash</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Date</label>
+                            <input type="date" class="form-control" id="historyDateFilter">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Search Homeowner</label>
+                            <input type="text" class="form-control" id="historySearchFilter" placeholder="Search by name...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="payment-history-list">
+                    <!-- Payment history items will be loaded here -->
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-container">
+                    <div class="pagination-info">
+                        <select class="form-select" id="historyPageSize">
+                            <option value="5">5 per page</option>
+                            <option value="10">10 per page</option>
+                            <option value="20">20 per page</option>
+                        </select>
+                        <span class="pagination-text">Showing <span id="startIndex">1</span>-<span id="endIndex">5</span> of <span id="totalItems">0</span></span>
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="btn btn-outline-primary" id="prevPage" disabled>
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <div class="page-numbers">
+                            <!-- Page numbers will be inserted here -->
+                        </div>
+                        <button class="btn btn-outline-primary" id="nextPage">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Homeowner Details Tab -->
+        <div class="tab-pane fade" id="homeowner" role="tabpanel">
+            <div class="homeowner-billing-section">
+                <!-- Search Section -->
+                <div class="search-section mb-4">
+                    <div class="header-title">
+                        <h2><i class="fas fa-search"></i> Find Homeowner</h2>
+                        <p>Search by UserID or full name</p>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" 
+                               id="homeownerSearch" 
+                               class="form-control" 
+                               placeholder="Enter UserID or full name..."
+                               autocomplete="off">
+                        <div id="searchSpinner" class="spinner-border text-primary search-spinner" role="status" style="display: none;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div id="homeownerSearchResults" class="search-results">
+                            <!-- Search results will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Homeowner Details Content -->
+                <div id="homeownerDetails" style="display: none;">
+                    <!-- Header with Homeowner Info -->
+                    <div class="homeowner-header mb-4">
+                        <div class="homeowner-info">
+                            <h3 id="homeownerName">John Doe</h3>
+                            <p id="homeownerUnit">Unit 101</p>
+                        </div>
+                        <div class="header-actions">
+                            <button class="btn btn-primary" id="generateBillBtn">
+                                <i class="fas fa-plus"></i> Generate Bill
+                            </button>
+                            <button class="btn btn-outline-primary" id="exportHomeownerReport">
+                                <i class="fas fa-file-export"></i> Export Report
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Cards -->
+                    <div class="stats-grid mb-4">
+                        <div class="stat-card total-billed">
+                            <div class="stat-icon">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h4>Total Billed</h4>
+                                <div class="stat-value" id="totalBilled">₱0.00</div>
+                                <div class="stat-label">All time</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card total-paid">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h4>Total Paid</h4>
+                                <div class="stat-value" id="totalPaid">₱0.00</div>
+                                <div class="stat-label">All time</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card pending-amount">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h4>Pending Amount</h4>
+                                <div class="stat-value" id="pendingAmount">₱0.00</div>
+                                <div class="stat-label">Current balance</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card payment-rate">
+                            <div class="stat-icon">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h4>Payment Rate</h4>
+                                <div class="stat-value" id="paymentRate">0%</div>
+                                <div class="stat-label">On-time payments</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Billing History -->
+                    <div class="billing-history-section">
+                        <div class="section-header">
+                            <div class="header-title">
+                                <h2><i class="fas fa-receipt"></i> Billing History</h2>
+                                <p>Complete history of bills and payments</p>
+                            </div>
+                            <div class="history-filters">
+                                <select class="form-select" id="billTypeFilter">
+                                    <option value="all">All Bill Types</option>
+                                    <!-- Bill types will be populated dynamically -->
+                                </select>
+                                <select class="form-select" id="yearFilter">
+                                    <option value="all">All Years</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2023">2023</option>
+                                </select>
+                                <select class="form-select" id="statusFilter">
+                                    <option value="all">All Status</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Paid">Paid</option>
+                                    <option value="Overdue">Overdue</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="billing-timeline">
+                            <!-- Timeline items will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate Bills Modal -->
+    <div class="modal fade" id="generateBillsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Generate Bills</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="generateBillsForm">
+                        <div class="mb-3">
+                            <label class="form-label">Bill Type</label>
+                            <select class="form-select" name="BillTypeID" required>
+                                <option value="">Select Bill Type</option>
+                                @foreach (var type in ViewBag.BillTypes)
+                                {
+                                    <option value="@type.BillTypeID">@type.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Amount</label>
+                            <input type="number" class="form-control" name="Amount" step="0.01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Due Date</label>
+                            <input type="date" class="form-control" name="DueDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description (Optional)</label>
+                            <textarea class="form-control" name="Description" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Select Homeowners</label>
+                            <div class="homeowners-list">
+                                @foreach (var user in ViewBag.Users)
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="SelectedUsers" value="@user.UserID">
+                                        <label class="form-check-label">
+                                            @user.Username (@user.FirstName @user.LastName)
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="submitGenerateBills">Generate Bills</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Bill Modal -->
+    <div class="modal fade" id="viewBillModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Bill Details & Payments</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="bill-details mb-4">
+                        <!-- Bill details will be populated here -->
+                    </div>
+                    <div class="payments-section">
+                        <h6 class="mb-3">Payment History</h6>
+                        <div class="payments-list">
+                            <!-- Payments will be populated here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Bill Modal -->
+    <div class="modal fade" id="editBillModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Bill</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editBillForm">
+                        <input type="hidden" id="editBillId">
+                        <div class="mb-3">
+                            <label class="form-label">Amount</label>
+                            <input type="number" class="form-control" id="editAmount" step="0.01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Due Date</label>
+                            <input type="date" class="form-control" id="editDueDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="editStatus" required>
+                                <option value="Pending">Pending</option>
+                                <option value="Paid">Paid</option>
+                                <option value="Overdue">Overdue</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="editDescription" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="submitEditBill">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Bill Type Modal -->
+    <div class="modal fade" id="billTypeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Manage Bill Types</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="billTypeForm">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" id="billTypeName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="billTypeDescription" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="billTypeIsRecurring">
+                            <label class="form-check-label">Is Recurring</label>
+                        </div>
+                    </form>
+                    <div class="existing-types mt-4">
+                        <h6>Existing Bill Types</h6>
+                        <div class="list-group">
+                            @foreach (var type in ViewBag.BillTypes)
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">@type.Name</h6>
+                                            <small>@(type.Description ?? "No description")</small>
+                                        </div>
+                                        <span class="badge bg-primary">@(type.IsRecurring ? "Recurring" : "One-time")</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="createBillType">Create Bill Type</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Status Modal -->
+    <div class="modal fade" id="editStatusModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Bill Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editStatusForm">
+                        <input type="hidden" id="statusBillId">
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="newStatus" required>
+                                <option value="Pending">Pending</option>
+                                <option value="Paid">Paid</option>
+                                <option value="Overdue">Overdue</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Notes (Optional)</label>
+                            <textarea class="form-control" id="statusNotes" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="updateStatus">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verify Payment Modal -->
+    <div class="modal fade" id="verifyPaymentModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content logout-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-check-circle text-success"></i> Verify Payment
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to verify this payment?</p>
+                    <div class="payment-details mt-3">
+                        <div class="detail-row">
+                            <span class="label">Amount:</span>
+                            <span class="value" id="verifyAmount"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Reference Number:</span>
+                            <span class="value" id="verifyReference"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Payment Method:</span>
+                            <span class="value" id="verifyMethod"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="confirmVerify">
+                        <i class="fas fa-check"></i> Verify Payment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reject Payment Modal -->
+    <div class="modal fade" id="rejectPaymentModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content logout-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-times-circle text-danger"></i> Reject Payment
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Please provide a reason for rejecting this payment:</p>
+                    <div class="payment-details mt-3 mb-3">
+                        <div class="detail-row">
+                            <span class="label">Amount:</span>
+                            <span class="value" id="rejectAmount"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Reference Number:</span>
+                            <span class="value" id="rejectReference"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Payment Method:</span>
+                            <span class="value" id="rejectMethod"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" id="rejectReason" rows="3" placeholder="Enter reason for rejection"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmReject">
+                        <i class="fas fa-times"></i> Reject Payment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this modal for bill payment history -->
+    <div class="modal fade" id="billPaymentHistoryModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Bill Payment History</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="bill-details mb-4">
+                        <div class="detail-row">
+                            <span class="label">Bill Type:</span>
+                            <span class="value" id="modalBillType"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Amount:</span>
+                            <span class="value" id="modalBillAmount"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Due Date:</span>
+                            <span class="value" id="modalBillDueDate"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Status:</span>
+                            <span class="value" id="modalBillStatus"></span>
+                        </div>
+                    </div>
+                    <h6 class="mb-3">Payment History</h6>
+                    <div class="payment-history-list">
+                        <!-- Payment history will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .billing-management {
+            padding: 2rem;
+            background: #121212;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .header-content h1 {
+            color: #fff;
+            font-size: 2rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-content p {
+            color: #888;
+            margin: 0.5rem 0 0 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Management Tools */
+        .management-tools {
+            background: #1e1e1e;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: #333;
+            border: 2px solid #444;
+            color: #fff;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #2d2d2d;
+            border-radius: 10px;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .search-result-item {
+            padding: 1rem;
+            border-bottom: 1px solid #444;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .search-result-item:hover {
+            background: #333;
+        }
+
+        .result-main {
+            flex: 1;
+        }
+
+        .result-main h4 {
+            color: #fff;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .result-main .unit {
+            color: #888;
+            margin: 0.25rem 0 0 0;
+            font-size: 0.9rem;
+        }
+
+        .result-meta {
+            text-align: right;
+        }
+
+        .id-no {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Bills Table */
+        .bills-table {
+            background: #1e1e1e;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .bills-table th {
+            background: #2d2d2d;
+            color: #fff;
+            border-bottom: 2px solid #444;
+            padding: 1rem;
+        }
+
+        .bills-table td {
+            color: #e0e0e0;
+            border-bottom: 1px solid #2d2d2d;
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-badge.pending {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .status-badge.paid {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .status-badge.overdue {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .status-badge.cancelled {
+            background: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Bulk Actions */
+        .bulk-actions {
+            background: #1e1e1e;
+            border-radius: 15px;
+            padding: 1rem;
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            background: #1e1e1e;
+            color: #fff;
+        }
+
+        .modal-header {
+            border-bottom-color: #2d2d2d;
+        }
+
+        .modal-footer {
+            border-top-color: #2d2d2d;
+        }
+
+        .form-control, .form-select {
+            background: #2d2d2d;
+            border-color: #444;
+            color: #fff;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: #2d2d2d;
+            border-color: #007bff;
+            color: #fff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .homeowners-list {
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: #2d2d2d;
+            border-radius: 8px;
+        }
+
+        .form-check {
+            padding: 0.5rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .form-check:last-child {
+            border-bottom: none;
+        }
+
+        .form-check-label {
+            color: #e0e0e0;
+        }
+
+        .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        /* Payment History Styles */
+        .payment-item {
+            background: #2d2d2d;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .payment-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-details {
+            display: flex;
+            gap: 1rem;
+            color: #888;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .payment-proof {
+            margin-top: 0.5rem;
+        }
+
+        .payment-proof a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .payment-proof a:hover {
+            text-decoration: underline;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background: #2d2d2d;
+            border-radius: 4px;
+        }
+
+        .detail-row .label {
+            color: #888;
+        }
+
+        .detail-row .value {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+        }
+
+        .status-badge.pending {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .status-badge.verified {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .status-badge.rejected {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .status-badge.payment-pending {
+            background: rgba(0, 123, 255, 0.1);
+            color: #007bff;
+        }
+
+        /* Tab Styles */
+        .nav-tabs {
+            border-bottom-color: #2d2d2d;
+        }
+
+        .nav-tabs .nav-link {
+            color: #888;
+            border: none;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: #fff;
+            border-color: transparent;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #007bff;
+            background: #1e1e1e;
+            border-bottom: 2px solid #007bff;
+        }
+
+        /* Pending Payments Styles */
+        .pending-payments-section {
+            background: #1e1e1e;
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+
+        .payment-verification-card {
+            background: #2d2d2d;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .payment-verification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .payment-verification-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .payment-verification-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .badge.pending-count {
+            margin-left: 0.5rem;
+        }
+
+        .payment-details {
+            background: #333;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background: #444;
+            border-radius: 4px;
+        }
+
+        .detail-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-row .label {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .detail-row .value {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        #rejectReason {
+            background: #333;
+            border: 1px solid #444;
+            color: #fff;
+            resize: none;
+        }
+
+        #rejectReason:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+
+        .modal-content.logout-modal .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        .payment-history-section {
+            background: #1e1e1e;
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+
+        .history-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            background: #2d2d2d;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .history-filters .form-select,
+        .history-filters .form-control {
+            background: #333;
+            border-color: #444;
+            color: #fff;
+        }
+
+        .payment-history-card {
+            background: #2d2d2d;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid transparent;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        .payment-history-card.Verified {
+            border-left-color: #28a745;
+        }
+
+        .payment-history-card.Rejected {
+            border-left-color: #dc3545;
+        }
+
+        .payment-status-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .payment-status-icon.Verified {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .payment-status-icon.Rejected {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .payment-main-content {
+            flex: 1;
+        }
+
+        .payment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .payment-header h4 {
+            color: #fff;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .payment-amount {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .payment-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .detail-item {
+            background: #333;
+            padding: 0.75rem;
+            border-radius: 8px;
+        }
+
+        .detail-item label {
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        .detail-item .value {
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .payment-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #444;
+        }
+
+        .payment-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: flex-end;
+        }
+
+        .pagination-container {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #2d2d2d;
+            border-radius: 10px;
+        }
+
+        .pagination-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .pagination-info select {
+            width: auto;
+        }
+
+        .pagination-text {
+            color: #888;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .page-numbers {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .page-numbers button {
+            min-width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #333;
+            border: 1px solid #444;
+            color: #fff;
+        }
+
+        .page-numbers button.active {
+            background: #007bff;
+            border-color: #007bff;
+        }
+
+        .empty-history {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .empty-history i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .header-title {
+            margin-bottom: 1.5rem;
+        }
+
+        .header-title h2 {
+            color: #fff;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-title h2 i {
+            color: #007bff;
+            font-size: 1.6rem;
+        }
+
+        .header-title p {
+            color: #888;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .pending-payments-section,
+        .payment-history-section {
+            background: linear-gradient(to bottom, #1a1a1a, #1e1e1e);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            border-bottom: 1px solid #333;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Update tab styles for better visibility */
+        .nav-tabs .nav-link {
+            font-size: 1.1rem;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link i {
+            font-size: 1.2rem;
+        }
+
+        .nav-tabs .nav-link.active {
+            background: #1e1e1e;
+            border-bottom: 3px solid #007bff;
+            font-weight: 500;
+        }
+
+        .badge.pending-count {
+            font-size: 0.9rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            background: #ffc107;
+            color: #000;
+            margin-left: 0.5rem;
+        }
+
+        .homeowner-billing-section {
+            background: linear-gradient(to bottom, #1a1a1a, #1e1e1e);
+            border-radius: 15px;
+            padding: 2rem;
+            min-height: 80vh;
+        }
+
+        .search-section {
+            background: #2d2d2d;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-box input {
+            background: #333;
+            border: 2px solid #444;
+            color: #fff;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #2d2d2d;
+            border-radius: 10px;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .search-result-item {
+            padding: 1rem;
+            border-bottom: 1px solid #444;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .search-result-item:hover {
+            background: #333;
+        }
+
+        .result-main {
+            flex: 1;
+        }
+
+        .result-main h4 {
+            color: #fff;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .result-main .unit {
+            color: #888;
+            margin: 0.25rem 0 0 0;
+            font-size: 0.9rem;
+        }
+
+        .result-meta {
+            text-align: right;
+        }
+
+        .id-no {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .homeowner-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #2d2d2d;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .homeowner-info h3 {
+            color: #fff;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .homeowner-info p {
+            color: #888;
+            margin: 0.5rem 0 0 0;
+            font-size: 1.1rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: #2d2d2d;
+            border-radius: 15px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .total-billed .stat-icon {
+            background: rgba(0, 123, 255, 0.1);
+            color: #007bff;
+        }
+
+        .total-paid .stat-icon {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .pending-amount .stat-icon {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .payment-rate .stat-icon {
+            background: rgba(23, 162, 184, 0.1);
+            color: #17a2b8;
+        }
+
+        .stat-content h4 {
+            color: #888;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .stat-value {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0.5rem 0;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .billing-history-section {
+            background: #2d2d2d;
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .billing-timeline {
+            margin-top: 2rem;
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2rem;
+            padding-left: 2rem;
+            border-left: 2px solid #444;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -0.5rem;
+            top: 0;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background: #007bff;
+        }
+
+        .timeline-item.paid::before {
+            background: #28a745;
+        }
+
+        .timeline-item.pending::before {
+            background: #ffc107;
+        }
+
+        .timeline-item.overdue::before {
+            background: #dc3545;
+        }
+
+        .timeline-content {
+            background: #333;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-left: 1rem;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-title {
+            color: #fff;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .timeline-amount {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .timeline-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-meta {
+            color: #888;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #444;
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+
+        .result-main {
+            flex: 1;
+        }
+
+        .result-meta {
+            text-align: right;
+        }
+
+        .id-no {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .activity-list {
+            margin-bottom: 1.5rem;
+        }
+
+        .activity-item {
+            background: #2d2d2d;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+        }
+
+        .activity-icon.payment {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .activity-icon.bill {
+            background: rgba(0, 123, 255, 0.1);
+            color: #007bff;
+        }
+
+        .activity-icon.status_change {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-title {
+            color: #fff;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .activity-amount {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .activity-details {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .activity-meta {
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .search-spinner {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .search-result-item.no-results,
+        .search-result-item.error {
+            color: #666;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .search-result-item.error {
+            color: #dc3545;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-result-item .username {
+            color: #888;
+            margin: 0.25rem 0 0 0;
+            font-size: 0.9rem;
+        }
+
+        .search-result-item .user-id {
+            color: #007bff;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .payment-history-item {
+            background: #2d2d2d;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .payment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .payment-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .payment-info .amount {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .payment-date {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .payment-details {
+            background: #333;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background: #444;
+            border-radius: 4px;
+        }
+
+        .detail-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-row .label {
+            color: #888;
+        }
+
+        .detail-row .value {
+            color: #fff;
+        }
+
+        .timeline-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .timeline-item {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .timeline-item:hover {
+            transform: translateX(5px);
+        }
+
+        .view-payments {
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+
+        .timeline-item:hover .view-payments {
+            opacity: 1;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Initialize date input with next month's first day
+            const nextMonth = new Date();
+            nextMonth.setMonth(nextMonth.getMonth() + 1);
+            nextMonth.setDate(1);
+            document.querySelector('input[name="DueDate"]').valueAsDate = nextMonth;
+
+            // Handle select all checkbox
+            $('#selectAll').change(function() {
+                $('.bill-checkbox').prop('checked', $(this).prop('checked'));
+                updateBulkActions();
+            });
+
+            // Handle individual checkboxes
+            $(document).on('change', '.bill-checkbox', function() {
+                updateBulkActions();
+            });
+
+            // Update bulk actions visibility
+            function updateBulkActions() {
+                const checkedCount = $('.bill-checkbox:checked').length;
+                $('.bulk-actions').toggle(checkedCount > 0);
+                
+                if (checkedCount === 0) {
+                    $('#selectAll').prop('checked', false);
+                } else if (checkedCount === $('.bill-checkbox').length) {
+                    $('#selectAll').prop('checked', true);
+                }
+            }
+
+            // Handle search and filters
+            $('#searchInput, #statusFilter, #billTypeFilter, #sortBy').on('input change', function() {
+                filterBills();
+            });
+
+            function filterBills() {
+                const searchTerm = $('#searchInput').val().toLowerCase();
+                const status = $('#statusFilter').val();
+                const billType = $('#billTypeFilter').val();
+                const sortBy = $('#sortBy').val();
+
+                $('.bills-table tbody tr').each(function() {
+                    const row = $(this);
+                    const homeowner = row.find('td:eq(1)').text().toLowerCase();
+                    const type = row.find('td:eq(2)').text();
+                    const rowStatus = row.find('.status-badge').text();
+
+                    const matchesSearch = homeowner.includes(searchTerm);
+                    const matchesStatus = !status || rowStatus === status;
+                    const matchesType = !billType || type === billType;
+
+                    row.toggle(matchesSearch && matchesStatus && matchesType);
+                });
+
+                // Sort rows
+                const rows = $('.bills-table tbody tr').get();
+                rows.sort(function(a, b) {
+                    let aValue, bValue;
+                    switch (sortBy) {
+                        case 'dueDate':
+                            aValue = new Date($(a).find('td:eq(4)').text());
+                            bValue = new Date($(b).find('td:eq(4)').text());
+                            break;
+                        case 'amount':
+                            aValue = parseFloat($(a).find('td:eq(3)').text().replace('₱', '').replace(',', ''));
+                            bValue = parseFloat($(b).find('td:eq(3)').text().replace('₱', '').replace(',', ''));
+                            break;
+                        case 'status':
+                            aValue = $(a).find('.status-badge').text();
+                            bValue = $(b).find('.status-badge').text();
+                            break;
+                        case 'name':
+                            aValue = $(a).find('td:eq(1)').text();
+                            bValue = $(b).find('td:eq(1)').text();
+                            break;
+                    }
+                    return aValue > bValue ? 1 : -1;
+                });
+
+                $.each(rows, function(index, row) {
+                    $('.bills-table tbody').append(row);
+                });
+            }
+
+            // Handle generate bills form submission
+            $('#submitGenerateBills').click(function() {
+                const form = document.getElementById('generateBillsForm');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                const formData = {
+                    BillTypeID: parseInt($('select[name="BillTypeID"]').val()),
+                    Amount: parseFloat($('input[name="Amount"]').val()),
+                    DueDate: $('input[name="DueDate"]').val(),
+                    Description: $('textarea[name="Description"]').val(),
+                    SelectedUsers: $('input[name="SelectedUsers"]:checked').map(function() {
+                        return parseInt($(this).val());
+                    }).get()
+                };
+
+                if (formData.SelectedUsers.length === 0) {
+                    showHeaderAlert('error', 'Please select at least one homeowner');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/Billing/GenerateBill',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        if (response.success) {
+                            $('#generateBillsModal').modal('hide');
+                            showHeaderAlert('success', response.message);
+                            setTimeout(() => window.location.reload(), 1500);
+                        } else {
+                            showHeaderAlert('error', response.message);
+                        }
+                    },
+                    error: function() {
+                        showHeaderAlert('error', 'An error occurred while generating bills');
+                    }
+                });
+            });
+
+            // View bill details and payments
+            $('.view-bill').click(function() {
+                const billId = $(this).closest('tr').data('bill-id');
+                
+                $.get(`/Billing/GetBillDetails/${billId}`, function(response) {
+                    if (response.success) {
+                        const bill = response.bill;
+                        
+                        // Populate bill details
+                        let detailsHtml = `
+                            <div class="detail-row">
+                                <span class="label">Homeowner:</span>
+                                <span class="value">${bill.user.username}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">Bill Type:</span>
+                                <span class="value">${bill.billType.name}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">Amount:</span>
+                                <span class="value">₱${bill.amount.toFixed(2)}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">Due Date:</span>
+                                <span class="value">${new Date(bill.dueDate).toLocaleDateString()}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">Status:</span>
+                                <span class="status-badge ${bill.status.toLowerCase()}">${bill.status}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">Created:</span>
+                                <span class="value">${new Date(bill.createdAt).toLocaleString()}</span>
+                            </div>
+                        `;
+                        
+                        $('.bill-details').html(detailsHtml);
+
+                        // Get payment history
+                        $.get(`/Billing/GetPayments/${billId}`, function(paymentResponse) {
+                            if (paymentResponse.success) {
+                                let paymentsHtml = '';
+                                if (paymentResponse.payments.length > 0) {
+                                    paymentResponse.payments.forEach(payment => {
+                                        paymentsHtml += `
+                                            <div class="payment-item">
+                                                <div class="payment-info">
+                                                    <span class="amount">₱${payment.amount.toFixed(2)}</span>
+                                                    <span class="status-badge ${payment.status.toLowerCase()}">${payment.status}</span>
+                                                </div>
+                                                <div class="payment-details">
+                                                    <span><i class="fas fa-money-bill"></i> ${payment.paymentMethod}</span>
+                                                    <span><i class="fas fa-hashtag"></i> ${payment.referenceNumber}</span>
+                                                    <span><i class="fas fa-calendar"></i> ${new Date(payment.paymentDate).toLocaleDateString()}</span>
+                                                </div>
+                                                ${payment.hasProofOfPayment ? `
+                                                    <div class="proof-of-payment mb-3">
+                                                        <a href="/Billing/GetProofOfPayment/${payment.paymentID}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-file-image"></i> View Proof of Payment
+                                                        </a>
+                                                    </div>
+                                                ` : ''}
+                                                ${payment.status === 'Pending' ? `
+                                                    <div class="payment-actions">
+                                                        <button class="btn btn-success btn-sm verify-payment" data-payment-id="${payment.paymentID}">
+                                                            <i class="fas fa-check"></i> Verify Payment
+                                                        </button>
+                                                        <button class="btn btn-danger btn-sm reject-payment" data-payment-id="${payment.paymentID}">
+                                                            <i class="fas fa-times"></i> Reject Payment
+                                                        </button>
+                                                    </div>
+                                                ` : ''}
+                                                ${payment.verifiedAt ? `
+                                                    <div class="payment-verification mt-2">
+                                                        <small class="text-muted">
+                                                            ${payment.status === 'Verified' ? 'Verified' : 'Rejected'} by ${payment.verifier.username} 
+                                                            on ${new Date(payment.verifiedAt).toLocaleString()}
+                                                        </small>
+                                                    </div>
+                                                ` : ''}
+                                            </div>
+                                        `;
+                                    });
+                                } else {
+                                    paymentsHtml = '<p class="text-muted">No payments recorded</p>';
+                                }
+                                $('.payments-list').html(paymentsHtml);
+                            }
+                        });
+                        
+                        $('#viewBillModal').modal('show');
+                    }
+                });
+            });
+
+            // Edit bill
+            $('.edit-bill').click(function() {
+                const row = $(this).closest('tr');
+                const billId = row.data('bill-id');
+                
+                // Get bill details
+                $.get(`/Billing/GetBillDetails/${billId}`, function(response) {
+                    if (response.success) {
+                        const bill = response.bill;
+                        
+                        // Populate form
+                        $('#editBillId').val(bill.billID);
+                        $('#editAmount').val(bill.amount);
+                        $('#editDueDate').val(bill.dueDate.split('T')[0]); // Format date for input
+                        $('#editStatus').val(bill.status);
+                        $('#editDescription').val(bill.description);
+                        
+                        // Show modal
+                        $('#editBillModal').modal('show');
+                    } else {
+                        alert(response.message);
+                    }
+                });
+            });
+
+            // Handle edit form submission
+            $('#submitEditBill').click(function() {
+                const form = document.getElementById('editBillForm');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                const data = {
+                    BillID: parseInt($('#editBillId').val()),
+                    Amount: parseFloat($('#editAmount').val()),
+                    DueDate: $('#editDueDate').val(),
+                    Status: $('#editStatus').val(),
+                    Description: $('#editDescription').val() || ''
+                };
+
+                $.ajax({
+                    url: '/Billing/EditBill',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function(response) {
+                        if (response.success) {
+                            $('#editBillModal').modal('hide');
+                            showHeaderAlert('success', response.message);
+                            window.location.reload();
+                        } else {
+                            showHeaderAlert('error', response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        showHeaderAlert('error', 'An error occurred while updating the bill');
+                    }
+                });
+            });
+
+            // Delete bill
+            $('.delete-bill').click(function() {
+                const billId = $(this).closest('tr').data('bill-id');
+                if (confirm('Are you sure you want to delete this bill?')) {
+                    $.post('/Billing/DeleteBill', { billId: billId }, function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert(response.message);
+                        }
+                    });
+                }
+            });
+
+            // Mark overdue bills
+            $('#markOverdueBills').click(function() {
+                if (confirm('Are you sure you want to mark eligible bills as overdue?')) {
+                    $.post('/Billing/ManageOverdueBills', function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert(response.message);
+                        }
+                    });
+                }
+            });
+
+            // Create bill type
+            $('#createBillType').click(function() {
+                const data = {
+                    Name: $('#billTypeName').val(),
+                    Description: $('#billTypeDescription').val(),
+                    IsRecurring: $('#billTypeIsRecurring').is(':checked')
+                };
+
+                if (!data.Name) {
+                    alert('Please enter a name for the bill type');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/Billing/CreateBillType',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            });
+
+            // Handle export
+            $('#exportBills').click(function() {
+                const table = document.querySelector('.bills-table');
+                const ws = XLSX.utils.table_to_sheet(table);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Bills');
+                XLSX.writeFile(wb, 'bills_report.xlsx');
+            });
+
+            // Helper function to show header alerts
+            function showHeaderAlert(type, message) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `custom-alert ${type}`;
+                alertDiv.textContent = message;
+                document.body.appendChild(alertDiv);
+
+                setTimeout(function() {
+                    alertDiv.style.opacity = '0';
+                    setTimeout(() => alertDiv.remove(), 500);
+                }, 5000);
+            }
+
+            // Edit Status
+            $('.edit-status').click(function() {
+                const row = $(this).closest('tr');
+                const billId = row.data('bill-id');
+                const currentStatus = row.find('.status-badge').text();
+                
+                $('#statusBillId').val(billId);
+                $('#newStatus').val(currentStatus);
+                $('#statusNotes').val('');
+                
+                $('#editStatusModal').modal('show');
+            });
+
+            // Update Status
+            $('#updateStatus').click(function() {
+                const billId = $('#statusBillId').val();
+                const status = $('#newStatus').val();
+                const notes = $('#statusNotes').val();
+
+                $.ajax({
+                    url: '/Billing/UpdateBillStatus',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        billId: parseInt(billId),
+                        status: status,
+                        notes: notes
+                    }),
+                    success: function(response) {
+                        if (response.success) {
+                            $('#editStatusModal').modal('hide');
+                            showHeaderAlert('success', response.message);
+                            window.location.reload();
+                        } else {
+                            showHeaderAlert('error', response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        showHeaderAlert('error', 'An error occurred while updating the bill status');
+                    }
+                });
+            });
+
+            // Load pending payments when tab is shown
+            $('#payments-tab').on('shown.bs.tab', function (e) {
+                loadPendingPayments();
+            });
+
+            function loadPendingPayments() {
+                $.get('/Billing/GetPendingPayments', function(response) {
+                    if (response.success) {
+                        let html = '';
+                        response.payments.forEach(payment => {
+                            html += `
+                                <div class="payment-verification-card">
+                                    <div class="payment-verification-header">
+                                        <div>
+                                            <h4>${payment.bill.billType.name}</h4>
+                                            <span class="text-muted">Bill #${payment.bill.billID}</span>
+                                        </div>
+                                        <div class="amount">₱${payment.amount.toFixed(2)}</div>
+                                    </div>
+                                    <div class="payment-verification-details">
+                                        <div class="detail-group">
+                                            <label>Homeowner</label>
+                                            <div>${payment.user.username}</div>
+                                        </div>
+                                        <div class="detail-group">
+                                            <label>Payment Method</label>
+                                            <div>${payment.paymentMethod}</div>
+                                        </div>
+                                        <div class="detail-group">
+                                            <label>Reference Number</label>
+                                            <div>${payment.referenceNumber}</div>
+                                        </div>
+                                        <div class="detail-group">
+                                            <label>Payment Date</label>
+                                            <div>${new Date(payment.paymentDate).toLocaleDateString()}</div>
+                                        </div>
+                                    </div>
+                                    ${payment.hasProofOfPayment ? `
+                                        <div class="proof-of-payment mb-3">
+                                            <a href="/Billing/GetProofOfPayment/${payment.paymentID}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-file-image"></i> View Proof of Payment
+                                            </a>
+                                        </div>
+                                    ` : ''}
+                                    <div class="payment-verification-actions">
+                                        <button class="btn btn-success verify-payment" data-payment-id="${payment.paymentID}">
+                                            <i class="fas fa-check"></i> Verify Payment
+                                        </button>
+                                        <button class="btn btn-danger reject-payment" data-payment-id="${payment.paymentID}">
+                                            <i class="fas fa-times"></i> Reject Payment
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        });
+
+                        if (response.payments.length === 0) {
+                            html = `
+                                <div class="text-center text-muted py-5">
+                                    <i class="fas fa-check-circle fa-3x mb-3"></i>
+                                    <p>No pending payments to verify</p>
+                                </div>
+                            `;
+                        }
+
+                        $('.pending-payments-list').html(html);
+                        $('.pending-count').text(response.payments.length || '');
+                    }
+                });
+            }
+
+            // Store the current payment ID
+            let currentPaymentId = null;
+
+            // Update verify payment click handler
+            $(document).on('click', '.verify-payment', function() {
+                const card = $(this).closest('.payment-verification-card');
+                currentPaymentId = $(this).data('payment-id');
+                
+                // Populate modal with payment details
+                $('#verifyAmount').text(card.find('.amount').text());
+                $('#verifyReference').text(card.find('.detail-group:contains("Reference Number") div').text());
+                $('#verifyMethod').text(card.find('.detail-group:contains("Payment Method") div').text());
+                
+                $('#verifyPaymentModal').modal('show');
+            });
+
+            // Update reject payment click handler
+            $(document).on('click', '.reject-payment', function() {
+                const card = $(this).closest('.payment-verification-card');
+                currentPaymentId = $(this).data('payment-id');
+                
+                // Populate modal with payment details
+                $('#rejectAmount').text(card.find('.amount').text());
+                $('#rejectReference').text(card.find('.detail-group:contains("Reference Number") div').text());
+                $('#rejectMethod').text(card.find('.detail-group:contains("Payment Method") div').text());
+                
+                $('#rejectPaymentModal').modal('show');
+            });
+
+            // Handle verify confirmation
+            $('#confirmVerify').click(function() {
+                if (currentPaymentId) {
+                    $.post('/Billing/VerifyPayment', {
+                        paymentId: currentPaymentId,
+                        isApproved: true,
+                        notes: 'Payment verified by admin/staff'
+                    }, function(response) {
+                        if (response.success) {
+                            $('#verifyPaymentModal').modal('hide');
+                            showHeaderAlert('success', response.message);
+                            
+                            // Remove the verified payment card
+                            $(`.payment-verification-card[data-payment-id="${currentPaymentId}"]`).fadeOut(300, function() {
+                                $(this).remove();
+                                // Update pending count
+                                const currentCount = parseInt($('.pending-count').text() || '0');
+                                $('.pending-count').text(currentCount > 0 ? currentCount - 1 : '');
+                            });
+                            
+                            // Update the bill status in the bills table
+                            if (response.updatedData) {
+                                const billRow = $(`.bills-table tr[data-bill-id="${response.updatedData.billId}"]`);
+                                if (billRow.length) {
+                                    billRow.find('.status-badge')
+                                        .removeClass('pending overdue')
+                                        .addClass('paid')
+                                        .text('Paid');
+                                }
+                            }
+
+                            // If no more pending payments, show empty state
+                            if ($('.payment-verification-card').length === 1) {
+                                $('.pending-payments-list').html(`
+                                    <div class="text-center text-muted py-5">
+                                        <i class="fas fa-check-circle fa-3x mb-3"></i>
+                                        <p>No pending payments to verify</p>
+                                    </div>
+                                `);
+                            }
+                        } else {
+                            showHeaderAlert('error', response.message);
+                        }
+                    });
+                }
+            });
+
+            // Handle reject confirmation
+            $('#confirmReject').click(function() {
+                const reason = $('#rejectReason').val().trim();
+                if (!reason) {
+                    showHeaderAlert('error', 'Please provide a reason for rejection');
+                    return;
+                }
+
+                if (currentPaymentId) {
+                    $.post('/Billing/VerifyPayment', {
+                        paymentId: currentPaymentId,
+                        isApproved: false,
+                        notes: reason
+                    }, function(response) {
+                        if (response.success) {
+                            $('#rejectPaymentModal').modal('hide');
+                            showHeaderAlert('success', response.message);
+                            
+                            // Remove the rejected payment card
+                            $(`.payment-verification-card[data-payment-id="${currentPaymentId}"]`).fadeOut(300, function() {
+                                $(this).remove();
+                                // Update pending count
+                                const currentCount = parseInt($('.pending-count').text() || '0');
+                                $('.pending-count').text(currentCount > 0 ? currentCount - 1 : '');
+                            });
+                            
+                            // Update the bill status in the bills table
+                            if (response.updatedData) {
+                                const billRow = $(`.bills-table tr[data-bill-id="${response.updatedData.billId}"]`);
+                                if (billRow.length) {
+                                    billRow.find('.status-badge')
+                                        .removeClass('paid overdue')
+                                        .addClass('pending')
+                                        .text('Pending');
+                                }
+                            }
+
+                            // Reset the form
+                            $('#rejectReason').val('');
+
+                            // If no more pending payments, show empty state
+                            if ($('.payment-verification-card').length === 1) {
+                                $('.pending-payments-list').html(`
+                                    <div class="text-center text-muted py-5">
+                                        <i class="fas fa-check-circle fa-3x mb-3"></i>
+                                        <p>No pending payments to verify</p>
+                                    </div>
+                                `);
+                            }
+                        } else {
+                            showHeaderAlert('error', response.message);
+                        }
+                    });
+                }
+            });
+
+            // Initial load of pending payments count
+            $.get('/Billing/GetPendingPaymentsCount', function(response) {
+                if (response.success) {
+                    $('.pending-count').text(response.count || '');
+                }
+            });
+
+            // Add this to your document ready function
+            $('#history-tab').on('shown.bs.tab', function (e) {
+                loadPaymentHistory();
+            });
+
+            let currentPage = 1;
+            let pageSize = 5;
+            let totalPages = 1;
+            let paymentHistory = [];
+
+            function loadPaymentHistory() {
+                const status = $('#historyStatusFilter').val();
+                const method = $('#historyMethodFilter').val();
+                const date = $('#historyDateFilter').val();
+                const search = $('#historySearchFilter').val();
+
+                $.get('/Billing/GetPaymentHistory', { 
+                    status: status, 
+                    method: method,
+                    date: date,
+                    search: search,
+                    page: currentPage,
+                    pageSize: pageSize
+                }, function(response) {
+                    if (response.success) {
+                        paymentHistory = response.payments;
+                        totalPages = Math.ceil(response.totalCount / pageSize);
+                        updatePagination();
+                        renderPayments();
+                    }
+                });
+            }
+
+            function renderPayments() {
+                let html = '';
+                const startIndex = (currentPage - 1) * pageSize;
+                const endIndex = Math.min(startIndex + pageSize, paymentHistory.length);
+
+                if (paymentHistory.length === 0) {
+                    html = `
+                        <div class="empty-history">
+                            <i class="fas fa-history"></i>
+                            <p>No payment history found</p>
+                        </div>
+                    `;
+                } else {
+                    paymentHistory.slice(startIndex, endIndex).forEach(payment => {
+                        html += `
+                            <div class="payment-history-card ${payment.status}">
+                                <div class="payment-status-icon ${payment.status}">
+                                    <i class="fas fa-${payment.status === 'Verified' ? 'check' : 'times'}"></i>
+                                </div>
+                                <div class="payment-main-content">
+                                    <div class="payment-header">
+                                        <div>
+                                            <h4>${payment.bill.billType.name}</h4>
+                                            <span class="text-muted">Bill #${payment.bill.billID}</span>
+                                        </div>
+                                        <div class="payment-amount">₱${payment.amount.toFixed(2)}</div>
+                                    </div>
+                                    <div class="payment-details">
+                                        <div class="detail-item">
+                                            <label>Homeowner</label>
+                                            <div class="value">${payment.user.firstName} ${payment.user.lastName}</div>
+                                        </div>
+                                        <div class="detail-item">
+                                            <label>Payment Method</label>
+                                            <div class="value">${payment.paymentMethod}</div>
+                                        </div>
+                                        <div class="detail-item">
+                                            <label>Reference Number</label>
+                                            <div class="value">${payment.referenceNumber}</div>
+                                        </div>
+                                        <div class="detail-item">
+                                            <label>Payment Date</label>
+                                            <div class="value">${new Date(payment.paymentDate).toLocaleDateString()}</div>
+                                        </div>
+                                    </div>
+                                    <div class="payment-meta">
+                                        <span>
+                                            <i class="fas fa-user"></i> 
+                                            ${payment.status === 'Verified' ? 'Verified' : 'Rejected'} by ${payment.verifier.username}
+                                        </span>
+                                        <span>
+                                            <i class="fas fa-clock"></i>
+                                            ${new Date(payment.verifiedAt).toLocaleString()}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="payment-actions">
+                                    ${payment.hasProofOfPayment ? `
+                                        <a href="/Billing/GetProofOfPayment/${payment.paymentID}" 
+                                           target="_blank" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-file-image"></i> View Proof
+                                        </a>
+                                    ` : ''}
+                                    <button class="btn btn-sm btn-outline-info view-notes" 
+                                            data-notes="${payment.notes || 'No notes provided'}"
+                                            data-bs-toggle="tooltip" 
+                                            title="View Notes">
+                                        <i class="fas fa-sticky-note"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                $('.payment-history-list').html(html);
+                updatePaginationInfo();
+                initializeTooltips();
+            }
+
+            function updatePagination() {
+                let paginationHtml = '';
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationHtml += `
+                        <button class="btn ${currentPage === i ? 'active' : ''}" 
+                                onclick="goToPage(${i})">${i}</button>
+                    `;
+                }
+                $('.page-numbers').html(paginationHtml);
+                
+                $('#prevPage').prop('disabled', currentPage === 1);
+                $('#nextPage').prop('disabled', currentPage === totalPages);
+            }
+
+            function updatePaginationInfo() {
+                const startIndex = (currentPage - 1) * pageSize + 1;
+                const endIndex = Math.min(startIndex + pageSize - 1, paymentHistory.length);
+                const total = paymentHistory.length;
+
+                $('#startIndex').text(startIndex);
+                $('#endIndex').text(endIndex);
+                $('#totalItems').text(total);
+            }
+
+            function goToPage(page) {
+                currentPage = page;
+                loadPaymentHistory();
+            }
+
+            $('#prevPage').click(() => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    loadPaymentHistory();
+                }
+            });
+
+            $('#nextPage').click(() => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    loadPaymentHistory();
+                }
+            });
+
+            $('#historyPageSize').change(function() {
+                pageSize = parseInt($(this).val());
+                currentPage = 1;
+                loadPaymentHistory();
+            });
+
+            // Add filter change handlers
+            $('#historyStatusFilter, #historyMethodFilter, #historyDateFilter').on('change', function() {
+                currentPage = 1;
+                loadPaymentHistory();
+            });
+
+            $('#historySearchFilter').on('input', debounce(function() {
+                currentPage = 1;
+                loadPaymentHistory();
+            }, 300));
+
+            function initializeTooltips() {
+                $('[data-bs-toggle="tooltip"]').tooltip();
+            }
+
+            // Debounce function to prevent too many API calls while typing
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+
+            // Handle viewing notes
+            $(document).on('click', '.view-notes', function() {
+                const notes = $(this).data('notes');
+                // You can show notes in a modal or tooltip
+                alert(notes); // Replace with a better UI for showing notes
+            });
+
+            // Initialize homeowner search
+            let searchTimeout;
+            $('#homeownerSearch').on('input', function() {
+                clearTimeout(searchTimeout);
+                const query = $(this).val().trim();
+                
+                if (query.length < 1) {
+                    $('#homeownerSearchResults').empty().hide();
+                    return;
+                }
+
+                // Show spinner
+                $('#searchSpinner').show();
+                
+                searchTimeout = setTimeout(() => {
+                    $.ajax({
+                        url: '/Billing/SearchHomeowners',
+                        type: 'GET',
+                        data: { query: query },
+                        success: function(response) {
+                            // Hide spinner
+                            $('#searchSpinner').hide();
+                            
+                            if (response.success) {
+                                let html = '';
+                                if (response.homeowners && response.homeowners.length > 0) {
+                                    response.homeowners.forEach(homeowner => {
+                                        html += `
+                                            <div class="search-result-item" data-homeowner-id="${homeowner.userID}">
+                                                <div class="result-main">
+                                                    <h4>${homeowner.firstName} ${homeowner.lastName}</h4>
+                                                    <p class="username">Username: ${homeowner.username}</p>
+                                                </div>
+                                                <div class="result-meta">
+                                                    <span class="user-id">UserID: ${homeowner.userID}</span>
+                                                </div>
+                                            </div>
+                                        `;
+                                    });
+                                } else {
+                                    html = `
+                                        <div class="search-result-item no-results">
+                                            <div class="result-main">
+                                                <p>No homeowners found</p>
+                                            </div>
+                                        </div>`;
+                                }
+                                $('#homeownerSearchResults').html(html).show();
+                            } else {
+                                $('#homeownerSearchResults').html(`
+                                    <div class="search-result-item error">
+                                        <div class="result-main">
+                                            <p>Error: ${response.message}</p>
+                                        </div>
+                                    </div>
+                                `).show();
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            // Hide spinner
+                            $('#searchSpinner').hide();
+                            
+                            $('#homeownerSearchResults').html(`
+                                <div class="search-result-item error">
+                                    <div class="result-main">
+                                        <p>Error: Could not complete the search</p>
+                                    </div>
+                                </div>
+                            `).show();
+                        }
+                    });
+                }, 300);
+            });
+
+            // Handle homeowner selection
+            $(document).on('click', '.search-result-item', function() {
+                if ($(this).hasClass('no-results') || $(this).hasClass('error')) {
+                    return;
+                }
+                
+                const homeownerId = $(this).data('homeowner-id');
+                if (!homeownerId) return;
+
+                const name = $(this).find('h4').text();
+                const unit = $(this).find('.unit').text();
+
+                // Update header
+                $('#homeownerName').text(name);
+                $('#homeownerUnit').text(unit);
+                
+                // Show details section and store homeowner ID
+                $('#homeownerDetails').show().data('homeowner-id', homeownerId);
+                
+                // Load homeowner billing data
+                loadHomeownerBillingData(homeownerId);
+                
+                // Hide search results and clear search input
+                $('#homeownerSearchResults').hide();
+                $('#homeownerSearch').val('');
+            });
+
+            // Hide search results when clicking outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.search-box').length) {
+                    $('#homeownerSearchResults').hide();
+                }
+            });
+
+            function loadHomeownerBillingData(homeownerId) {
+                // Load statistics
+                $.get('/Billing/GetHomeownerStats', { homeownerId: homeownerId }, function(response) {
+                    if (response.success) {
+                        $('#totalBilled').text('₱' + response.stats.totalBilled.toFixed(2));
+                        $('#totalPaid').text('₱' + response.stats.totalPaid.toFixed(2));
+                        $('#pendingAmount').text('₱' + response.stats.pendingAmount.toFixed(2));
+                        $('#paymentRate').text(response.stats.paymentRate.toFixed(1) + '%');
+                    }
+                });
+
+                // Load billing history
+                loadBillingHistory(homeownerId);
+            }
+
+            function loadBillingHistory(homeownerId) {
+                const billType = $('#billTypeFilter').val();
+                const year = $('#yearFilter').val();
+                const status = $('#statusFilter').val();
+
+                $.get('/Billing/GetHomeownerBillingHistory', {
+                    homeownerId: homeownerId,
+                    billType: billType,
+                    year: year,
+                    status: status
+                }, function(response) {
+                    if (response.success) {
+                        // Update bill type filter options
+                        const billTypeFilter = $('#billTypeFilter');
+                        billTypeFilter.find('option:not(:first)').remove();
+                        response.billTypes.forEach(type => {
+                            billTypeFilter.append(`<option value="${type}">${type}</option>`);
+                        });
+                        billTypeFilter.val(billType);
+
+                        let html = '';
+                        if (response.history.length > 0) {
+                            response.history.forEach(item => {
+                                html += `
+                                    <div class="timeline-item ${item.status.toLowerCase()}" data-bill-id="${item.billId}">
+                                        <div class="timeline-content">
+                                            <div class="timeline-header">
+                                                <h4 class="timeline-title">${item.billType}</h4>
+                                                <div class="timeline-amount">₱${item.amount.toFixed(2)}</div>
+                                            </div>
+                                            <div class="timeline-details">
+                                                <div class="detail-item">
+                                                    <label>Due Date</label>
+                                                    <div class="value">${new Date(item.dueDate).toLocaleDateString()}</div>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <label>Status</label>
+                                                    <div class="value">
+                                                        <span class="status-badge ${item.status.toLowerCase()}">${item.status}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="timeline-meta">
+                                                <span>
+                                                    <i class="fas fa-calendar"></i> 
+                                                    Created: ${new Date(item.createdAt).toLocaleDateString()}
+                                                </span>
+                                                <button class="btn btn-sm btn-outline-primary view-payments">
+                                                    <i class="fas fa-history"></i> View Payments
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                        } else {
+                            html = `
+                                <div class="empty-state">
+                                    <i class="fas fa-receipt"></i>
+                                    <p>No billing history found</p>
+                                </div>
+                            `;
+                        }
+                        $('.billing-timeline').html(html);
+
+                        // Add click handler for viewing payments
+                        $('.timeline-item').click(function() {
+                            const billId = $(this).data('bill-id');
+                            showBillPayments(billId);
+                        });
+                    }
+                });
+            }
+
+            // Handle filter changes
+            $('#billTypeFilter, #yearFilter, #statusFilter').on('change', function() {
+                const homeownerId = $('#homeownerDetails').data('homeowner-id');
+                if (homeownerId) {
+                    loadBillingHistory(homeownerId);
+                }
+            });
+
+            // Handle export
+            $('#exportHomeownerReport').click(function() {
+                const homeownerId = $('#homeownerDetails').data('homeowner-id');
+                if (homeownerId) {
+                    window.location.href = `/Billing/ExportHomeownerReport?homeownerId=${homeownerId}`;
+                }
+            });
+
+            let activityCurrentPage = 1;
+            let activityPageSize = 5;
+            let activityTotalPages = 1;
+
+            function loadRecentActivity() {
+                $.get('/Billing/GetRecentActivity', {
+                    page: activityCurrentPage,
+                    pageSize: activityPageSize
+                }, function(response) {
+                    if (response.success) {
+                        let html = '';
+                        response.activities.forEach(activity => {
+                            const icon = getActivityIcon(activity.type);
+                            const title = getActivityTitle(activity);
+                            
+                            html += `
+                                <div class="activity-item">
+                                    <div class="activity-icon ${activity.type}">
+                                        <i class="fas ${icon}"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-header">
+                                            <h4 class="activity-title">${title}</h4>
+                                            <div class="activity-amount">₱${activity.amount.toFixed(2)}</div>
+                                        </div>
+                                        <div class="activity-details">
+                                            ${activity.userName} - ${activity.billType}
+                                        </div>
+                                        <div class="activity-meta">
+                                            <i class="fas fa-clock"></i> ${new Date(activity.createdAt).toLocaleString()}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+
+                        $('.activity-list').html(html);
+                        activityTotalPages = response.totalPages;
+                        updateActivityPagination();
+                        updateActivityPaginationInfo(response.totalCount);
+                    }
+                });
+            }
+
+            function getActivityIcon(type) {
+                switch (type) {
+                    case 'payment': return 'fa-money-bill-wave';
+                    case 'bill': return 'fa-file-invoice';
+                    case 'status_change': return 'fa-exchange-alt';
+                    default: return 'fa-circle';
+                }
+            }
+
+            function getActivityTitle(activity) {
+                switch (activity.type) {
+                    case 'payment':
+                        return `Payment ${activity.status.toLowerCase()} for ${activity.billType}`;
+                    case 'bill':
+                        return `New bill generated for ${activity.billType}`;
+                    case 'status_change':
+                        return `Bill status updated to ${activity.status.toLowerCase()}`;
+                    default:
+                        return 'Activity recorded';
+                }
+            }
+
+            function updateActivityPagination() {
+                let paginationHtml = '';
+                for (let i = 1; i <= activityTotalPages; i++) {
+                    paginationHtml += `
+                        <button class="btn ${activityCurrentPage === i ? 'active' : ''}" 
+                                onclick="goToActivityPage(${i})">${i}</button>
+                    `;
+                }
+                $('.activity-pagination .page-numbers').html(paginationHtml);
+                
+                $('#activityPrevPage').prop('disabled', activityCurrentPage === 1);
+                $('#activityNextPage').prop('disabled', activityCurrentPage === activityTotalPages);
+            }
+
+            function updateActivityPaginationInfo(totalCount) {
+                const startIndex = (activityCurrentPage - 1) * activityPageSize + 1;
+                const endIndex = Math.min(startIndex + activityPageSize - 1, totalCount);
+                
+                $('#activityStartIndex').text(startIndex);
+                $('#activityEndIndex').text(endIndex);
+                $('#activityTotalItems').text(totalCount);
+            }
+
+            function goToActivityPage(page) {
+                activityCurrentPage = page;
+                loadRecentActivity();
+            }
+
+            $('#activityPrevPage').click(() => {
+                if (activityCurrentPage > 1) {
+                    activityCurrentPage--;
+                    loadRecentActivity();
+                }
+            });
+
+            $('#activityNextPage').click(() => {
+                if (activityCurrentPage < activityTotalPages) {
+                    activityCurrentPage++;
+                    loadRecentActivity();
+                }
+            });
+
+            $('#activityPageSize').change(function() {
+                activityPageSize = parseInt($(this).val());
+                activityCurrentPage = 1;
+                loadRecentActivity();
+            });
+
+            // Initialize
+            $(document).ready(function() {
+                loadPaymentMethodsChart();
+                loadRecentActivity();
+            });
+
+            // Update the search result item template in the JavaScript
+            function loadPaymentMethodsChart() {
+                $.get('/Billing/GetPaymentMethodStats', function(response) {
+                    if (response.success) {
+                        const ctx = document.getElementById('paymentMethodsChart').getContext('2d');
+                        const total = response.stats.reduce((sum, item) => sum + item.count, 0);
+                        
+                        new Chart(ctx, {
+                            type: 'doughnut',
+                            data: {
+                                labels: response.stats.map(item => item.method),
+                                datasets: [{
+                                    data: response.stats.map(item => item.count),
+                                    backgroundColor: [
+                                        'rgba(0, 123, 255, 0.8)',
+                                        'rgba(40, 167, 69, 0.8)',
+                                        'rgba(255, 193, 7, 0.8)',
+                                        'rgba(23, 162, 184, 0.8)'
+                                    ],
+                                    borderColor: '#1e1e1e',
+                                    borderWidth: 2
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom',
+                                        labels: {
+                                            color: '#fff',
+                                            padding: 20,
+                                            generateLabels: function(chart) {
+                                                const data = chart.data;
+                                                if (data.labels.length && data.datasets.length) {
+                                                    return data.labels.map((label, i) => {
+                                                        const value = data.datasets[0].data[i];
+                                                        const percentage = ((value / total) * 100).toFixed(1);
+                                                        return {
+                                                            text: `${label} (${percentage}%)`,
+                                                            fillStyle: data.datasets[0].backgroundColor[i],
+                                                            hidden: false,
+                                                            index: i
+                                                        };
+                                                    });
+                                                }
+                                                return [];
+                                            }
+                                        }
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                const value = context.raw;
+                                                const percentage = ((value / total) * 100).toFixed(1);
+                                                return `${context.label}: ${value} (${percentage}%)`;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+
+            function showBillPayments(billId) {
+                console.log('Loading payments for bill:', billId); // Debug log
+                $.ajax({
+                    url: '/Billing/GetPayments',
+                    type: 'GET',
+                    data: { billId: billId },
+                    success: function(response) {
+                        console.log('Payment response:', response); // Debug log
+                        if (response.success && response.payments) {
+                            // Get the first payment's bill details or use the current bill
+                            const bill = response.bill || {};
+                            
+                            // Update modal bill details
+                            $('#modalBillType').text(bill.billType?.name || 'N/A');
+                            $('#modalBillAmount').text(bill.amount ? `₱${bill.amount.toFixed(2)}` : 'N/A');
+                            $('#modalBillDueDate').text(bill.dueDate ? new Date(bill.dueDate).toLocaleDateString() : 'N/A');
+                            $('#modalBillStatus').html(bill.status ? 
+                                `<span class="status-badge ${bill.status.toLowerCase()}">${bill.status}</span>` : 'N/A');
+
+                            // Update payment history
+                            let paymentsHtml = '';
+                            if (response.payments.length > 0) {
+                                response.payments.forEach(payment => {
+                                    paymentsHtml += `
+                                        <div class="payment-history-item">
+                                            <div class="payment-header">
+                                                <div class="payment-info">
+                                                    <span class="amount">₱${payment.amount.toFixed(2)}</span>
+                                                    <span class="status-badge ${payment.status.toLowerCase()}">${payment.status}</span>
+                                                </div>
+                                                <div class="payment-date">
+                                                    ${new Date(payment.paymentDate).toLocaleDateString()}
+                                                </div>
+                                            </div>
+                                            <div class="payment-details">
+                                                <div class="detail-row">
+                                                    <span class="label">Method:</span>
+                                                    <span class="value">${payment.paymentMethod}</span>
+                                                </div>
+                                                <div class="detail-row">
+                                                    <span class="label">Reference:</span>
+                                                    <span class="value">${payment.referenceNumber}</span>
+                                                </div>
+                                                ${payment.verifiedBy ? `
+                                                    <div class="detail-row">
+                                                        <span class="label">Verified By:</span>
+                                                        <span class="value">${payment.verifiedBy}</span>
+                                                    </div>
+                                                    <div class="detail-row">
+                                                        <span class="label">Verified At:</span>
+                                                        <span class="value">${new Date(payment.verifiedAt).toLocaleString()}</span>
+                                                    </div>
+                                                ` : ''}
+                                            </div>
+                                            ${payment.hasProofOfPayment ? `
+                                                <div class="payment-proof mt-2">
+                                                    <a href="/Billing/GetProofOfPayment/${payment.paymentID}" 
+                                                       target="_blank" 
+                                                       class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-file-image"></i> View Proof of Payment
+                                                    </a>
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                    `;
+                                });
+                            } else {
+                                paymentsHtml = `
+                                    <div class="empty-state">
+                                        <p>No payments recorded for this bill</p>
+                                    </div>
+                                `;
+                            }
+                            $('.payment-history-list').html(paymentsHtml);
+
+                            // Show the modal
+                            $('#billPaymentHistoryModal').modal('show');
+                        } else {
+                            console.error('Failed to load payment history:', response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error loading payment history:', error);
+                    }
+                });
+            }
+
+            // Initialize payment methods chart only when needed
+            function initializePaymentMethodsChart() {
+                const chartCanvas = document.getElementById('paymentMethodsChart');
+                if (!chartCanvas) return;
+
+                $.get('/Billing/GetPaymentMethodStats', function(response) {
+                    if (response.success && response.stats) {
+                        const ctx = chartCanvas.getContext('2d');
+                        const total = response.stats.reduce((sum, item) => sum + item.count, 0);
+                        
+                        if (chartCanvas.chart) {
+                            chartCanvas.chart.destroy();
+                        }
+
+                        chartCanvas.chart = new Chart(ctx, {
+                            type: 'doughnut',
+                            data: {
+                                labels: response.stats.map(item => item.method),
+                                datasets: [{
+                                    data: response.stats.map(item => item.count),
+                                    backgroundColor: [
+                                        'rgba(0, 123, 255, 0.8)',
+                                        'rgba(40, 167, 69, 0.8)',
+                                        'rgba(255, 193, 7, 0.8)',
+                                        'rgba(23, 162, 184, 0.8)'
+                                    ],
+                                    borderColor: '#1e1e1e',
+                                    borderWidth: 2
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom',
+                                        labels: {
+                                            color: '#fff',
+                                            padding: 20,
+                                            generateLabels: function(chart) {
+                                                const data = chart.data;
+                                                if (data.labels.length && data.datasets.length) {
+                                                    return data.labels.map((label, i) => {
+                                                        const value = data.datasets[0].data[i];
+                                                        const percentage = ((value / total) * 100).toFixed(1);
+                                                        return {
+                                                            text: `${label} (${percentage}%)`,
+                                                            fillStyle: data.datasets[0].backgroundColor[i],
+                                                            hidden: false,
+                                                            index: i
+                                                        };
+                                                    });
+                                                }
+                                                return [];
+                                            }
+                                        }
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                const value = context.raw;
+                                                const percentage = ((value / total) * 100).toFixed(1);
+                                                return `${context.label}: ${value} (${percentage}%)`;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+
+            // Initialize chart when homeowner tab is shown
+            $('#homeowner-tab').on('shown.bs.tab', function (e) {
+                initializePaymentMethodsChart();
+            });
+        });
+    </script>
+} 

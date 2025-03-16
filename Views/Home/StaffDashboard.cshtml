@@ -67,6 +67,23 @@
 
         <div class="card animate__animated animate__fadeInLeft" style="animation-delay: 0.4s">
             <div class="card-header">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <h3>Billing Management</h3>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("AdminDashboard", "Billing")" class="btn btn-primary">
+                    <i class="fas fa-chart-line"></i>
+                    Billing Dashboard
+                </a>
+                <a href="@Url.Action("ManageBills", "Billing")" class="btn btn-secondary">
+                    <i class="fas fa-file-invoice"></i>
+                    Manage Bills
+                </a>
+            </div>
+        </div>
+
+        <div class="card animate__animated animate__fadeInLeft" style="animation-delay: 0.6s">
+            <div class="card-header">
                 <i class="fas fa-comment-dots"></i>
                 <h3>Feedback & Complaints</h3>
             </div>

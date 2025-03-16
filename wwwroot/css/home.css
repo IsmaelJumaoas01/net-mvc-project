@@ -388,3 +388,671 @@ body {
     background-color: #222;
     color: #fff;
 }
+
+
+   /* Responsive Design */
+   @media (max-width: 768px) {
+    .billing-admin-dashboard {
+        padding: 1rem;
+    }
+
+    .page-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .header-actions .btn {
+        flex: 1;
+    }
+
+    .quick-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .action-card .card-body {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+   /* Responsive Design */
+   @media (max-width: 768px) {
+    .billing-management {
+        padding: 1rem;
+    }
+
+    .page-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .header-actions .btn {
+        flex: 1;
+    }
+
+    .search-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .bulk-actions {
+        flex-direction: column;
+    }
+
+    .bulk-actions .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .billing-dashboard {
+        padding: 1rem;
+    }
+
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .bill-card, .payment-card {
+        padding: 1rem;
+    }
+
+    .bill-header, .payment-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .bill-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    /* General Layout */
+    .content-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    .summary-cards {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    /* Dashboard Header */
+    .page-header {
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+
+    .header-actions {
+        flex-direction: column !important;
+        width: 100% !important;
+    }
+
+    .header-actions .btn {
+        width: 100% !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    /* Bills Management */
+    .bills-table {
+        display: block !important;
+        overflow-x: auto !important;
+    }
+
+    .search-filters {
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+
+    .search-filters > * {
+        width: 100% !important;
+    }
+
+    /* Bill Cards */
+    .bill-card {
+        padding: 1rem !important;
+    }
+
+    .bill-header {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+
+    .bill-actions {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+        align-items: stretch !important;
+    }
+
+    .bill-actions .btn {
+        width: 100% !important;
+    }
+
+    /* Payment Cards */
+    .payment-card {
+        padding: 1rem !important;
+    }
+
+    .payment-header {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+
+    /* Modals */
+    .modal-dialog {
+        margin: 0.5rem !important;
+    }
+
+    .modal-content {
+        padding: 1rem !important;
+    }
+
+    .modal-footer {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+
+    .modal-footer .btn {
+        width: 100% !important;
+    }
+
+    /* Navigation */
+    .navbar-nav {
+        flex-direction: column !important;
+        width: 100% !important;
+    }
+
+    .nav-item {
+        width: 100% !important;
+        text-align: center !important;
+    }
+
+    /* Form Controls */
+    .form-control, .form-select {
+        font-size: 16px !important; /* Prevents zoom on iOS */
+    }
+
+    /* Tables */
+    .table-responsive {
+        margin: 0 -1rem !important;
+        padding: 0 1rem !important;
+    }
+
+    .table td, .table th {
+        white-space: nowrap !important;
+    }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+    .billing-dashboard {
+        padding: 1rem !important;
+    }
+
+    .card-content .amount {
+        font-size: 1.2rem !important;
+    }
+
+    .status-badge {
+        font-size: 0.75rem !important;
+        padding: 0.2rem 0.5rem !important;
+    }
+
+    .bill-amount, .payment-amount {
+        font-size: 1rem !important;
+    }
+}
+
+/* Billing Dashboard Responsive Styles */
+.billing-dashboard .content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.billing-dashboard .content-section {
+    background: #1e1e1e;
+    border-radius: 15px;
+    padding: 1.5rem;
+    max-height: 600px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #333 #1e1e1e;
+}
+
+.billing-dashboard .content-section::-webkit-scrollbar {
+    width: 8px;
+}
+
+.billing-dashboard .content-section::-webkit-scrollbar-track {
+    background: #1e1e1e;
+    border-radius: 10px;
+}
+
+.billing-dashboard .content-section::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
+}
+
+.billing-dashboard .content-section::-webkit-scrollbar-thumb:hover {
+    background: #444;
+}
+
+/* Payment Verification Card Styles */
+.payment-verification-card {
+    background: #2d2d2d;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #444;
+}
+
+.payment-verification-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.payment-verification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #444;
+}
+
+.payment-verification-header h4 {
+    color: #fff;
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.payment-verification-header .text-muted {
+    color: #888 !important;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+.payment-verification-header .amount {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #00bcd4;
+    background: rgba(0, 188, 212, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+}
+
+.detail-group {
+    background: #222;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+
+.detail-group label {
+    display: block;
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.detail-group div {
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.payment-verification-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #444;
+}
+
+.payment-verification-actions .btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.payment-verification-actions .btn-success {
+    background: #28a745;
+    border: none;
+}
+
+.payment-verification-actions .btn-danger {
+    background: #dc3545;
+    border: none;
+}
+
+.payment-verification-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.proof-of-payment {
+    background: #222;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+
+.proof-of-payment .btn {
+    background: transparent;
+    border: 1px solid #00bcd4;
+    color: #00bcd4;
+    transition: all 0.3s ease;
+}
+
+.proof-of-payment .btn:hover {
+    background: #00bcd4;
+    color: #fff;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .billing-dashboard .summary-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .billing-dashboard .content-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .billing-dashboard .content-section {
+        max-height: 400px;
+    }
+
+    .payment-verification-card {
+        padding: 1rem;
+    }
+
+    .payment-verification-details {
+        grid-template-columns: 1fr;
+    }
+
+    .payment-verification-header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .payment-verification-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .payment-verification-actions button {
+        width: 100%;
+    }
+
+    .bill-card, .payment-card {
+        padding: 1rem;
+    }
+
+    .bill-actions, .payment-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .bill-actions button, .payment-actions button {
+        width: 100%;
+    }
+
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .billing-dashboard {
+        padding: 1rem;
+    }
+
+    .page-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .header-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .header-actions button {
+        width: 100%;
+    }
+
+    .summary-card {
+        padding: 1rem;
+    }
+
+    .bill-header, .payment-header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .bill-amount, .payment-amount {
+        text-align: left;
+    }
+}
+
+/* Starry Background Animation */
+@keyframes movingStars {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-1000px);
+    }
+}
+
+@keyframes twinkle {
+    0%, 100% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Combined starry background wrapper */
+.announcements-section {
+    position: relative;
+    padding: 5rem 0;
+    background: linear-gradient(to bottom, #0d1117, #161b22);
+    overflow: hidden;
+}
+
+.features-section {
+    position: relative;
+    padding: 5rem 0;
+    background: linear-gradient(to bottom, #161b22, #0d1117);
+    overflow: hidden;
+    margin-top: 0; /* Remove any gap */
+}
+
+.announcements-section::before,
+.announcements-section::after,
+.features-section::before,
+.features-section::after {
+    content: '';
+    position: absolute; /* Changed from fixed to absolute */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 40px 70px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 50px 160px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 130px 80px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 160px 120px, #ffffff, rgba(0,0,0,0));
+    background-repeat: repeat;
+    background-size: 200px 200px;
+    animation: movingStars 60s linear infinite;
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.announcements-section::after,
+.features-section::after {
+    background-image: 
+        radial-gradient(3px 3px at 10px 20px, #58a6ff, rgba(0,0,0,0)),
+        radial-gradient(3px 3px at 30px 60px, #58a6ff, rgba(0,0,0,0)),
+        radial-gradient(3px 3px at 60px 150px, #58a6ff, rgba(0,0,0,0)),
+        radial-gradient(3px 3px at 100px 30px, #58a6ff, rgba(0,0,0,0)),
+        radial-gradient(3px 3px at 140px 70px, #58a6ff, rgba(0,0,0,0)),
+        radial-gradient(3px 3px at 170px 110px, #58a6ff, rgba(0,0,0,0));
+    background-size: 400px 400px;
+    animation: movingStars 120s linear infinite;
+    opacity: 0.3;
+}
+
+.announcements-section .container,
+.features-section .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Features Section Styles */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    padding: 0 1rem;
+}
+
+.feature-card {
+    background: rgba(45, 51, 59, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(88, 166, 255, 0.1);
+    border-radius: 15px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 25px rgba(88, 166, 255, 0.2);
+    border-color: rgba(88, 166, 255, 0.3);
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(88, 166, 255, 0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.feature-card:hover::before {
+    opacity: 1;
+}
+
+.section-title {
+    text-align: center;
+    color: #ffffff;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    text-shadow: 0 0 10px rgba(88, 166, 255, 0.5);
+    position: relative;
+    z-index: 1;
+}
+
+.announcement-card {
+    background: rgba(45, 51, 59, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(88, 166, 255, 0.1);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.announcement-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 25px rgba(88, 166, 255, 0.2);
+    border-color: rgba(88, 166, 255, 0.3);
+}
+
+.announcement-content {
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.announcement-content h3 {
+    color: #ffffff;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.announcement-content p {
+    color: #c9d1d9;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.announcement-date {
+    color: #8b949e;
+    font-size: 0.9rem;
+}
+
+/* Remove any unwanted gaps */
+.announcements-section + .features-section {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+/* Ensure the footer doesn't have a gap */
+footer {
+    margin-top: -1px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Fix for any potential gaps */
+html, body {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    background: #0d1117;
+}
+
+

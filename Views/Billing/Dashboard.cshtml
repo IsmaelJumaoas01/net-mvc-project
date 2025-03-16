@@ -1,0 +1,610 @@
+@model homeowner.Models.BillingDashboardViewModel
+@{
+    ViewData["Title"] = "Billing Dashboard";
+}
+
+<div class="container mt-4">
+    <div class="page-header">
+        <div class="header-content">
+            <h2><i class="fas fa-file-invoice-dollar"></i> Billing & Payments</h2>
+            <p>View and manage your bills and payments</p>
+        </div>
+    </div>
+
+    <div class="billing-dashboard">
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <div class="summary-card">
+                <div class="card-icon pending">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Pending Bills</h3>
+                    <div class="amount">₱@Model.TotalDue.ToString("N2")</div>
+                    <div class="count">@Model.PendingBillsCount bills pending</div>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="card-icon paid">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Total Paid</h3>
+                    <div class="amount">₱@Model.TotalPaid.ToString("N2")</div>
+                    <div class="count">All time</div>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="card-icon overdue">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Overdue</h3>
+                    <div class="amount">₱@Model.TotalOverdue.ToString("N2")</div>
+                    <div class="count">@Model.OverdueBillsCount bills overdue</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bills and Payments Sections -->
+        <div class="content-grid">
+            <!-- Pending Bills Section -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-file-invoice"></i> Recent Bills</h2>
+                </div>
+                <div class="bills-list">
+                    @if (Model.RecentBills.Any())
+                    {
+                        foreach (var bill in Model.RecentBills)
+                        {
+                            <div class="bill-card @bill.Status.ToLower()">
+                                <div class="bill-header">
+                                    <div class="bill-type">
+                                        <i class="fas fa-file-alt"></i>
+                                        <span>@bill.BillType.Name</span>
+                                    </div>
+                                    <div class="bill-amount">₱@bill.Amount.ToString("N2")</div>
+                                </div>
+                                <div class="bill-details">
+                                    <div class="detail-item">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>Due: @bill.DueDate.ToString("MMM dd, yyyy")</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>@bill.Description</span>
+                                    </div>
+                                </div>
+                                <div class="bill-actions">
+                                    <span class="status-badge @bill.Status.ToLower()">@bill.Status</span>
+                                    @if (bill.Status == "Pending" || bill.Status == "Overdue")
+                                    {
+                                        <button class="btn btn-primary btn-sm submit-payment" 
+                                                data-bill-id="@bill.BillID"
+                                                data-amount="@bill.Amount"
+                                                data-type="@bill.BillType.Name">
+                                            Submit Payment
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <i class="fas fa-file-invoice"></i>
+                            <p>No bills to display</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Recent Payments Section -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-history"></i> Recent Payments</h2>
+                </div>
+                <div class="payments-list">
+                    @if (Model.RecentPayments.Any())
+                    {
+                        foreach (var payment in Model.RecentPayments)
+                        {
+                            <div class="payment-card">
+                                <div class="payment-header">
+                                    <div class="payment-type">
+                                        <i class="fas fa-receipt"></i>
+                                        <span>@payment.Bill.BillType.Name</span>
+                                    </div>
+                                    <div class="payment-amount">₱@payment.Amount.ToString("N2")</div>
+                                </div>
+                                <div class="payment-details">
+                                    <div class="detail-item">
+                                        <i class="fas fa-calendar-check"></i>
+                                        <span>Paid: @payment.PaymentDate.ToString("MMM dd, yyyy")</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <i class="fas fa-money-check-alt"></i>
+                                        <span>@payment.PaymentMethod</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <i class="fas fa-hashtag"></i>
+                                        <span>Ref: @payment.ReferenceNumber</span>
+                                    </div>
+                                </div>
+                                <div class="payment-status">
+                                    <span class="status-badge @payment.Status.ToLower()">@payment.Status</span>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <i class="fas fa-receipt"></i>
+                            <p>No payment history</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Submit Payment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="paymentForm" enctype="multipart/form-data">
+                    <input type="hidden" id="billId" name="BillID">
+                    <input type="hidden" id="billAmount" name="Amount">
+                    <div class="payment-summary mb-4">
+                        <div class="summary-row">
+                            <span>Bill Type:</span>
+                            <span id="billTypeDisplay"></span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Amount Due:</span>
+                            <span id="billAmountDisplay"></span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Payment Method</label>
+                        <select class="form-select" name="PaymentMethod" required>
+                            <option value="">Select payment method</option>
+                            <option value="GCash">GCash</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="Cash">Cash</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Reference Number</label>
+                        <input type="text" class="form-control" name="ReferenceNumber" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Payment Date</label>
+                        <input type="date" class="form-control" name="PaymentDate" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Proof of Payment (Optional)</label>
+                        <input type="file" class="form-control" name="ProofOfPayment" accept="image/*,.pdf">
+                        <div class="form-text text-muted">Upload an image or PDF of your payment receipt (optional)</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Notes (Optional)</label>
+                        <textarea class="form-control" name="Notes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="submitPayment">Submit Payment</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #0d1117; /* GitHub dark theme background */
+        color: #ffffff;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .container {
+        position: relative;
+        padding: 2rem;
+        background-color: #161b22; /* GitHub dark theme container */
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #21262d; /* GitHub dark theme header */
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-content {
+        flex: 1;
+    }
+
+    .page-header h2 {
+        color: #fff;
+        font-size: 1.8rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .page-header p {
+        color: #8b949e; /* GitHub dark theme text */
+        margin: 0.5rem 0 0 0;
+        font-size: 1rem;
+    }
+
+    .billing-dashboard {
+        padding: 1rem 0;
+    }
+
+    /* Summary Cards */
+    .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .summary-card {
+        background: #21262d;
+        border-radius: 15px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        border: 1px solid #30363d;
+    }
+
+    .card-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .card-icon.pending {
+        background: rgba(249, 168, 37, 0.1);
+        color: #f9a825;
+    }
+
+    .card-icon.paid {
+        background: rgba(35, 134, 54, 0.1);
+        color: #238636;
+    }
+
+    .card-icon.overdue {
+        background: rgba(248, 81, 73, 0.1);
+        color: #f85149;
+    }
+
+    .card-content h3 {
+        color: #8b949e;
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    .card-content .amount {
+        color: #fff;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0.5rem 0;
+    }
+
+    .card-content .count {
+        color: #8b949e;
+        font-size: 0.9rem;
+    }
+
+    /* Content Grid */
+    .content-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 2rem;
+    }
+
+    .content-section {
+        background: #21262d;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .section-header {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #30363d;
+    }
+
+    .section-header h2 {
+        color: #fff;
+        font-size: 1.2rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Bills and Payments Cards */
+    .bill-card, .payment-card {
+        background: #2d333b;
+        border-radius: 10px;
+        padding: 1.2rem;
+        margin-bottom: 1rem;
+        border: 1px solid #30363d;
+    }
+
+    .bill-header, .payment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #30363d;
+    }
+
+    .bill-type, .payment-type {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #fff;
+    }
+
+    .bill-amount, .payment-amount {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #8b949e;
+        margin-bottom: 0.5rem;
+    }
+
+    .detail-item i {
+        color: #58a6ff;
+    }
+
+    /* Status Badges */
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .status-badge.pending {
+        background: rgba(249, 168, 37, 0.1);
+        color: #f9a825;
+    }
+
+    .status-badge.paid {
+        background: rgba(35, 134, 54, 0.1);
+        color: #238636;
+    }
+
+    .status-badge.overdue {
+        background: rgba(248, 81, 73, 0.1);
+        color: #f85149;
+    }
+
+    .status-badge.verified {
+        background: rgba(88, 166, 255, 0.1);
+        color: #58a6ff;
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background: #238636;
+        border: 1px solid rgba(240,246,252,0.1);
+        color: #fff;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+        background: #2ea043;
+        transform: translateY(-1px);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #8b949e;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    /* Modal Styles */
+    .modal-content {
+        background: #21262d;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+    }
+
+    .modal-header {
+        background: #2d333b;
+        border-bottom: 1px solid #30363d;
+        padding: 1.5rem;
+    }
+
+    .modal-title {
+        color: #fff;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .modal-body {
+        background: #21262d;
+        padding: 1.5rem;
+    }
+
+    .modal-footer {
+        background: #2d333b;
+        border-top: 1px solid #30363d;
+        padding: 1rem;
+    }
+
+    .form-label {
+        color: #c9d1d9;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        background: #2d333b;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+        border-radius: 6px;
+    }
+
+    .form-control:focus {
+        background: #2d333b;
+        border-color: #58a6ff;
+        color: #c9d1d9;
+        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
+    }
+
+    .form-select {
+        background-color: #2d333b;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+    }
+
+    .form-select:focus {
+        background-color: #2d333b;
+        border-color: #58a6ff;
+        color: #c9d1d9;
+        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
+    }
+
+    .btn-close {
+        color: #8b949e;
+        opacity: 0.8;
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+
+    .btn-close:hover {
+        color: #fff;
+        opacity: 1;
+    }
+
+    .btn-secondary {
+        background: #21262d;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+    }
+
+    .btn-secondary:hover {
+        background: #2d333b;
+        border-color: #58a6ff;
+        color: #fff;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize payment modal
+            $('.submit-payment').click(function() {
+                const billId = $(this).data('bill-id');
+                const billType = $(this).data('type');
+                const amount = parseFloat($(this).data('amount'));
+
+                if (isNaN(amount)) {
+                    console.error('Invalid amount:', $(this).data('amount'));
+                    showHeaderAlert('error', 'Invalid bill amount');
+                    return;
+                }
+
+                $('#billId').val(billId);
+                $('#billAmount').val(amount);
+                $('#billTypeDisplay').text(billType);
+                $('#billAmountDisplay').text(`₱${amount.toFixed(2)}`);
+                
+                // Set payment date default to today
+                document.querySelector('input[name="PaymentDate"]').valueAsDate = new Date();
+                
+                $('#paymentModal').modal('show');
+            });
+
+            // Handle payment submission
+            $('#submitPayment').click(function() {
+                const form = document.getElementById('paymentForm');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                const formData = new FormData(form);
+                
+                $.ajax({
+                    url: '/Billing/SubmitPayment',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            $('#paymentModal').modal('hide');
+                            showHeaderAlert('success', response.message);
+                            window.location.reload();
+                        } else {
+                            showHeaderAlert('error', response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        showHeaderAlert('error', 'An error occurred while submitting the payment');
+                    }
+                });
+            });
+
+            // Helper function to show alerts
+            function showHeaderAlert(type, message) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `custom-alert ${type}`;
+                alertDiv.textContent = message;
+                document.body.appendChild(alertDiv);
+
+                setTimeout(function() {
+                    alertDiv.style.opacity = '0';
+                    setTimeout(() => alertDiv.remove(), 500);
+                }, 5000);
+            }
+        });
+    </script>
+} 
