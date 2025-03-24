@@ -4,6 +4,8 @@
     ViewBag.Title = "Register Homeowner";
 }
 
+<link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+
 <div class="form-container">
     <div id="registerError" class="custom-alert-register error" style="display:none;"></div>
 
@@ -49,7 +51,7 @@
                     <span asp-validation-for="PhoneNumber" class="error"></span>
                 </div>
 
-                <button type="button" class="btn-next">Next</button>
+                <button type="button" class="btn btn-primary btn-next">Next</button>
             </div>
 
             <!-- Step 2: Account Information -->
@@ -66,7 +68,7 @@
                         <input name="password" type="password" class="form-control" required />
                         <div class="input-group-append">
                             <button class="btn toggle-password" type="button">
-                                <i class="fas fa-eye-slash"></i>
+                                <i class="fas fa-eye"></i>
                             </button>
                         </div>
                     </div>
@@ -79,27 +81,29 @@
                         <input name="confirmPassword" type="password" class="form-control" required />
                         <div class="input-group-append">
                             <button class="btn toggle-password" type="button">
-                                <i class="fas fa-eye-slash"></i>
+                                <i class="fas fa-eye"></i>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <button type="button" class="btn-prev">Previous</button>
-                <button type="button" class="btn-next">Next</button>
+                <button type="button" class="btn btn-secondary btn-prev">Previous</button>
+                <button type="button" class="btn btn-primary btn-next">Next</button>
             </div>
 
             <!-- Step 3: Terms of Service -->
             <div class="form-step">
                 <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="acceptTerms" required />
-                        I accept the <a href="#">Terms of Service</a>
-                    </label>
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="termsCheck" required>
+                        <label class="custom-control-label" for="termsCheck">
+                            I agree to the <a href="#" class="terms-link">Terms of Service</a> and <a href="#" class="privacy-link">Privacy Policy</a>
+                        </label>
+                    </div>
                 </div>
 
-                <button type="button" class="btn-prev">Previous</button>
-                <button type="submit" class="btn-register" disabled>Register</button>
+                <button type="button" class="btn btn-secondary btn-prev">Previous</button>
+                <button type="submit" class="btn btn-primary">Create Account</button>
             </div>
         </form>
     </div>
@@ -166,14 +170,14 @@
             var icon = $(this).find('i');
             if (input.attr('type') === 'password') {
                 input.attr('type', 'text');
-                icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                icon.removeClass('fa-eye').addClass('fa-eye');
             } else {
                 input.attr('type', 'password');
-                icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                icon.removeClass('fa-eye').addClass('fa-eye');
             }
         });
 
-        $('#acceptTerms').on('change', function () {
+        $('#termsCheck').on('change', function () {
             $('.btn-register').prop('disabled', !this.checked);
         });
     });

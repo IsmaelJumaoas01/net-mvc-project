@@ -6,11 +6,7 @@
     string username = ViewBag.username;
 }
 
-<link rel="stylesheet" href="~/css/home.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="~/css/homeowner.css" asp-append-version="true" />
 
 <div class="container mt-4">
     <div class="page-header">
@@ -132,9 +128,7 @@
                         <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="@Model.PhoneNumber">
                     </div>
                     <div class="password-section">
-                        <h6 class="section-title">
-                          
-                        </h6>
+                        <h6 class="section-title">Change Password</h6>
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="password">New Password</label>
@@ -174,451 +168,116 @@
     </div>
 </div>
 
-<style>
-    body {
-        background-color: #0d1117; /* GitHub dark theme background */
-        color: #ffffff;
-        font-family: 'Poppins', sans-serif;
-    }
-
-    .container {
-        position: relative;
-        padding: 2rem;
-        background-color: #161b22; /* GitHub dark theme container */
-        border-radius: 20px;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
-    }
-
-    .page-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 2rem;
-        padding: 1.5rem;
-        background: #21262d; /* GitHub dark theme header */
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .header-content {
-        flex: 1;
-    }
-
-    .page-header h2 {
-        color: #fff;
-        font-size: 1.8rem;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 0.8rem;
-    }
-
-    .page-header p {
-        color: #8b949e; /* GitHub dark theme text */
-        margin: 0.5rem 0 0 0;
-        font-size: 1rem;
-    }
-
-    .profile-container {
-        background: #21262d;
-        color: white;
-        padding: 2rem;
-        border-radius: 15px;
-        margin: 2rem auto;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        border: 1px solid #30363d;
-    }
-
-    .profile-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-    }
-
-    .profile-info {
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-    }
-
-    .profile-avatar {
-        width: 80px;
-        height: 80px;
-        background: linear-gradient(45deg, #00bcd4, #2196f3);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        color: white;
-    }
-
-    .profile-details h2 {
-        margin: 0;
-        font-size: 2rem;
-        background: linear-gradient(45deg, #00bcd4, #2196f3);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .role-badge {
-        display: inline-block;
-        padding: 0.5rem 1rem;
-        background: rgba(33, 150, 243, 0.1);
-        color: #2196f3;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        margin-top: 0.5rem;
-    }
-
-    .profile-stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .stat-card {
-        background: #1e1e1e;
-        padding: 1.5rem;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        transition: transform 0.3s ease;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-5px);
-    }
-
-    .stat-card i {
-        font-size: 2rem;
-        color: #00bcd4;
-    }
-
-    .stat-info h4 {
-        margin: 0;
-        color: #fff;
-        font-size: 1.1rem;
-    }
-
-    .stat-info p {
-        margin: 0.5rem 0 0;
-        color: #888;
-    }
-
-    .recent-activities, .services-bookings {
-        background: #1e1e1e;
-        padding: 1.5rem;
-        border-radius: 12px;
-        margin-top: 1.5rem;
-    }
-
-    .recent-activities h3, .services-bookings h3 {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: #fff;
-        font-size: 1.3rem;
-        margin-bottom: 1rem;
-    }
-
-    .recent-activities i, .services-bookings i {
-        color: #00bcd4;
-    }
-
-    .activity-container {
-        padding: 1rem;
-        background: #2a2a2a;
-        border-radius: 8px;
-        color: #888;
-    }
-
-    .back-btn {
-        margin: 1rem;
-        background: #2a2a2a;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.3s ease;
-    }
-
-    .back-btn:hover {
-        background: #333;
-        transform: translateX(-5px);
-    }
-
-    .edit-profile-btn {
-        background: linear-gradient(45deg, #00bcd4, #2196f3);
-        border: none;
-        padding: 0.75rem 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.3s ease;
-    }
-
-    .edit-profile-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0, 188, 212, 0.3);
-    }
-
-    /* Modal Styles */
-    .modal-content {
-        background: #1e1e1e;
-        color: #fff;
-        border-radius: 15px;
-    }
-
-    .modal-header {
-        background: #2a2a2a;
-        border-bottom: 1px solid #333;
-        border-radius: 15px 15px 0 0;
-        padding: 1.5rem;
-    }
-
-    .modal-title {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: #00bcd4;
-    }
-
-    .modal-body {
-        padding: 2rem;
-    }
-
-    .form-control {
-        background: #2a2a2a;
-        border: 1px solid #333;
-        color: #fff;
-        border-radius: 8px;
-        padding: 0.75rem 1rem;
-    }
-
-    .form-control:focus {
-        background: #2a2a2a;
-        border-color: #00bcd4;
-        box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.25);
-        color: #fff;
-    }
-
-    /* Profile Form Specific Styles */
-    #editProfileForm .form-group label {
-        color: #888;
-        margin-bottom: 0.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    #editProfileForm .form-group label i {
-        color: #00bcd4;
-    }
-
-    .password-section {
-        margin-top: 2rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid #333;
-    }
-
-    .section-title {
-        color: #00bcd4;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .input-group-append .btn {
-        background: #333;
-        border: 1px solid #444;
-        color: #888;
-    }
-
-    .input-group-append .btn:hover {
-        background: #444;
-        color: #fff;
-    }
-
-    .modal-footer {
-        border-top: 1px solid #333;
-        padding: 1.5rem;
-    }
-
-    .alert {
-        border-radius: 8px;
-        margin-bottom: 1.5rem;
-    }
-
-    .alert-danger {
-        background: rgba(220, 53, 69, 0.1);
-        color: #dc3545;
-        border: 1px solid rgba(220, 53, 69, 0.2);
-    }
-
-    .alert-success {
-        background: rgba(40, 167, 69, 0.1);
-        color: #28a745;
-        border: 1px solid rgba(40, 167, 69, 0.2);
-    }
-
-    .custom-alert {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 9999;
-        min-width: 300px;
-        padding: 15px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        animation: slideIn 0.5s ease-out;
-    }
-
-    .alert-success {
-        background: rgba(40, 167, 69, 0.95);
-        color: white;
-        border: none;
-    }
-
-    .alert-danger {
-        background: rgba(220, 53, 69, 0.95);
-        color: white;
-        border: none;
-    }
-</style>
-
-@section Scripts {
-    <script>
-        $(document).ready(function() {
-            // Toggle password visibility
-            $('.toggle-password').click(function() {
-                const input = $(this).closest('.input-group').find('input');
-                const icon = $(this).find('i');
-                
-                if (input.attr('type') === 'password') {
-                    input.attr('type', 'text');
-                    icon.removeClass('fa-eye').addClass('fa-eye-slash');
-                } else {
-                    input.attr('type', 'password');
-                    icon.removeClass('fa-eye-slash').addClass('fa-eye');
-                }
-            });
-
-            // Form submission
-            $('#editProfileForm').submit(function(e) {
-                e.preventDefault();
-                
-                // Clear previous alerts
-                $('#modalAlert').hide();
-
-                // Only check if passwords match when both fields are filled
-                const password = $('#password').val();
-                const confirmPassword = $('#confirmPassword').val();
-
-                if (password && confirmPassword && password !== confirmPassword) {
-                    $('#modalAlert')
-                        .removeClass('alert-success')
-                        .addClass('alert alert-danger')
-                        .text('Passwords do not match')
-                        .show();
-                    return;
-                }
-
-                // Get form data
-                const formData = {};
-                const form = $(this);
-                form.find('input').each(function() {
-                    if ($(this).val()) {
-                        formData[$(this).attr('name')] = $(this).val();
-                    }
-                });
-
-                $.ajax({
-                    url: form.attr('action'),
-                    type: 'POST',
-                    data: formData,
-                    success: function(response) {
-                        if (response.success) {
-                            // Show success message in modal
-                            $('#modalAlert')
-                                .removeClass('alert-danger')
-                                .addClass('alert alert-success')
-                                .text(response.message)
-                                .show();
-
-                            // Create success toast
-                            const toast = $('<div>')
-                                .addClass('alert alert-success custom-alert')
-                                .text(response.message);
-                            $('body').append(toast);
-
-                            // Update username in the profile if it was changed
-                            if (response.newUsername) {
-                                $('h2').text(response.newUsername + "'s Profile");
-                            }
-
-                            // Close modal and reload after delay
-                            setTimeout(function() {
-                                $('#editProfileModal').modal('hide');
-                                window.location.reload();
-                            }, 1500);
-                        } else {
-                            // Show error message in modal
-                            $('#modalAlert')
-                                .removeClass('alert-success')
-                                .addClass('alert alert-danger')
-                                .text(response.message)
-                                .show();
-                        }
-                    },
-                    error: function(xhr) {
-                        // Show error message in modal
-                        const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred while updating your profile';
-                        $('#modalAlert')
-                            .removeClass('alert-success')
-                            .addClass('alert alert-danger')
-                            .text(errorMessage)
-                            .show();
-                    }
-                });
-            });
-
-            // Show temporary messages if they exist
-            @if (!string.IsNullOrEmpty(TempData["SuccessMessage"]?.ToString()))
-            {
-                <text>
-                    const successMessage = '@TempData["SuccessMessage"]';
-                    if (successMessage) {
-                        const alert = $('<div>')
-                            .addClass('alert alert-success custom-alert')
-                            .text(successMessage);
-                        $('body').append(alert);
-                        setTimeout(function() {
-                            alert.fadeOut('slow', function() { $(this).remove(); });
-                        }, 3000);
-                    }
-                </text>
-            }
-
-            @if (!string.IsNullOrEmpty(TempData["ErrorMessage"]?.ToString()))
-            {
-                <text>
-                    const errorMessage = '@TempData["ErrorMessage"]';
-                    if (errorMessage) {
-                        const alert = $('<div>')
-                            .addClass('alert alert-danger custom-alert')
-                            .text(errorMessage);
-                        $('body').append(alert);
-                        setTimeout(function() {
-                            alert.fadeOut('slow', function() { $(this).remove(); });
-                        }, 3000);
-                    }
-                </text>
-            }
+<script>
+    // Password toggle functionality
+    document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', function() {
+            const input = this.parentElement.previousElementSibling;
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('fa-eye');
+            this.querySelector('i').classList.toggle('fa-eye-slash');
         });
-    </script>
-}
+    });
+
+    // Form submission handling
+    document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Clear previous alerts
+        const modalAlert = document.getElementById('modalAlert');
+        modalAlert.style.display = 'none';
+        
+        // Check password match
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        if (password && password !== confirmPassword) {
+            modalAlert.className = 'alert alert-danger';
+            modalAlert.textContent = 'Passwords do not match!';
+            modalAlert.style.display = 'block';
+            return;
+        }
+
+        // Get form data
+        const formData = new FormData(this);
+
+        // Submit form via AJAX
+        fetch(this.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(response => {
+            if (response.success) {
+                // Show success message
+                modalAlert.className = 'alert alert-success';
+                modalAlert.textContent = response.message;
+                modalAlert.style.display = 'block';
+
+                // Update username in profile if changed
+                if (response.newUsername) {
+                    document.querySelector('.profile-details h2').textContent = response.newUsername + "'s Profile";
+                }
+
+                // Create success toast
+                const toast = document.createElement('div');
+                toast.className = 'alert alert-success custom-alert';
+                toast.textContent = response.message;
+                document.body.appendChild(toast);
+
+                // Close modal and reload after delay
+                setTimeout(() => {
+                    $('#editProfileModal').modal('hide');
+                    window.location.reload();
+                }, 1500);
+            } else {
+                // Show error message
+                modalAlert.className = 'alert alert-danger';
+                modalAlert.textContent = response.message;
+                modalAlert.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            // Show error message
+            modalAlert.className = 'alert alert-danger';
+            modalAlert.textContent = 'An error occurred while updating your profile';
+            modalAlert.style.display = 'block';
+        });
+    });
+
+    // Show temporary messages if they exist
+    @if (!string.IsNullOrEmpty(TempData["SuccessMessage"]?.ToString()))
+    {
+        <text>
+            const successMessage = '@TempData["SuccessMessage"]';
+            if (successMessage) {
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-success custom-alert';
+                alert.textContent = successMessage;
+                document.body.appendChild(alert);
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 300);
+                }, 3000);
+            }
+        </text>
+    }
+
+    @if (!string.IsNullOrEmpty(TempData["ErrorMessage"]?.ToString()))
+    {
+        <text>
+            const errorMessage = '@TempData["ErrorMessage"]';
+            if (errorMessage) {
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-danger custom-alert';
+                alert.textContent = errorMessage;
+                document.body.appendChild(alert);
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 300);
+                }, 3000);
+            }
+        </text>
+    }
+</script>

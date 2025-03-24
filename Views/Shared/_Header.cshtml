@@ -6,7 +6,9 @@
     role == "Staff" ? "Staff Portal" : "Subdivision Portal";
 }
 
-<header class="navbar navbar-expand-lg navbar-light">
+<link rel="stylesheet" href="~/css/header.css" asp-append-version="true" />
+
+<header class="navbar navbar-expand-lg">
     <a class="navbar-brand" asp-controller="Home" asp-action="Index">@portalTitle</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
@@ -60,8 +62,8 @@
                     </li>
                 }
                 <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("Index", "Poll")">
-                        <i class="fas fa-poll me-2"></i>Polls & Surveys
+                    <a class="nav-link" asp-controller="Poll" asp-action="Index" title="Polls & Surveys">
+                        <i class="fas fa-poll"></i>
                     </a>
                 </li>
             </ul>
@@ -82,7 +84,7 @@
                             <li><a class="dropdown-item" asp-controller="FacilityReservation" asp-action="Book">Book a
                                     Facility</a></li>
                         }
-                            <li><a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">Logout</a></li>
+                        <li><a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">Logout</a></li>
                     </ul>
                 </li>
             }
@@ -99,82 +101,3 @@
         </ul>
     </div>
 </header>
-
-<style>
-    header.navbar {
-        background-color: #000000;
-        border-bottom: 1px solid #e0e0e0;
-        width: 100%;
-        padding: 0 20px;
-        /* Add padding to ensure content is not too close to the edges */
-    }
-
-   header.navbar .navbar-nav {
-    padding-right: 55px; /* Moves all nav items, including the dropdown, away from the right edge */
-}
-
-
-    header.navbar .nav-link {
-        color: #ffffff;
-        /* Change icon color to white for better readability */
-        margin: 0 10px;
-    }
-
-    header.navbar .nav-link i {
-        color: #ffffff;
-        /* Ensure icons are white */
-    }
-
-    header.navbar .nav-link:hover {
-        color: #007bff;
-    }
-
-    header.navbar .navbar-brand {
-        color: #ffffff;
-        /* Change brand color to white for better readability */
-    }
-
-    header.navbar .navbar-brand:hover {
-        color: #007bff;
-    }
-
-    header.navbar .navbar-toggler {
-        border-color: #ffffff;
-        /* Change toggler border color to white */
-    }
-
-    header.navbar .navbar-toggler-icon {
-        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%28255, 255, 255, 1%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
-    }
-
-    header.navbar .username {
-        color: #ffffff;
-        /* Change username color to white */
-    }
-
-    header.navbar .dropdown-menu {
-        right: 20px;
-        /* Push it slightly away from the edge */
-        margin-top: 10px;
-        /* Add space below the username */
-        background-color: #333333;
-        /* Optional: Dark background */
-    }
-
-    header.navbar .dropdown-item {
-        color: #ffffff;
-        /* Make dropdown text white */
-    }
-
-    header.navbar .dropdown-item:hover {
-        background-color: #007bff;
-        /* Change hover effect */
-    }
-
-    header.navbar .dropdown-toggle::after {
-        border-top: 5px solid white;
-        /* Makes the triangle white */
-        border-right: 5px solid transparent;
-        border-left: 5px solid transparent;
-    }
-</style>

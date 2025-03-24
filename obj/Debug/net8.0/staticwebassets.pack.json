@@ -9,12 +9,24 @@
       "PackagePath": "staticwebassets\\css\\admin-dashboard.css"
     },
     {
+      "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\auth.css",
+      "PackagePath": "staticwebassets\\css\\auth.css"
+    },
+    {
       "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\feedback.css",
       "PackagePath": "staticwebassets\\css\\feedback.css"
     },
     {
+      "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\header.css",
+      "PackagePath": "staticwebassets\\css\\header.css"
+    },
+    {
       "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\home.css",
       "PackagePath": "staticwebassets\\css\\home.css"
+    },
+    {
+      "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\homeowner.css",
+      "PackagePath": "staticwebassets\\css\\homeowner.css"
     },
     {
       "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\homeowner_forum.css",
@@ -27,6 +39,10 @@
     {
       "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\styles.css",
       "PackagePath": "staticwebassets\\css\\styles.css"
+    },
+    {
+      "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\css\\theme.css",
+      "PackagePath": "staticwebassets\\css\\theme.css"
     },
     {
       "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\favicon.ico",
@@ -55,6 +71,10 @@
     {
       "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
+    },
+    {
+      "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\js\\theme.js",
+      "PackagePath": "staticwebassets\\js\\theme.js"
     },
     {
       "Id": "X:\\vscode projects\\net-mvc-project\\wwwroot\\lib\\bootstrap\\LICENSE",

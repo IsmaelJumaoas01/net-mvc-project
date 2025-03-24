@@ -1,0 +1,266 @@
+/* Header Styles */
+header.navbar {
+    background-color: var(--navbar-bg);
+    border-bottom: 1px solid var(--border-color);
+    width: 100%;
+    padding: 0 20px;
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+header.navbar .navbar-nav {
+    padding-right: 55px;
+}
+
+header.navbar .nav-link {
+    color: var(--text-primary);
+    margin: 0 10px;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+header.navbar .nav-link i {
+    color: var(--text-primary);
+    transition: color 0.3s ease;
+    font-size: 1.1rem;
+}
+
+header.navbar .nav-link:hover {
+    color: var(--accent-color);
+}
+
+header.navbar .nav-link:hover i {
+    color: var(--accent-color);
+}
+
+header.navbar .navbar-brand {
+    color: var(--text-primary);
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+header.navbar .navbar-brand:hover {
+    color: var(--accent-color);
+}
+
+header.navbar .navbar-toggler {
+    border-color: var(--border-color);
+    background-color: transparent;
+}
+
+header.navbar .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+header.navbar .username {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+header.navbar .dropdown-menu {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px var(--shadow-color);
+    margin-top: 10px;
+    right: 20px;
+    min-width: 200px;
+}
+
+header.navbar .dropdown-item {
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+}
+
+header.navbar .dropdown-item:hover {
+    background-color: var(--hover-bg);
+    color: var(--accent-color);
+}
+
+header.navbar .dropdown-toggle::after {
+    border-top-color: var(--text-primary);
+}
+
+/* Polls & Surveys specific style */
+header.navbar .nav-link[href*="Poll"] {
+    padding: 0.5rem 1rem;
+}
+
+header.navbar .nav-link[href*="Poll"] i {
+    margin-right: 0.5rem;
+}
+
+/* Login/Register buttons */
+header.navbar .btn-primary {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+}
+
+header.navbar .btn-secondary {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+header.navbar .btn-primary:hover {
+    background-color: var(--link-hover-color);
+    border-color: var(--link-hover-color);
+}
+
+header.navbar .btn-secondary:hover {
+    background-color: var(--hover-bg);
+}
+
+/* Modal styles */
+.modal-content {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px var(--shadow-color);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+}
+
+.modal-title {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.modal-body {
+    background-color: var(--bg-primary);
+}
+
+.modal-body input,
+.modal-body select,
+.modal-body textarea {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    transition: border-color 0.3s ease;
+}
+
+.modal-body input:focus,
+.modal-body select:focus,
+.modal-body textarea:focus {
+    background-color: var(--bg-secondary);
+    border-color: var(--accent-color);
+    color: var(--text-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--accent-rgb), 0.25);
+}
+
+.modal-body label {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.modal .close {
+    color: var(--text-primary);
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.modal .close:hover {
+    opacity: 1;
+}
+
+.modal .btn-primary {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+}
+
+.modal .btn-secondary {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.modal .btn-primary:hover {
+    background-color: var(--link-hover-color);
+    border-color: var(--link-hover-color);
+}
+
+.modal .btn-secondary:hover {
+    background-color: var(--hover-bg);
+}
+
+.modal .alert {
+    margin-bottom: 1rem;
+    border-radius: 4px;
+}
+
+.modal .alert-success {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.modal .alert-danger {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+/* Form group spacing */
+.modal .form-group {
+    margin-bottom: 1rem;
+}
+
+.modal .form-group:last-child {
+    margin-bottom: 0;
+}
+
+/* Input group styles */
+.modal .input-group {
+    display: flex;
+    align-items: center;
+}
+
+.modal .input-group-append {
+    margin-left: 0.5rem;
+}
+
+.modal .input-group-append .btn {
+    border-color: var(--border-color);
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.modal .input-group-append .btn:hover {
+    background-color: var(--hover-bg);
+}
+
+/* Section titles */
+.modal .section-title {
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+    header.navbar .navbar-nav {
+        padding-right: 0;
+    }
+    
+    header.navbar .nav-link {
+        padding: 0.5rem 1rem;
+    }
+    
+    header.navbar .dropdown-menu {
+        right: 0;
+        width: 100%;
+    }
+} 

@@ -105,18 +105,54 @@
 </div>
 
 <style>
+    :root {
+        --bg-primary: #f8f9fa;
+        --bg-secondary: #ffffff;
+        --text-primary: #2d333b;
+        --text-secondary: #57606a;
+        --border-color: #d0d7de;
+        --accent-color: #0969da;
+        --accent-hover: #1a7f37;
+        --success-color: #238636;
+        --danger-color: #cf222e;
+        --warning-color: #9a6700;
+        --shadow-color: rgba(0, 0, 0, 0.1);
+        --card-bg: #ffffff;
+        --card-hover: #f6f8fa;
+        --icon-bg: #0969da;
+        --icon-color: #ffffff;
+    }
+
+    [data-theme="dark"] {
+        --bg-primary: #0d1117;
+        --bg-secondary: #161b22;
+        --text-primary: #ffffff;
+        --text-secondary: #8b949e;
+        --border-color: #30363d;
+        --accent-color: #58a6ff;
+        --accent-hover: #1f6feb;
+        --success-color: #238636;
+        --danger-color: #f85149;
+        --warning-color: #d29922;
+        --shadow-color: rgba(0, 0, 0, 0.3);
+        --card-bg: #21262d;
+        --card-hover: #2d333b;
+        --icon-bg: #58a6ff;
+        --icon-color: #ffffff;
+    }
+
     body {
-        background-color: #0d1117; /* GitHub dark theme background */
-        color: #ffffff;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
         font-family: 'Poppins', sans-serif;
     }
 
     .container {
         position: relative;
         padding: 2rem;
-        background-color: #161b22; /* GitHub dark theme container */
+        background-color: var(--bg-secondary);
         border-radius: 20px;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 0 30px var(--shadow-color);
     }
 
     .page-header {
@@ -124,9 +160,10 @@
         align-items: center;
         margin-bottom: 2rem;
         padding: 1.5rem;
-        background: #21262d; /* GitHub dark theme header */
+        background: var(--card-bg);
         border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 15px var(--shadow-color);
+        border: 1px solid var(--border-color);
     }
 
     .header-content {
@@ -134,7 +171,7 @@
     }
 
     .page-header h2 {
-        color: #fff;
+        color: var(--text-primary);
         font-size: 1.8rem;
         margin: 0;
         display: flex;
@@ -143,7 +180,7 @@
     }
 
     .page-header p {
-        color: #8b949e; /* GitHub dark theme text */
+        color: var(--text-secondary);
         margin: 0.5rem 0 0 0;
         font-size: 1rem;
     }
@@ -153,10 +190,11 @@
     }
 
     .content-section {
-        background: #21262d; /* GitHub dark theme section */
+        background: var(--card-bg);
         border-radius: 15px;
         padding: 1.5rem;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 15px var(--shadow-color);
+        border: 1px solid var(--border-color);
     }
 
     .controls-container {
@@ -169,20 +207,20 @@
         display: flex;
         align-items: center;
         gap: 1rem;
-        background: #2d333b;
+        background: var(--bg-secondary);
         padding: 0.8rem 1.2rem;
         border-radius: 12px;
-        border: 1px solid #30363d;
+        border: 1px solid var(--border-color);
     }
 
     .sort-control i {
-        color: #58a6ff; /* GitHub blue */
+        color: var(--accent-color);
     }
 
     .sort-control select {
         background: transparent;
         border: none;
-        color: #c9d1d9;
+        color: var(--text-primary);
         font-size: 1rem;
         cursor: pointer;
     }
@@ -194,17 +232,18 @@
     }
 
     .announcement-card {
-        background: #2d333b;
+        background: var(--card-bg);
         border-radius: 15px;
         overflow: hidden;
         transition: all 0.3s ease;
         cursor: pointer;
-        border: 1px solid #30363d;
+        border: 1px solid var(--border-color);
     }
 
     .announcement-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 8px 25px var(--shadow-color);
+        background: var(--card-hover);
     }
 
     .card-content {
@@ -214,7 +253,7 @@
     .announcement-icon {
         width: 50px;
         height: 50px;
-        background: linear-gradient(45deg, #58a6ff, #238636);
+        background: linear-gradient(45deg, var(--icon-bg), var(--accent-color));
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -224,18 +263,18 @@
 
     .announcement-icon i {
         font-size: 1.5rem;
-        color: white;
+        color: var(--icon-color);
     }
 
     .announcement-card h3 {
         font-size: 1.5rem;
         font-weight: 600;
         margin-bottom: 1rem;
-        color: #fff;
+        color: var(--text-primary);
     }
 
     .announcement-preview {
-        color: #c9d1d9;
+        color: var(--text-secondary);
         line-height: 1.6;
         margin-bottom: 1.5rem;
     }
@@ -243,7 +282,7 @@
     .announcement-footer {
         display: flex;
         gap: 1.5rem;
-        color: #8b949e;
+        color: var(--text-secondary);
         font-size: 0.9rem;
     }
 
@@ -255,19 +294,19 @@
 
     /* Modal Styles */
     .modal-content {
-        background: #21262d;
-        border: 1px solid #30363d;
-        color: #fff;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
     }
 
     .modal-header {
-        background: #2d333b;
-        border-bottom: 1px solid #30363d;
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-color);
         padding: 1.5rem;
     }
 
     .modal-title {
-        color: #fff;
+        color: var(--text-primary);
         font-size: 1.8rem;
         font-weight: 600;
     }
@@ -276,22 +315,22 @@
         padding: 2rem;
         font-size: 1.1rem;
         line-height: 1.8;
-        color: #c9d1d9;
+        color: var(--text-secondary);
     }
 
     .modal-footer {
-        border-top: 1px solid #30363d;
+        border-top: 1px solid var(--border-color);
         padding: 1.5rem;
     }
 
     .close {
-        color: #8b949e;
+        color: var(--text-secondary);
         opacity: 0.8;
         transition: all 0.3s ease;
     }
 
     .close:hover {
-        color: #fff;
+        color: var(--text-primary);
         opacity: 1;
     }
 </style>

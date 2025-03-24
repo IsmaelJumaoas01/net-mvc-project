@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/homeowner_app.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/home.css" />
+    <link rel="stylesheet" href="~/css/theme.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -31,6 +32,103 @@
         bool isLoggedIn = ViewBag.IsLoggedIn;
         string username = ViewBag.username;
     }
+
+    <style>
+        /* Logout Modal Styles */
+        .logout-modal {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .logout-modal .modal-header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem;
+        }
+
+        .logout-modal .modal-title {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logout-modal .modal-title i {
+            color: var(--accent-color);
+        }
+
+        .logout-modal .modal-body {
+            padding: 1.5rem;
+        }
+
+        .logout-modal .modal-body p {
+            margin-bottom: 0.5rem;
+        }
+
+        .logout-modal .modal-body .text-muted {
+            color: var(--text-secondary) !important;
+        }
+
+        .logout-modal .modal-footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 1rem;
+        }
+
+        .logout-modal .btn-close {
+            color: var(--text-secondary);
+            opacity: 0.8;
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        .logout-modal .btn-close:hover {
+            color: var(--text-primary);
+            opacity: 1;
+        }
+
+        .logout-modal .btn-secondary {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .logout-modal .btn-secondary:hover {
+            background: var(--card-hover);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .logout-modal .btn-danger {
+            background: var(--gradient-danger);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .logout-modal .btn-danger:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px var(--shadow-color);
+        }
+
+        .logout-modal .close {
+            color: var(--text-secondary);
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .logout-modal .close:hover {
+            color: var(--text-primary);
+            opacity: 1;
+        }
+    </style>
 
 </head>
 <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
@@ -83,6 +181,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/theme.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 

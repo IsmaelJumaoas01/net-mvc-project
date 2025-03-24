@@ -87,8 +87,26 @@ namespace homeowner.Controllers
                 {
                     conn.Open();
 
+                    // Get current user data
+                    string currentUserQuery = "SELECT * FROM USERS WHERE UserID = @UserID";
+                    MySqlCommand currentUserCmd = new MySqlCommand(currentUserQuery, conn);
+                    currentUserCmd.Parameters.AddWithValue("@UserID", userId);
+                    string currentUsername = null;
+                    string currentEmail = null;
+                    string currentPhoneNumber = null;
+
+                    using (var reader = currentUserCmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            currentUsername = reader.GetString("Username");
+                            currentEmail = reader.GetString("Email");
+                            currentPhoneNumber = reader["PhoneNumber"]?.ToString();
+                        }
+                    }
+
                     // Check for duplicate username
-                    if (!string.IsNullOrEmpty(username))
+                    if (!string.IsNullOrEmpty(username) && username != currentUsername)
                     {
                         string checkQuery = "SELECT UserID FROM USERS WHERE Username = @Username AND UserID != @UserID";
                         MySqlCommand checkCmd = new MySqlCommand(checkQuery, conn);
@@ -102,7 +120,7 @@ namespace homeowner.Controllers
                     }
 
                     // Check for duplicate email
-                    if (!string.IsNullOrEmpty(email))
+                    if (!string.IsNullOrEmpty(email) && email != currentEmail)
                     {
                         string checkQuery = "SELECT UserID FROM USERS WHERE Email = @Email AND UserID != @UserID";
                         MySqlCommand checkCmd = new MySqlCommand(checkQuery, conn);
@@ -116,7 +134,7 @@ namespace homeowner.Controllers
                     }
 
                     // Check for duplicate phone number
-                    if (!string.IsNullOrEmpty(phoneNumber))
+                    if (!string.IsNullOrEmpty(phoneNumber) && phoneNumber != currentPhoneNumber)
                     {
                         string checkQuery = "SELECT UserID FROM USERS WHERE PhoneNumber = @PhoneNumber AND UserID != @UserID";
                         MySqlCommand checkCmd = new MySqlCommand(checkQuery, conn);
@@ -194,7 +212,7 @@ namespace homeowner.Controllers
                         }
                     }
 
-                    return Json(new { success = true, message = "No changes were made." });
+                    return Json(new { success = false, message = "No changes were made to your profile." });
                 }
             }
             catch (Exception ex)

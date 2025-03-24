@@ -2,6 +2,8 @@
     ViewBag.Title = "Login";
 }
 
+<link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+
 <div class="form-container">
     <div id="loginError" class="custom-alert-login error" style="display:none;"></div>
 
@@ -19,10 +21,17 @@
                     <label for="password">Password</label>
                     <a href="#" class="forgot-link">Forgot?</a>
                 </div>
-                <input id="password" name="password" type="password" class="form-control" required autocomplete="current-password">
+                <div class="input-group">
+                    <input id="password" name="password" type="password" class="form-control" required autocomplete="current-password">
+                    <div class="input-group-append">
+                        <button class="btn toggle-password" type="button">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <button type="submit" class="btn-login">Log In</button>
+            <button type="submit" class="btn btn-primary btn-block">Log In</button>
         </form>
 
         <p class="register-text">New here? 

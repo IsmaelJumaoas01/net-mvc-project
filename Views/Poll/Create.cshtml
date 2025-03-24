@@ -56,28 +56,71 @@
 </div>
 
 <style>
+    :root {
+        --bg-primary: #f8f9fa;
+        --bg-secondary: #ffffff;
+        --text-primary: #2d333b;
+        --text-secondary: #57606a;
+        --border-color: #d0d7de;
+        --accent-color: #0969da;
+        --accent-hover: #1a7f37;
+        --success-color: #238636;
+        --danger-color: #cf222e;
+        --warning-color: #9a6700;
+        --shadow-color: rgba(0, 0, 0, 0.1);
+        --card-bg: #ffffff;
+        --card-hover: #f6f8fa;
+        --icon-bg: #0969da;
+        --icon-color: #ffffff;
+        --gradient-primary: linear-gradient(45deg, #00bcd4, #2196f3);
+        --gradient-success: linear-gradient(45deg, #4CAF50, #8BC34A);
+        --gradient-warning: linear-gradient(45deg, #FFC107, #FF9800);
+        --gradient-danger: linear-gradient(45deg, #f44336, #e91e63);
+    }
+
+    [data-theme="dark"] {
+        --bg-primary: #0d1117;
+        --bg-secondary: #161b22;
+        --text-primary: #ffffff;
+        --text-secondary: #8b949e;
+        --border-color: #30363d;
+        --accent-color: #58a6ff;
+        --accent-hover: #1f6feb;
+        --success-color: #238636;
+        --danger-color: #f85149;
+        --warning-color: #d29922;
+        --shadow-color: rgba(0, 0, 0, 0.3);
+        --card-bg: #21262d;
+        --card-hover: #2d333b;
+        --icon-bg: #58a6ff;
+        --icon-color: #ffffff;
+        --gradient-primary: linear-gradient(45deg, #58a6ff, #1f6feb);
+        --gradient-success: linear-gradient(45deg, #238636, #2ea043);
+        --gradient-warning: linear-gradient(45deg, #d29922, #f9a825);
+        --gradient-danger: linear-gradient(45deg, #f85149, #f85149);
+    }
+
     .poll-create {
         padding: 2rem;
-        background: #1a1a1a;
+        background: var(--bg-primary);
         min-height: 100vh;
-        color: #fff;
+        color: var(--text-primary);
     }
 
     .dashboard-header h1 {
-        color: #fff;
+        color: var(--text-primary);
         font-size: 2rem;
         margin-bottom: 2rem;
-        background: linear-gradient(45deg, #00bcd4, #2196f3);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
     }
 
     .poll-form-container {
-        background: #222;
+        background: var(--card-bg);
         padding: 2rem;
         border-radius: 15px;
         max-width: 800px;
         margin: 0 auto;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 15px var(--shadow-color);
     }
 
     .form-group {
@@ -87,23 +130,25 @@
     .form-group label {
         display: block;
         margin-bottom: 0.5rem;
-        color: #00bcd4;
+        color: var(--text-primary);
+        font-weight: 500;
     }
 
     .form-control {
         width: 100%;
         padding: 0.75rem;
-        background: #333;
-        border: 1px solid #444;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
         border-radius: 8px;
-        color: #fff;
+        color: var(--text-primary);
         transition: all 0.3s ease;
     }
 
     .form-control:focus {
-        background: #2a2a2a;
-        border-color: #00bcd4;
-        box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.25);
+        background: var(--bg-secondary);
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(var(--accent-color), 0.2);
+        outline: none;
     }
 
     .option-input {
@@ -122,6 +167,16 @@
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        transition: all 0.3s ease;
+    }
+
+    .remove-option:hover {
+        background: var(--danger-color);
+        color: white;
+        border-color: var(--danger-color);
     }
 
     .btn {
@@ -132,33 +187,39 @@
     }
 
     .btn-primary {
-        background: #00bcd4;
+        background: var(--gradient-primary);
         border: none;
+        color: white;
     }
 
     .btn-primary:hover {
-        background: #008ba3;
         transform: translateY(-2px);
+        box-shadow: 0 4px 15px var(--shadow-color);
     }
 
     .btn-secondary {
-        background: #444;
-        border: none;
-        color: #fff;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
     }
 
     .btn-secondary:hover {
-        background: #555;
+        background: var(--card-hover);
+        border-color: var(--accent-color);
+        color: var(--accent-color);
         transform: translateY(-2px);
     }
 
     .btn-danger {
-        background: #f44336;
+        background: var(--gradient-danger);
         border: none;
+        color: white;
     }
 
     .btn-danger:hover {
-        background: #d32f2f;
+        background: var(--danger-color);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px var(--shadow-color);
     }
 
     .form-actions {
@@ -166,6 +227,8 @@
         gap: 1rem;
         justify-content: flex-end;
         margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color);
     }
 </style>
 
