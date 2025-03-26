@@ -9,153 +9,153 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = homeowner_app
 build_property.RootNamespace = homeowner_app
-build_property.ProjectDir = X:\vscode projects\net-mvc-project\
+build_property.ProjectDir = C:\Users\ASUS\Desktop\net-mvc-project\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = X:\vscode projects\net-mvc-project
+build_property.MSBuildProjectDirectory = C:\Users\ASUS\Desktop\net-mvc-project
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 8.0
 build_property.EnableCodeStyleSeverity = 
 
-[X:/vscode projects/net-mvc-project/Views/AccesDenied.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/AccesDenied.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjZXNEZW5pZWQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Account/ManageUsers.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Account/ManageUsers.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxNYW5hZ2VVc2Vycy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Admin_Staff/Facility.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Admin_Staff/Facility.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5fU3RhZmZcRmFjaWxpdHkuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Admin_Staff/Index.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Admin_Staff/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5fU3RhZmZcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Admin_Staff/ManageServiceRequest.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Admin_Staff/ManageServiceRequest.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5fU3RhZmZcTWFuYWdlU2VydmljZVJlcXVlc3QuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Admin_Staff/_ServiceRequestTable.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Admin_Staff/_ServiceRequestTable.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5fU3RhZmZcX1NlcnZpY2VSZXF1ZXN0VGFibGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Billing/AdminDashboard.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Billing/AdminDashboard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQmlsbGluZ1xBZG1pbkRhc2hib2FyZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Billing/Dashboard.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Billing/Dashboard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQmlsbGluZ1xEYXNoYm9hcmQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Billing/ManageBills.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Billing/ManageBills.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQmlsbGluZ1xNYW5hZ2VCaWxscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/ContactDirectory/Index.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/ContactDirectory/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udGFjdERpcmVjdG9yeVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/ContactDirectory/Manage.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/ContactDirectory/Manage.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udGFjdERpcmVjdG9yeVxNYW5hZ2UuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Contact/Index.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Contact/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udGFjdFxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Feedback/Index.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Feedback/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmVlZGJhY2tcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Forum/Details.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Forum/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRm9ydW1cRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Homeowner/BookFacility.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Homeowner/BookFacility.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZW93bmVyXEJvb2tGYWNpbGl0eS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Homeowner/Forum.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Homeowner/Forum.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZW93bmVyXEZvcnVtLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Homeowner/Profile.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Homeowner/Profile.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZW93bmVyXFByb2ZpbGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Homeowner/ServiceRequest.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Homeowner/ServiceRequest.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZW93bmVyXFNlcnZpY2VSZXF1ZXN0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Homeowner/_HomeownerAnnouncements.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Homeowner/_HomeownerAnnouncements.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZW93bmVyXF9Ib21lb3duZXJBbm5vdW5jZW1lbnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Home/AdminDashboard.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Home/AdminDashboard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxBZG1pbkRhc2hib2FyZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Home/Index.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Home/Privacy.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Home/StaffDashboard.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Home/StaffDashboard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxTdGFmZkRhc2hib2FyZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Poll/Create.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Poll/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUG9sbFxDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Poll/Index.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Poll/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUG9sbFxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Shared/Error.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Shared/_Header.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Shared/_Header.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9IZWFkZXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Shared/_LoginPartial.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Shared/_LoginPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2dpblBhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Shared/_LoginRequiredModal.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Shared/_LoginRequiredModal.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2dpblJlcXVpcmVkTW9kYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Shared/_ReadmeModal.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Shared/_ReadmeModal.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9SZWFkbWVNb2RhbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Shared/_RegisterPartial.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Shared/_RegisterPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9SZWdpc3RlclBhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/_ViewImports.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/_ViewStart.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/vscode projects/net-mvc-project/Views/Shared/_Layout.cshtml]
+[C:/Users/ASUS/Desktop/net-mvc-project/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-v7trwm1c9n

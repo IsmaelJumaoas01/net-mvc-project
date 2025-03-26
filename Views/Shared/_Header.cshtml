@@ -6,67 +6,80 @@
     role == "Staff" ? "Staff Portal" : "Subdivision Portal";
 }
 
-<header class="navbar navbar-expand-lg navbar-light">
-    <a class="navbar-brand" asp-controller="Home" asp-action="Index">@portalTitle</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-        @if (isLoggedIn)
-        {
-            <ul class="navbar-nav mx-auto">
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Announcements" asp-action="Index" title="Announcements">
-                        <i class="fas fa-bullhorn"></i>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Forum" asp-action="Index" title="Forums">
-                        <i class="fas fa-newspaper"></i>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Payments" asp-action="Index" title="Payments">
-                        <i class="fas fa-credit-card"></i>
-                    </a>
-                </li>
+<!-- Side Navigation Menu -->
+<div id="sideNav" class="sidenav">
+    <div class="sidenav-header">
+        <button id="closeSideNav" class="close-btn">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    @if (isLoggedIn)
+    {
+        <div class="nav-links">
+            <a asp-controller="Home" asp-action="Index">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a asp-controller="Announcements" asp-action="Index">
+                <i class="fas fa-bullhorn"></i> Announcements
+            </a>
+            <a asp-controller="Forum" asp-action="Index">
+                <i class="fas fa-newspaper"></i> Forums
+            </a>
+            <a asp-controller="Billing" asp-action="Dashboard">
+                <i class="fas fa-file-invoice-dollar"></i> Billing & Payments
+            </a>
 
-                @if (role == "Homeowner")
-                {
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="FacilityBooking" asp-action="Index" title="Facility Booking">
-                            <i class="fas fa-calendar-alt"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="ServiceRequests" asp-action="Index" title="Service Request">
-                            <i class="fas fa-tools"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="ContactDirectory" asp-action="Index" title="Contact Directory">
-                            <i class="fas fa-address-book"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Billing" asp-action="Dashboard" title="Billing & Payments">
-                            <i class="fas fa-file-invoice-dollar"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Feedback" asp-action="Index" title="Feedback & Complaints">
-                            <i class="fas fa-comment-dots"></i>
-                        </a>
-                    </li>
-                }
-                <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("Index", "Poll")">
-                        <i class="fas fa-poll me-2"></i>Polls & Surveys
-                    </a>
-                </li>
-            </ul>
-        }
+            @if (role == "Homeowner")
+            {
+                <a asp-controller="FacilityBooking" asp-action="Index">
+                    <i class="fas fa-calendar-alt"></i> Facility Booking
+                </a>
+                <a asp-controller="ServiceRequests" asp-action="Index">
+                    <i class="fas fa-tools"></i> Service Request
+                </a>
+                <a asp-controller="ContactDirectory" asp-action="Index">
+                    <i class="fas fa-address-book"></i> Contact Directory
+                </a>
+                <a asp-controller="Feedback" asp-action="Index">
+                    <i class="fas fa-comment-dots"></i> Feedback & Complaints
+                </a>
+            }
+            <a href="@Url.Action("Index", "Poll")">
+                <i class="fas fa-poll"></i> Polls & Surveys
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="guest-message">
+            <i class="fas fa-lock"></i>
+            <h3>Login Required</h3>
+            <p>Please sign in to access the navigation menu and features.</p>
+            <div class="guest-actions">
+                <button class="btn-login" data-toggle="modal" data-target="#loginModal">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <button class="btn-register" data-toggle="modal" data-target="#registerModal">
+                    <i class="fas fa-user-plus"></i> Register
+                </button>
+            </div>
+        </div>
+    }
+</div>
 
+<!-- Simplified Header -->
+<header class="navbar navbar-expand-lg">
+    <div class="header-left">
+        <button id="openSideNav" class="menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+    
+    <div class="header-center">
+        <a class="navbar-brand" asp-controller="Home" asp-action="Index">@portalTitle</a>
+    </div>
+    
+    <div class="header-right">
         <ul class="navbar-nav">
             @if (isLoggedIn)
             {
@@ -75,25 +88,31 @@
                         aria-expanded="false">
                         <i class="fas fa-user"></i> <span class="username">@username</span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         @if (role == "Homeowner")
                         {
-                            <li><a class="dropdown-item" asp-controller="Homeowner" asp-action="Profile">Profile</a></li>
-                            <li><a class="dropdown-item" asp-controller="FacilityReservation" asp-action="Book">Book a
-                                    Facility</a></li>
+                            <li><a class="dropdown-item" asp-controller="Homeowner" asp-action="Profile">
+                                <i class="fas fa-user-circle"></i> Profile</a></li>
+                            <li><a class="dropdown-item" asp-controller="FacilityReservation" asp-action="Book">
+                                <i class="fas fa-calendar-check"></i> Book a Facility</a></li>
                         }
-                            <li><a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">Logout</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                            <i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </li>
             }
             else
             {
                 <li class="nav-item">
-                    <a class="nav-link btn btn-primary text-white" data-toggle="modal" data-target="#loginModal">Login</a>
+                    <a class="nav-link btn btn-login" data-toggle="modal" data-target="#loginModal">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link btn btn-secondary text-white" data-toggle="modal"
-                        data-target="#registerModal">Register</a>
+                    <a class="nav-link btn btn-register" data-toggle="modal" data-target="#registerModal">
+                        <i class="fas fa-user-plus"></i> Register
+                    </a>
                 </li>
             }
         </ul>
@@ -101,80 +120,374 @@
 </header>
 
 <style>
+    /* Header Styles */
     header.navbar {
         background-color: #000000;
-        border-bottom: 1px solid #e0e0e0;
+        border-bottom: 1px solid #30363d;
         width: 100%;
-        padding: 0 20px;
-        /* Add padding to ensure content is not too close to the edges */
+        height: 60px;
+        padding: 0 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
     }
 
-   header.navbar .navbar-nav {
-    padding-right: 55px; /* Moves all nav items, including the dropdown, away from the right edge */
-}
+    .header-left, .header-right {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        z-index: 1001;
+    }
 
+    .header-left {
+        justify-content: flex-start;
+    }
 
-    header.navbar .nav-link {
+    .header-center {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+    }
+
+    .header-right {
+        justify-content: flex-end;
+    }
+
+    .navbar-brand {
+        color: #ffffff !important;
+        font-size: 1.5rem;
+        font-weight: 600;
+        text-decoration: none;
+        margin: 0;
+        text-align: center;
+        white-space: nowrap;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .navbar-brand:hover {
+        color: #58a6ff !important;
+    }
+
+    .menu-btn {
+        background: none;
+        border: none;
         color: #ffffff;
-        /* Change icon color to white for better readability */
-        margin: 0 10px;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        transition: color 0.3s ease;
     }
 
-    header.navbar .nav-link i {
+    .menu-btn:hover {
+        color: #58a6ff;
+    }
+
+    /* User Navigation Styles */
+    .navbar-nav {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+    }
+
+    .nav-item.dropdown {
+        position: relative;
+    }
+
+    .nav-link {
+        color: #ffffff !important;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+        font-size: 1rem;
+        white-space: nowrap;
+        transition: all 0.3s ease;
+    }
+
+    .nav-link:hover {
+        color: #58a6ff !important;
+    }
+
+    .nav-link i {
+        font-size: 1.2rem;
         color: #ffffff;
-        /* Ensure icons are white */
     }
 
-    header.navbar .nav-link:hover {
-        color: #007bff;
-    }
-
-    header.navbar .navbar-brand {
+    .username {
+        margin-left: 0.5rem;
+        font-weight: 500;
         color: #ffffff;
-        /* Change brand color to white for better readability */
     }
 
-    header.navbar .navbar-brand:hover {
-        color: #007bff;
+    /* Login/Register Buttons */
+    .btn-login, .btn-register {
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-left: 0.5rem;
+        color: #ffffff !important;
+        transition: all 0.3s ease;
     }
 
-    header.navbar .navbar-toggler {
-        border-color: #ffffff;
-        /* Change toggler border color to white */
+    .btn-login {
+        background: #238636 !important;
+        border: none;
     }
 
-    header.navbar .navbar-toggler-icon {
-        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%28255, 255, 255, 1%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+    .btn-login:hover {
+        background: #2ea043 !important;
+        transform: translateY(-1px);
     }
 
-    header.navbar .username {
+    .btn-register {
+        background: #21262d !important;
+        border: 1px solid #30363d;
+    }
+
+    .btn-register:hover {
+        background: #30363d !important;
+        border-color: #58a6ff;
+        transform: translateY(-1px);
+    }
+
+    /* Dropdown Menu */
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background-color: #2d333b;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        margin-top: 0.5rem;
+        min-width: 200px;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+        z-index: 1002;
+    }
+
+    .dropdown-menu-end {
+        right: 0;
+        left: auto;
+    }
+
+    .dropdown-item {
+        color: #ffffff !important;
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+
+    .dropdown-item i {
+        width: 20px;
+        text-align: center;
+        font-size: 1rem;
+    }
+
+    .dropdown-item:hover {
+        background-color: #444;
+        color: #58a6ff !important;
+    }
+
+    .dropdown-divider {
+        border-top: 1px solid #30363d;
+        margin: 0.5rem 0;
+    }
+
+    /* Media Queries */
+
+
+    /* Side Navigation Styles */
+    .sidenav {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        z-index: 1001;
+        top: 0;
+        left: 0;
+        background-color: #1a1a1a;
+        overflow-x: hidden;
+        transition: 0.3s;
+        padding-top: 60px;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .sidenav.open {
+        width: 280px;
+    }
+
+    .sidenav-header {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 1rem;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
         color: #ffffff;
-        /* Change username color to white */
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        transition: color 0.3s ease;
     }
 
-    header.navbar .dropdown-menu {
-        right: 20px;
-        /* Push it slightly away from the edge */
-        margin-top: 10px;
-        /* Add space below the username */
-        background-color: #333333;
-        /* Optional: Dark background */
+    .close-btn:hover {
+        color: #58a6ff;
     }
 
-    header.navbar .dropdown-item {
+    /* Guest Message Styles */
+    .guest-message {
+        padding: 2rem;
+        text-align: center;
         color: #ffffff;
-        /* Make dropdown text white */
     }
 
-    header.navbar .dropdown-item:hover {
-        background-color: #007bff;
-        /* Change hover effect */
+    .guest-message i {
+        font-size: 3rem;
+        color: #58a6ff;
+        margin-bottom: 1rem;
     }
 
-    header.navbar .dropdown-toggle::after {
-        border-top: 5px solid white;
-        /* Makes the triangle white */
-        border-right: 5px solid transparent;
-        border-left: 5px solid transparent;
+    .guest-message h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #58a6ff;
+    }
+
+    .guest-message p {
+        color: #8b949e;
+        margin-bottom: 2rem;
+        line-height: 1.5;
+    }
+
+    .guest-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .btn-login, .btn-register {
+        width: 100%;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-login {
+        background: #238636;
+        color: #ffffff;
+    }
+
+    .btn-login:hover {
+        background: #2ea043;
+    }
+
+    .btn-register {
+        background: #21262d;
+        color: #ffffff;
+        border: 1px solid #30363d;
+    }
+
+    .btn-register:hover {
+        background: #30363d;
+        border-color: #58a6ff;
+    }
+
+    /* Navigation Links */
+    .nav-links {
+        padding: 1rem 0;
+    }
+
+    .nav-links a {
+        padding: 1rem 1.5rem;
+        text-decoration: none;
+        font-size: 1.1rem;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+        background-color: #2d333b;
+        color: #58a6ff;
+    }
+
+    .nav-links a:first-child {
+        border-top: 1px solid #30363d;
+        margin-top: 0.5rem;
+    }
+
+    .nav-links i {
+        width: 20px;
+        text-align: center;
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sideNav = document.getElementById('sideNav');
+        const openBtn = document.getElementById('openSideNav');
+        const closeBtn = document.getElementById('closeSideNav');
+        const mainContent = document.querySelector('main');
+
+        function openNav() {
+            sideNav.classList.add('open');
+            mainContent.classList.add('shifted');
+        }
+
+        function closeNav() {
+            sideNav.classList.remove('open');
+            mainContent.classList.remove('shifted');
+        }
+
+        openBtn.addEventListener('click', openNav);
+        closeBtn.addEventListener('click', closeNav);
+
+        // Close sidenav when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!sideNav.contains(event.target) && !openBtn.contains(event.target) && sideNav.classList.contains('open')) {
+                closeNav();
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth <= 768 && sideNav.classList.contains('open')) {
+                mainContent.classList.remove('shifted');
+            } else if (window.innerWidth > 768 && sideNav.classList.contains('open')) {
+                mainContent.classList.add('shifted');
+            }
+        });
+    });
+</script>

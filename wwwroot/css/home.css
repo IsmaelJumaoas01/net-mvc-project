@@ -164,6 +164,50 @@ body {
         margin-right: 0;
         margin-left: 0;
     }
+    
+}
+
+@media (max-width: 768px) {
+    .header-center {
+        position: static;
+        transform: none;
+        margin: 0 auto;
+    }
+
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+
+    .username {
+        display: none;
+    }
+
+
+    .sidenav.open {
+        width: 100%;
+    }
+
+    .nav-item .btn {
+        padding: 0.5rem;
+    }
+
+    
+}
+
+/* Adjust main content for fixed header */
+main {
+    margin-top: 60px; /* Height of the header */
+    transition: margin-left 0.3s ease;
+}
+
+main.shifted {
+    margin-left: 280px;
+}
+
+@media (max-width: 768px) {
+    main.shifted {
+        margin-left: 0;
+    }
 }
 
 /* Page Header Container */

@@ -15,8 +15,6 @@
 
 <head>
     <link rel="stylesheet" href="~/css/home.css" />
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 </head>
 
 <div class="container mt-4">
@@ -27,10 +25,10 @@
         </div>
     </div>
 
-    <div id="errorMsg" class="alert alert-danger d-none" data-aos="fade-up"></div>
+    <div id="errorMsg" class="alert alert-danger d-none"></div>
 
     <div class="row">
-        <div class="col-md-6" data-aos="fade-right">
+        <div class="col-md-6">
             <div class="request-form-container">
                 <h2 class="form-title">Submit New Request</h2>
                 <form id="requestServiceForm" class="mt-4">
@@ -83,7 +81,7 @@
             </div>
         </div>
 
-        <div class="col-md-6" data-aos="fade-left">
+        <div class="col-md-6">
             <div class="requests-history-container">
                 <h2 class="history-title">Your Service Requests</h2>
                 <div class="filter-container mb-4">
@@ -102,7 +100,7 @@
                 <div class="requests-list">
                     @foreach (var req in serviceRequests)
                     {
-                        <div class="request-card @req.Status.ToLower()" data-status="@req.Status" data-aos="fade-up">
+                        <div class="request-card @req.Status.ToLower()" data-status="@req.Status">
                             <div class="request-header">
                                 <div class="request-icon">
                                     <i class="fas @(req.Status == "Pending" ? "fa-clock" : 
@@ -506,12 +504,6 @@
 
 <script>
     $(document).ready(function () {
-        // Initialize AOS
-        AOS.init({
-            duration: 1000,
-            once: true
-        });
-
         $("#requestServiceForm").submit(function (e) {
             e.preventDefault();
             $("#errorMsg").hide();

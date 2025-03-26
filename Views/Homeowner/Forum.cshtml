@@ -7,15 +7,12 @@
 <link rel="stylesheet" href="~/css/home.css" />
 <link rel="stylesheet" href="~/css/homeowner_forum.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
 <div class="container mt-4">
     <div class="header-container">
-     
         <div class="page-header">
             <div class="header-content">
                 <h2><i class="fas fa-comments"></i> Community Forum</h2>
@@ -39,8 +36,7 @@
             @foreach (var post in Model)
             {
                 <div class="col-md-6 mb-3">
-                    <div class="card post-card" data-date="@post.CreatedAt.ToString("yyyy-MM-dd")" data-userid="@post.UserID"
-                        data-aos="fade-up">
+                    <div class="card post-card" data-date="@post.CreatedAt.ToString("yyyy-MM-dd")" data-userid="@post.UserID">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div>
                                 <h5 class="card-title mb-0">@post.Title</h5>
@@ -83,7 +79,9 @@
         }
         else
         {
-            <p>No posts available.</p>
+            <div class="col-12 text-center">
+                <p>No posts available.</p>
+            </div>
         }
     </div>
 </div>
@@ -193,14 +191,6 @@
 
 <script>
     $(document).ready(function () {
-        // Initialize AOS
-        AOS.init({
-            duration: 1000,
-            once: true
-        });
-
-        $(".post-card").hide().fadeIn(1000); // Fade in effect for posts
-
         let currentUserId = "@(ViewBag.CurrentUserId ?? "null")";
         console.log("Current User ID:", currentUserId);
 
@@ -359,13 +349,10 @@
             $("#editPostID").val(postID);
             $("#editPostTitle").val(title);
             $("#editPostContent").val(content);
-
             if (image) {
                 $("#editImagePreview").attr("src", "data:image/png;base64," + image).show();
-                $("#deleteImageBtn").attr("data-id", postID).show();
             } else {
                 $("#editImagePreview").hide();
-                $("#deleteImageBtn").hide();
             }
 
             $("#editPostModal").modal("show");
@@ -459,7 +446,7 @@
         // Toast notification function
         function showToast(message, type) {
             const toast = $('<div>').addClass('toast ' + type).text(message);
-            $('#toastContainer').append(toast);
+            $('body').append(toast);
             setTimeout(() => toast.addClass('show'), 100);
             setTimeout(() => {
                 toast.removeClass('show');
