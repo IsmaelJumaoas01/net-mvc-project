@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "iLXLotpr1NkLA4C5cB+bLH04SVzngJ69oLMBzgeq/jQ=",
+  "Hash": "C73IbWFApFGLuQS78N35kwLELFYugNgNehqyyKj+HG8=",
   "Source": "homeowner_app",
   "BasePath": "_content/homeowner_app",
   "Mode": "Default",
@@ -115,8 +115,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "dg8qy5s0e9",
-      "Integrity": "s/xIs83PurykYkvOjLnQof7l/mE9IrsL6TTPRQy5dZ4=",
+      "Fingerprint": "lpry4v0gm3",
+      "Integrity": "ySBPP5AC/qYucKah8TjSGtMwv/2m20vRPyjslwotqhQ=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\home.css"
@@ -225,6 +225,48 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\basketball_court.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\ASUS\\Desktop\\net-mvc-project\\wwwroot\\images\\beach.png.jpg",
+      "SourceId": "homeowner_app",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\ASUS\\Desktop\\net-mvc-project\\wwwroot\\",
+      "BasePath": "_content/homeowner_app",
+      "RelativePath": "images/beach.png#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "tqke91091i",
+      "Integrity": "exJboOfXMKuOja7GaaKpo9CRGN4pVuZbqG5A8VzhfhQ=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\beach.png.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\ASUS\\Desktop\\net-mvc-project\\wwwroot\\images\\shore.png.jpg",
+      "SourceId": "homeowner_app",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\ASUS\\Desktop\\net-mvc-project\\wwwroot\\",
+      "BasePath": "_content/homeowner_app",
+      "RelativePath": "images/shore.png#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "g3vdi24qyr",
+      "Integrity": "VMem6Geyc/rIburYWeRm3eRPNQ5v00mzXaSieTeDdww=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\shore.png.jpg"
     },
     {
       "Identity": "C:\\Users\\ASUS\\Desktop\\net-mvc-project\\wwwroot\\images\\subdivision.jpg",
@@ -1705,7 +1747,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "21708"
+          "Value": "22488"
         },
         {
           "Name": "Content-Type",
@@ -1713,11 +1755,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"s/xIs83PurykYkvOjLnQof7l/mE9IrsL6TTPRQy5dZ4=\""
+          "Value": "\"ySBPP5AC/qYucKah8TjSGtMwv/2m20vRPyjslwotqhQ=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 26 Mar 2025 22:35:43 GMT"
+          "Value": "Thu, 27 Mar 2025 01:33:41 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1727,12 +1769,12 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-s/xIs83PurykYkvOjLnQof7l/mE9IrsL6TTPRQy5dZ4="
+          "Value": "sha256-ySBPP5AC/qYucKah8TjSGtMwv/2m20vRPyjslwotqhQ="
         }
       ]
     },
     {
-      "Route": "css/home.dg8qy5s0e9.css",
+      "Route": "css/home.lpry4v0gm3.css",
       "AssetFile": "C:\\Users\\ASUS\\Desktop\\net-mvc-project\\wwwroot\\css\\home.css",
       "Selectors": [],
       "ResponseHeaders": [
@@ -1742,7 +1784,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "21708"
+          "Value": "22488"
         },
         {
           "Name": "Content-Type",
@@ -1750,11 +1792,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"s/xIs83PurykYkvOjLnQof7l/mE9IrsL6TTPRQy5dZ4=\""
+          "Value": "\"ySBPP5AC/qYucKah8TjSGtMwv/2m20vRPyjslwotqhQ=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 26 Mar 2025 22:35:43 GMT"
+          "Value": "Thu, 27 Mar 2025 01:33:41 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1764,7 +1806,7 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "dg8qy5s0e9"
+          "Value": "lpry4v0gm3"
         },
         {
           "Name": "label",
@@ -1772,7 +1814,7 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-s/xIs83PurykYkvOjLnQof7l/mE9IrsL6TTPRQy5dZ4="
+          "Value": "sha256-ySBPP5AC/qYucKah8TjSGtMwv/2m20vRPyjslwotqhQ="
         }
       ]
     },
@@ -2347,6 +2389,170 @@
         {
           "Name": "integrity",
           "Value": "sha256-KbRioDdZDxK0XMPy3uix8vTCMuvIATvBtK+4C88/IWM="
+        }
+      ]
+    },
+    {
+      "Route": "images/beach.png.jpg",
+      "AssetFile": "C:\\Users\\ASUS\\Desktop\\net-mvc-project\\wwwroot\\images\\beach.png.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "635436"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"exJboOfXMKuOja7GaaKpo9CRGN4pVuZbqG5A8VzhfhQ=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 27 Mar 2025 00:29:55 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-exJboOfXMKuOja7GaaKpo9CRGN4pVuZbqG5A8VzhfhQ="
+        }
+      ]
+    },
+    {
+      "Route": "images/beach.png.tqke91091i.jpg",
+      "AssetFile": "C:\\Users\\ASUS\\Desktop\\net-mvc-project\\wwwroot\\images\\beach.png.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "635436"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"exJboOfXMKuOja7GaaKpo9CRGN4pVuZbqG5A8VzhfhQ=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 27 Mar 2025 00:29:55 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "tqke91091i"
+        },
+        {
+          "Name": "label",
+          "Value": "images/beach.png.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-exJboOfXMKuOja7GaaKpo9CRGN4pVuZbqG5A8VzhfhQ="
+        }
+      ]
+    },
+    {
+      "Route": "images/shore.png.g3vdi24qyr.jpg",
+      "AssetFile": "C:\\Users\\ASUS\\Desktop\\net-mvc-project\\wwwroot\\images\\shore.png.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "4335903"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"VMem6Geyc/rIburYWeRm3eRPNQ5v00mzXaSieTeDdww=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 27 Mar 2025 00:26:33 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "g3vdi24qyr"
+        },
+        {
+          "Name": "label",
+          "Value": "images/shore.png.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-VMem6Geyc/rIburYWeRm3eRPNQ5v00mzXaSieTeDdww="
+        }
+      ]
+    },
+    {
+      "Route": "images/shore.png.jpg",
+      "AssetFile": "C:\\Users\\ASUS\\Desktop\\net-mvc-project\\wwwroot\\images\\shore.png.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "4335903"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"VMem6Geyc/rIburYWeRm3eRPNQ5v00mzXaSieTeDdww=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 27 Mar 2025 00:26:33 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-VMem6Geyc/rIburYWeRm3eRPNQ5v00mzXaSieTeDdww="
         }
       ]
     },

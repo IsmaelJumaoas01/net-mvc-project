@@ -37,6 +37,14 @@
       "PackagePath": "staticwebassets\\images\\basketball_court.jpg"
     },
     {
+      "Id": "C:\\Users\\ASUS\\Desktop\\net-mvc-project\\wwwroot\\images\\beach.png.jpg",
+      "PackagePath": "staticwebassets\\images\\beach.png.jpg"
+    },
+    {
+      "Id": "C:\\Users\\ASUS\\Desktop\\net-mvc-project\\wwwroot\\images\\shore.png.jpg",
+      "PackagePath": "staticwebassets\\images\\shore.png.jpg"
+    },
+    {
       "Id": "C:\\Users\\ASUS\\Desktop\\net-mvc-project\\wwwroot\\images\\subdivision.jpg",
       "PackagePath": "staticwebassets\\images\\subdivision.jpg"
     },

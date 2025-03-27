@@ -13,13 +13,17 @@
         .Take(itemsPerPage)
         .ToList();
 
-    TimeSpan minTime = new TimeSpan(7, 30, 0);
-    TimeSpan maxTime = new TimeSpan(22, 0, 0);
+    // Generate time options using DateTime
     var timeOptions = new List<string>();
-    for (TimeSpan t = minTime; t <= maxTime; t = t.Add(TimeSpan.FromMinutes(30)))
+    var baseDate = DateTime.Today;
+    var startTime = baseDate.AddHours(7).AddMinutes(30);
+    var endTime = baseDate.AddHours(22);
+
+    for (var time = startTime; time <= endTime; time = time.AddMinutes(30))
     {
-        timeOptions.Add(t.ToString(@"hh\:mm"));
+        timeOptions.Add(time.ToString("HH:mm"));
     }
+    
     var today = DateTime.Now.ToString("yyyy-MM-dd");
 }
 
@@ -30,120 +34,75 @@
 </head>
 
 <div class="container mt-4">
-    <div class="header-container">
-
-
-        <div class="page-header">
-            <div class="header-content">
-                <h2><i class="fas fa-calendar-check"></i> Facility Booking</h2>
-                <p>Reserve and manage your facility bookings</p>
-            </div>
-            <button class="btn btn-primary pulse-button" data-bs-toggle="modal" data-bs-target="#bookingModal">
-                <i class="fas fa-plus"></i> New Booking
-            </button>
+    <div class="welcome-section">
+        <div class="welcome-content">
+            <h1><i class="fas fa-umbrella-beach"></i> Our Amenities</h1>
+            <p>Experience luxury and convenience with our world-class facilities. Book your spot today!</p>
         </div>
     </div>
 
-    <!-- Booking Modal -->
-    <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="bookingModalLabel">
-                        <i class="fas fa-calendar-check"></i> Book a Facility
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="bookFacilityForm">
-                        <div class="mb-4">
-                            <label class="form-label">Select Facility</label>
-                            <div class="facility-grid">
+    <div class="facilities-grid">
                                 @foreach (var facility in facilities)
                                 {
-                                    <div class="facility-card" data-id="@facility.FacilityID" data-name="@facility.FacilityName">
-                                        <div class="facility-image"
-                                            style="background-image: url('/images/@(facility.FacilityName.ToLower().Contains("basketball") ? "basketball_court.jpg" : facility.FacilityName.ToLower().Contains("pool") ? "swimming_pool.jpg" : facility.FacilityName.ToLower().Contains("hall") ? "hall.jpg" : "default.jpg")');">
-                                            <div class="facility-overlay">
-                                                <i class="fas @(facility.FacilityName.ToLower().Contains("basketball") ? "fa-basketball-ball" : facility.FacilityName.ToLower().Contains("pool") ? "fa-swimming-pool" : "fa-building")"></i>
-                                            </div>
-                                        </div>
-                                        <p class="facility-name">@facility.FacilityName</p>
-                                    </div>
-                                }
-                            </div>
-                            <input type="hidden" id="facilitySelect" required>
-                        </div>
+            string imagePath = facility.FacilityName.ToLower().Contains("basketball") ? "/images/basketball_court.jpg" :
+                             facility.FacilityName.ToLower().Contains("pool") ? "/images/swimming_pool.jpg" :
+                             facility.FacilityName.ToLower().Contains("beach") ? "/images/beach.png.jpg" :
+                             facility.FacilityName.ToLower().Contains("shore") ? "/images/shore.png.jpg" :
+                             "/images/beach.png.jpg";
 
-                        <div class="booking-details">
-                            <div class="mb-3">
-                                <label for="reservationDate" class="form-label">
-                                    <i class="fas fa-calendar"></i> Reservation Date
-                                </label>
-                                <input type="date" id="reservationDate" class="form-control custom-input" required min="@today">
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="startTime" class="form-label">
-                                        <i class="fas fa-clock"></i> Start Time
-                                    </label>
-                                    <select id="startTime" class="form-select custom-input" required>
-                                        <option value="">Select time</option>
-                                        @foreach (var time in timeOptions)
-                                        {
-                                            <option value="@time">@time</option>
-                                        }
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="endTime" class="form-label">
-                                        <i class="fas fa-clock"></i> End Time
-                                    </label>
-                                    <select id="endTime" class="form-select custom-input" required>
-                                        <option value="">Select time</option>
-                                        @foreach (var time in timeOptions)
-                                        {
-                                            <option value="@time">@time</option>
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="text-center mt-4">
-                                <button type="submit" class="btn btn-primary btn-lg w-100 submit-btn">
-                                    <i class="fas fa-check-circle"></i> Confirm Booking
+            <div class="facility-card" onclick="selectFacility('@facility.FacilityID', '@facility.FacilityName')" data-aos="fade-up">
+                <div class="facility-image" style="background-image: url('@imagePath')">
+                                            <div class="facility-overlay">
+                        <h3>@facility.FacilityName</h3>
+                        <button class="btn btn-book">
+                            <i class="fas fa-calendar-check"></i> Book Now
                                 </button>
                             </div>
-                        </div>
-                    </form>
                 </div>
             </div>
-        </div>
+        }
     </div>
 
-    <h2 class="text-center mt-5 mb-4" data-aos="fade-up">Your Reservations</h2>
+    <!-- Your Reservations Section -->
+    <div class="reservations-section">
+        <h2 class="section-title" data-aos="fade-up">
+            <i class="fas fa-calendar-alt"></i> Your Reservations
+        </h2>
+        
     <div class="reservation-timeline" data-aos="fade-up">
         @if (paginatedReservations.Any())
         {
-            @foreach (var res in paginatedReservations)
-            {
-                <div class="timeline-item @res.Status.ToLower()">
+                foreach (var res in paginatedReservations)
+                {
+                    string statusClass = res.Status.ToLower();
+                    string statusIcon = res.Status == "Confirmed" ? "check-circle" :
+                                      res.Status == "Pending" ? "clock" : "times-circle";
+                    
+                    <div class="timeline-card @statusClass">
                     <div class="timeline-icon">
-                        <i class="@(res.Status == "Confirmed" ? "fas fa-check-circle" : res.Status == "Pending" ? "fas fa-clock" : "fas fa-times-circle")"></i>
-                    </div>
-                    <div class="timeline-content">
-                        <div class="facility-img"
-                            style="background-image: url('/images/@(res.FacilityName.ToLower().Contains("basketball") ? "basketball_court.jpg" : res.FacilityName.ToLower().Contains("pool") ? "swimming_pool.jpg" : res.FacilityName.ToLower().Contains("hall") ? "hall.jpg" : "default.jpg")');">
+                            <i class="fas fa-@statusIcon"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="facility-img" style="background-image: url('@(res.FacilityName.ToLower().Contains("basketball") ? "/images/basketball_court.jpg" : 
+                                                                                    res.FacilityName.ToLower().Contains("pool") ? "/images/swimming_pool.jpg" : 
+                                                                                    res.FacilityName.ToLower().Contains("beach") ? "/images/beach.png.jpg" :
+                                                                                    res.FacilityName.ToLower().Contains("shore") ? "/images/shore.png.jpg" :
+                                                                                    "/images/beach.png.jpg")')">
                         </div>
                         <div class="details">
-                            <h5>@res.FacilityName</h5>
-                            <p>
-                                <i class="fas fa-calendar-day"></i> <strong>Date:</strong> @res.ReservationDate.ToString("MMM dd, yyyy")<br>
-                                <i class="fas fa-clock"></i> <strong>Time:</strong> @res.StartTime.ToString(@"hh\:mm") - @res.EndTime.ToString(@"hh\:mm")
-                            </p>
-                            <span class="status-badge @res.Status.ToLower()">
-                                @res.Status
-                            </span>
-                        </div>
+                                <h4>@res.FacilityName</h4>
+                                <div class="reservation-details">
+                                    <div class="detail-item">
+                                        <i class="fas fa-calendar-day"></i>
+                                        <span>@res.ReservationDate.ToString("MMM dd, yyyy")</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <i class="fas fa-clock"></i>
+                                        <span>@DateTime.Today.Add(res.StartTime).ToString("HH:mm") - @DateTime.Today.Add(res.EndTime).ToString("HH:mm")</span>
+                                    </div>
+                                </div>
+                                <span class="status-badge @statusClass">@res.Status</span>
+                            </div>
                     </div>
                 </div>
             }
@@ -171,241 +130,134 @@
                             </a>
                         }
                     </div>
-                    <div class="page-info">
-                        Page @currentPage of @totalPages
                     </div>
-                </div>
-            }
+                }
         }
         else
         {
             <div class="no-reservations" data-aos="fade-up">
                 <i class="fas fa-calendar-times"></i>
                 <p>No reservations found</p>
+                    <span>Book a facility to get started!</span>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Booking Modal -->
+<div class="modal fade" id="bookingModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-calendar-check"></i> Book a Facility
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-        }
+            <div class="modal-body">
+                <form id="bookFacilityForm">
+                    <input type="hidden" id="selectedFacilityId" name="facilityId">
+                    <div class="selected-facility">
+                        <h6>Selected Facility:</h6>
+                        <p id="selectedFacilityName">Please select a facility</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reservationDate">
+                            <i class="fas fa-calendar"></i> Date
+                        </label>
+                        <input type="date" id="reservationDate" class="form-control" required min="@today">
+                    </div>
+
+                    <div class="time-selection">
+                        <div class="form-group">
+                            <label for="startTime">
+                                <i class="fas fa-clock"></i> Start Time
+                            </label>
+                            <select id="startTime" class="form-control" required>
+                                <option value="">Select time</option>
+                                @foreach (var time in timeOptions)
+                                {
+                                    <option value="@time">@time</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="endTime">
+                                <i class="fas fa-clock"></i> End Time
+                            </label>
+                            <select id="endTime" class="form-control" required>
+                                <option value="">Select time</option>
+                                @foreach (var time in timeOptions)
+                                {
+                                    <option value="@time">@time</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-check-circle"></i> Confirm Booking
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
 <style>
-    body {
-        background-color: #0d1117; /* GitHub dark theme background */
-        color: #ffffff;
-        font-family: 'Poppins', sans-serif;
+    /* Welcome Section */
+    .welcome-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/beach.png.jpg');
+        background-size: cover;
+        background-position: center;
+        padding: 4rem 2rem;
+        border-radius: 15px;
+        margin-bottom: 3rem;
+        text-align: center;
+        color: white;
     }
 
-    .container {
-        position: relative;
-        padding: 2rem;
-        background-color: #161b22; /* GitHub dark theme container */
-        border-radius: 20px;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
-    }
-
-    .page-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 2rem;
-        padding: 1.5rem;
-        background: #21262d; /* GitHub dark theme header */
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .header-content {
-        flex: 1;
-    }
-
-    .page-header h2 {
-        color: #fff;
-        font-size: 1.8rem;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 0.8rem;
-    }
-
-    .page-header p {
-        color: #8b949e; /* GitHub dark theme text */
-        margin: 0.5rem 0 0 0;
-        font-size: 1rem;
-    }
-
-    .pulse-button {
-        position: relative;
-        background: linear-gradient(45deg, #00bcd4, #2196f3);
-        border: none;
-        border-radius: 50px;
-        padding: 15px 40px;
-        font-size: 1.1rem;
+    .welcome-content h1 {
+        font-size: 2.5rem;
         font-weight: 600;
-        letter-spacing: 1px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        transform: scale(1);
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
 
-    .pulse-button:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 20px rgba(33, 150, 243, 0.4);
+    .welcome-content p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
     }
 
-    .pulse-button::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 150%;
-        height: 150%;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 50%;
-        transform: translate(-50%, -50%) scale(0);
-        animation: pulse 2s infinite;
-    }
-
-    /* @*
-        CSS Animations
-    *@ */
-    @@keyframes pulse {
-        0% {
-            transform: translate(-50%, -50%) scale(0);
-            opacity: 1;
-        }
-        100% {
-            transform: translate(-50%, -50%) scale(1.5);
-            opacity: 0;
-        }
-    }
-
-    /* Modal Styles */
-    .modal-content {
-        background: #21262d;
-        border: 1px solid #30363d;
-        color: #c9d1d9;
-    }
-
-    .modal-header {
-        background: #2d333b;
-        border-bottom: 1px solid #30363d;
-        padding: 1.5rem;
-    }
-
-    .modal-title {
-        color: #fff;
-        font-size: 1.5rem;
-        font-weight: 600;
-    }
-
-    .modal-body {
-        background: #21262d;
-        padding: 1.5rem;
-    }
-
-    .modal-footer {
-        background: #2d333b;
-        border-top: 1px solid #30363d;
-        padding: 1rem;
-    }
-
-    .form-label {
-        color: #c9d1d9;
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-    }
-
-    .form-control {
-        background: #2d333b;
-        border: 1px solid #30363d;
-        color: #c9d1d9;
-        border-radius: 6px;
-    }
-
-    .form-control:focus {
-        background: #2d333b;
-        border-color: #58a6ff;
-        color: #c9d1d9;
-        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
-    }
-
-    .form-select {
-        background-color: #2d333b;
-        border: 1px solid #30363d;
-        color: #c9d1d9;
-    }
-
-    .form-select:focus {
-        background-color: #2d333b;
-        border-color: #58a6ff;
-        color: #c9d1d9;
-        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
-    }
-
-    .btn-close {
-        color: #8b949e;
-        opacity: 0.8;
-        filter: invert(1) grayscale(100%) brightness(200%);
-    }
-
-    .btn-close:hover {
-        color: #fff;
-        opacity: 1;
-    }
-
-    .btn-primary {
-        background: #238636;
-        border: 1px solid rgba(240,246,252,0.1);
-        color: #fff;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        transition: all 0.2s ease;
-    }
-
-    .btn-primary:hover {
-        background: #2ea043;
-        transform: translateY(-1px);
-    }
-
-    .btn-secondary {
-        background: #21262d;
-        border: 1px solid #30363d;
-        color: #c9d1d9;
-    }
-
-    .btn-secondary:hover {
-        background: #2d333b;
-        border-color: #58a6ff;
-        color: #fff;
-    }
-
-    /* Facility Grid */
-    .facility-grid {
+    /* Facilities Grid */
+    .facilities-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        margin-top: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 4rem;
     }
 
     .facility-card {
         background: #2d333b;
-        border-radius: 10px;
+        border-radius: 15px;
         overflow: hidden;
-        cursor: pointer;
         transition: all 0.3s ease;
+        cursor: pointer;
         border: 1px solid #30363d;
     }
 
     .facility-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    }
-
-    .facility-card.selected {
-        border: 2px solid #58a6ff;
-        box-shadow: 0 0 20px rgba(88, 166, 255, 0.3);
+        transform: translateY(-10px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     }
 
     .facility-image {
-        height: 150px;
+        height: 250px;
         background-size: cover;
         background-position: center;
         position: relative;
@@ -419,73 +271,91 @@
         bottom: 0;
         background: rgba(0, 0, 0, 0.5);
         display: flex;
-        align-items: center;
+        flex-direction: column;
         justify-content: center;
+        align-items: center;
         opacity: 0;
-        transition: opacity 0.3s ease;
+        transition: all 0.3s ease;
     }
 
     .facility-card:hover .facility-overlay {
         opacity: 1;
     }
 
-    .facility-overlay i {
-        font-size: 2rem;
-        color: #fff;
-    }
-
-    .facility-name {
-        padding: 1rem;
-        margin: 0;
-        text-align: center;
-        font-weight: 500;
-        color: #fff;
-    }
-
-    /* Form Controls */
-    .custom-input {
-        background: #2a2a2a;
-        border: 1px solid #444;
-        color: #fff;
-        padding: 0.8rem;
-        border-radius: 10px;
-        transition: all 0.3s ease;
-    }
-
-    .custom-input:focus {
-        background: #333;
-        border-color: #00bcd4;
-        box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.2);
-    }
-
-    .submit-btn {
-        background: linear-gradient(45deg, #00bcd4, #2196f3);
-        border: none;
-        padding: 1rem;
-        font-weight: 600;
-        letter-spacing: 1px;
-        border-radius: 10px;
-        transition: all 0.3s ease;
-    }
-
-    .submit-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
-    }
-
-    /* Timeline Styling */
-    .reservation-timeline {
-        position: relative;
-        max-width: 800px;
-        margin: 2rem auto;
-    }
-
-    .timeline-item {
-        background: #2d333b;
-        border-radius: 10px;
-        padding: 1.2rem;
+    .facility-overlay h3 {
+        color: white;
+        font-size: 1.5rem;
         margin-bottom: 1rem;
-        border: 1px solid #30363d;
+        text-align: center;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .btn-book {
+        background: #238636;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-book:hover {
+        background: #2ea043;
+        transform: scale(1.05);
+    }
+
+    /* Alert Styles */
+    .alert {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .alert-danger {
+        background: rgba(235, 77, 75, 0.2);
+        border: 1px solid rgba(235, 77, 75, 0.3);
+        color: #eb4d4b;
+    }
+
+    .d-none {
+        display: none;
+    }
+
+    /* Reservations Section */
+    .reservations-section {
+        background: #21262d;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-top: 3rem;
+    }
+
+    .section-title {
+        color: white;
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .timeline-card {
+        background: #2d333b;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        gap: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .timeline-card:hover {
+        transform: translateX(10px);
     }
 
     .timeline-icon {
@@ -496,44 +366,33 @@
         align-items: center;
         justify-content: center;
         font-size: 1.5rem;
-        margin-right: 1.5rem;
         flex-shrink: 0;
     }
 
-    .timeline-item.confirmed .timeline-icon {
-        background: linear-gradient(45deg, #4CAF50, #8BC34A);
-        box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+    .timeline-card.confirmed .timeline-icon {
+        background: linear-gradient(45deg, #238636, #2ea043);
+        color: white;
     }
 
-    .timeline-item.pending .timeline-icon {
-        background: linear-gradient(45deg, #FFC107, #FF9800);
-        box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+    .timeline-card.pending .timeline-icon {
+        background: linear-gradient(45deg, #f7b731, #f7d794);
+        color: #000;
     }
 
-    .timeline-item.cancelled .timeline-icon {
-        background: linear-gradient(45deg, #f44336, #e91e63);
-        box-shadow: 0 0 20px rgba(244, 67, 54, 0.3);
+    .timeline-card.cancelled .timeline-icon {
+        background: linear-gradient(45deg, #eb4d4b, #ff7979);
+        color: white;
     }
 
     .timeline-content {
-        background: #2d333b;
-        border-radius: 10px;
-        padding: 1.2rem;
-        flex-grow: 1;
+        flex: 1;
         display: flex;
-        align-items: center;
         gap: 1.5rem;
-        border: 1px solid #30363d;
-    }
-
-    .timeline-content:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     }
 
     .facility-img {
-        width: 100px;
-        height: 100px;
+        width: 120px;
+        height: 120px;
         border-radius: 10px;
         background-size: cover;
         background-position: center;
@@ -541,163 +400,297 @@
     }
 
     .details {
-        flex-grow: 1;
+        flex: 1;
     }
 
-    .details h5 {
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-        color: #fff;
+    .details h4 {
+        color: white;
+        margin-bottom: 1rem;
     }
 
-    .details p {
+    .reservation-details {
+        margin-bottom: 1rem;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: #8b949e;
         margin-bottom: 0.5rem;
-        color: #bbb;
+    }
+
+    .detail-item i {
+        color: #58a6ff;
+        width: 20px;
+        text-align: center;
     }
 
     .status-badge {
-        padding: 0.25rem 0.75rem;
+        padding: 0.5rem 1rem;
         border-radius: 20px;
-        font-size: 0.875rem;
+        font-size: 0.9rem;
         font-weight: 500;
     }
 
     .status-badge.confirmed {
-        background: rgba(35, 134, 54, 0.1);
-        color: #238636;
+        background: rgba(35, 134, 54, 0.2);
+        color: #2ea043;
     }
 
     .status-badge.pending {
-        background: rgba(249, 168, 37, 0.1);
-        color: #f9a825;
+        background: rgba(247, 183, 49, 0.2);
+        color: #f7b731;
     }
 
     .status-badge.cancelled {
-        background: rgba(248, 81, 73, 0.1);
-        color: #f85149;
+        background: rgba(235, 77, 75, 0.2);
+        color: #eb4d4b;
     }
 
-    /* Pagination Styling */
-    .pagination-container {
+    /* Modal Styles */
+    .modal-content {
+        background: #21262d;
+        border: 1px solid #30363d;
+    }
+
+    .modal-header {
+        background: #2d333b;
+        border-bottom: 1px solid #30363d;
+        padding: 1.5rem;
+    }
+
+    .modal-title {
+        color: white;
         display: flex;
-        flex-direction: column;
         align-items: center;
-        margin-top: 2rem;
+        gap: 0.75rem;
+    }
+
+    .modal-body {
+        padding: 2rem;
+    }
+
+    .selected-facility {
+        background: #2d333b;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+
+    .selected-facility h6 {
+        color: #8b949e;
+        margin-bottom: 0.5rem;
+    }
+
+    .selected-facility p {
+        color: white;
+        margin: 0;
+        font-size: 1.1rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        color: #8b949e;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        background: #2d333b;
+        border: 1px solid #30363d;
+        color: white;
+        border-radius: 8px;
+    }
+
+    .form-control:focus {
+        background: #2d333b;
+        border-color: #58a6ff;
+        color: white;
+        box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+    }
+
+    .time-selection {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         gap: 1rem;
     }
 
-    .pagination {
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
-        background: #222;
-        padding: 0.5rem;
-        border-radius: 50px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    }
-
-    .page-link {
+    .btn-primary {
+        background: #238636;
+        border: none;
+        padding: 1rem;
+        font-size: 1.1rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        color: #fff;
-        text-decoration: none;
+        gap: 0.75rem;
         transition: all 0.3s ease;
-        font-weight: 500;
-        background: #333;
     }
 
-    .page-link:hover {
-        background: #444;
-        color: #00bcd4;
+    .btn-primary:hover {
+        background: #2ea043;
         transform: translateY(-2px);
     }
 
-    .page-link.active {
-        background: linear-gradient(45deg, #00bcd4, #2196f3);
-        color: white;
-        box-shadow: 0 0 15px rgba(0, 188, 212, 0.3);
-    }
+    /* Responsive Styles */
+   
 
-    .page-info {
-        color: #888;
-        font-size: 0.9rem;
-    }
-
+    /* No Reservations State */
     .no-reservations {
         text-align: center;
         padding: 3rem;
-        background: #222;
-        border-radius: 15px;
-        color: #666;
+        color: #8b949e;
     }
 
     .no-reservations i {
         font-size: 3rem;
         margin-bottom: 1rem;
+        color: #30363d;
     }
 
     .no-reservations p {
         font-size: 1.2rem;
-        margin: 0;
+        margin-bottom: 0.5rem;
     }
 
-    /* Toast Notification */
-    .toast {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 1rem 2rem;
-        border-radius: 10px;
-        color: white;
-        font-weight: 500;
-        transform: translateX(120%);
-        transition: transform 0.3s ease;
-        z-index: 9999;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    }
-
-    .toast.show {
-        transform: translateX(0);
-    }
-
-    .toast.success {
-        background: linear-gradient(45deg, #238636, #2ea043);
-    }
-
-    .toast.error {
-        background: linear-gradient(45deg, #f85149, #f85149);
+    .no-reservations span {
+        font-size: 0.9rem;
+        opacity: 0.7;
     }
 </style>
 
 <script>
-    $(document).ready(function () {
+    function selectFacility(facilityId, facilityName) {
+        document.getElementById('selectedFacilityId').value = facilityId;
+        document.getElementById('selectedFacilityName').textContent = facilityName;
+        $('#bookingModal').modal('show');
+        
+        // Update available time slots when opening modal
+        updateAvailableTimeSlots();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
         // Initialize AOS
         AOS.init({
             duration: 1000,
             once: true
         });
 
-        // Facility selection
-        $(".facility-card").click(function () {
-            $(".facility-card").removeClass("selected");
-            $(this).addClass("selected");
-            $("#facilitySelect").val($(this).data("id"));
+        // Function to check if a time is in the past for today
+        function isTimeInPast(timeString) {
+            const now = new Date();
+            const [hours, minutes] = timeString.split(':').map(Number);
+            const selectedTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+            
+            // Add a 30-minute buffer to allow booking slots starting soon
+            const bufferedNow = new Date(now.getTime() - (30 * 60 * 1000));
+            return selectedTime < bufferedNow;
+        }
+
+        // Function to update available time slots
+        function updateAvailableTimeSlots() {
+            const selectedDate = $('#reservationDate').val();
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            
+            // If selected date is today, disable past time slots
+            if (selectedDate === today) {
+                $('#startTime option, #endTime option').each(function() {
+                    const timeValue = $(this).val();
+                    if (timeValue && timeValue !== '') {
+                        $(this).prop('disabled', isTimeInPast(timeValue));
+                    }
+                });
+            } else {
+                // Enable all time slots for future dates
+                $('#startTime option, #endTime option').prop('disabled', false);
+            }
+        }
+
+        // Form validation
+        function validateBooking(startTime, endTime, reservationDate) {
+            if (!startTime || !endTime) {
+                return { isValid: false, message: "Please select both start and end times." };
+            }
+
+            const now = new Date();
+            const [startHours, startMinutes] = startTime.split(':').map(Number);
+            const [endHours, endMinutes] = endTime.split(':').map(Number);
+            const selectedDate = new Date(reservationDate);
+            
+            // Create Date objects for start and end times
+            const startDateTime = new Date(selectedDate);
+            startDateTime.setHours(startHours, startMinutes, 0);
+            
+            const endDateTime = new Date(selectedDate);
+            endDateTime.setHours(endHours, endMinutes, 0);
+
+            // Check if booking for today and time is in the past
+            if (selectedDate.toDateString() === now.toDateString()) {
+                // Add a 30-minute buffer to allow booking slots starting soon
+                const bufferedNow = new Date(now.getTime() - (30 * 60 * 1000));
+                if (startDateTime < bufferedNow) {
+                    return { isValid: false, message: "Please select a future time slot." };
+                }
+            }
+
+            if (startDateTime.getTime() === endDateTime.getTime()) {
+                return { isValid: false, message: "Start time cannot be the same as end time." };
+            }
+
+            if (endDateTime < startDateTime) {
+                return { isValid: false, message: "End time cannot be earlier than start time." };
+            }
+
+            return { isValid: true };
+        }
+
+        // Add event listeners for time selection
+        $('#startTime, #endTime, #reservationDate').change(function() {
+            const startTime = $('#startTime').val();
+            const endTime = $('#endTime').val();
+            const reservationDate = $('#reservationDate').val();
+
+            // Update available time slots when date changes
+            if (this.id === 'reservationDate') {
+                updateAvailableTimeSlots();
+                // Reset time selections when date changes
+                $('#startTime, #endTime').val('');
+                return;
+            }
+
+            if (startTime && endTime && reservationDate) {
+                const validation = validateBooking(startTime, endTime, reservationDate);
+                if (!validation.isValid) {
+                    const errorAlert = $('<div class="custom-alert error">' + validation.message + '</div>');
+                    $('main').prepend(errorAlert);
+                    // Reset the time if it's invalid
+                    if (this.id === 'startTime' || this.id === 'endTime') {
+                        $(this).val('');
+                    }
+                }
+            }
         });
 
         // Form submission
-        $("#bookFacilityForm").submit(function (e) {
+        $("#bookFacilityForm").submit(function(e) {
             e.preventDefault();
-            var facilityID = $("#facilitySelect").val();
-            var reservationDate = $("#reservationDate").val();
-            var startTime = $("#startTime").val();
-            var endTime = $("#endTime").val();
+            const facilityID = $("#selectedFacilityId").val();
+            const reservationDate = $("#reservationDate").val();
+            const startTime = $("#startTime").val();
+            const endTime = $("#endTime").val();
 
-            if (!facilityID) {
-                showToast("Please select a facility", "error");
+            // Validate times
+            const validation = validateBooking(startTime, endTime, reservationDate);
+            if (!validation.isValid) {
+                const errorAlert = $('<div class="custom-alert error">' + validation.message + '</div>');
+                $('main').prepend(errorAlert);
                 return;
             }
 
@@ -705,53 +698,23 @@
                 url: '@Url.Action("Book", "FacilityReservation")',
                 type: 'POST',
                 data: { facilityID: facilityID, reservationDate: reservationDate, startTime: startTime, endTime: endTime },
-                success: function (response) {
+                success: function(response) {
                     if (response.success) {
-                        showToast(response.message, "success");
-                        setTimeout(() => location.reload(), 2000);
+                        // Hide modal
+                        $('#bookingModal').modal('hide');
+                        location.reload(); // This will show the TempData message after reload
                     } else {
-                        showToast(response.message, "error");
+                        // Error message will be shown through TempData
+                        location.reload();
                     }
+                },
+                error: function() {
+                    location.reload(); // Error message will be shown through TempData
                 }
             });
         });
 
-        // Toast notification function
-        function showToast(message, type) {
-            const toast = $('<div>').addClass('toast ' + type).text(message);
-            $('body').append(toast);
-            setTimeout(() => toast.addClass('show'), 100);
-            setTimeout(() => {
-                toast.removeClass('show');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        // Add this to your existing styles
-        $('<style>')
-            .text(`
-                .toast {
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    padding: 1rem 2rem;
-                    border-radius: 10px;
-                    color: white;
-                    font-weight: 500;
-                    transform: translateX(120%);
-                    transition: transform 0.3s ease;
-                    z-index: 9999;
-                }
-                .toast.show {
-                    transform: translateX(0);
-                }
-                .toast.success {
-                    background: linear-gradient(45deg, #4CAF50, #8BC34A);
-                }
-                .toast.error {
-                    background: linear-gradient(45deg, #f44336, #e91e63);
-                }
-            `)
-            .appendTo('head');
+        // Initialize time slots on page load
+        updateAvailableTimeSlots();
     });
 </script>
