@@ -1,0 +1,569 @@
+@{
+    ViewData["Title"] = "Community Calendar";
+}
+
+<div class="container mt-4">
+    <div class="page-header">
+        <div class="header-content">
+            <h2>
+                <i class="fas fa-calendar"></i> Community Calendar
+            </h2>
+            <p class="description">View all community events, bookings, and important dates</p>
+        </div>
+        <div class="header-actions">
+            <div class="view-controls">
+                <button class="btn btn-outline-primary" id="monthView">Month</button>
+                <button class="btn btn-outline-primary" id="weekView">Week</button>
+                <button class="btn btn-outline-primary" id="dayView">Day</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <div class="calendar-legend">
+            <div class="legend-item">
+                <span class="color-dot" style="background-color: #4CAF50;"></span>
+                <span>Facility Bookings</span>
+            </div>
+            <div class="legend-item">
+                <span class="color-dot" style="background-color: #2196F3;"></span>
+                <span>Visitor Passes</span>
+            </div>
+            <div class="legend-item">
+                <span class="color-dot" style="background-color: #E91E63;"></span>
+                <span>Service Requests</span>
+            </div>
+            <div class="legend-item">
+                <span class="color-dot" style="background-color: #F44336;"></span>
+                <span>Bills Due</span>
+            </div>
+            <div class="legend-item">
+                <span class="color-dot" style="background-color: #9C27B0;"></span>
+                <span>Announcements</span>
+            </div>
+        </div>
+        <div id="calendar"></div>
+        <!-- Debug section -->
+        @if (ViewBag.Events != null)
+        {
+            <div id="debug" style="display: none;">
+                <pre>@ViewBag.Events</pre>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Event Details Modal -->
+<div class="modal fade" id="eventModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Event Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="eventDetails"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .container {
+            position: relative;
+            padding: 2rem;
+            background-color: #161b22;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 2rem;
+            background: linear-gradient(145deg, #1a1a1a, #222);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .header-content h2 {
+            color: #fff;
+            font-size: 1.8rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .header-content p {
+            color: #8b949e;
+            margin: 0.5rem 0 0 0;
+            font-size: 1rem;
+        }
+
+        .content-section {
+            background: #1e1e1e;
+            border-radius: 15px;
+            padding: 1.5rem;
+            height: auto;
+            min-height: 600px;
+            max-height: none;
+            overflow: visible;
+        }
+
+        .calendar-legend {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            padding: 1rem;
+            background: #2d333b;
+            border-radius: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #fff;
+        }
+
+        .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .view-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .view-controls .btn {
+            color: #fff;
+            border-color: #30363d;
+        }
+
+        .view-controls .btn:hover {
+            background-color: #30363d;
+            border-color: #58a6ff;
+        }
+
+        .view-controls .btn.active {
+            background-color: #238636;
+            border-color: #238636;
+        }
+
+        /* FullCalendar Customization */
+        .fc {
+            background: #2d333b;
+            border-radius: 8px;
+            padding: 1rem;
+            min-height: 600px;
+            height: auto !important;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        /* Prevent sticky headers */
+        .fc .fc-scroller {
+            overflow: visible !important;
+            height: auto !important;
+        }
+
+        .fc .fc-scroller-liquid-absolute {
+            position: static !important;
+            top: auto !important;
+            right: auto !important;
+            left: auto !important;
+            bottom: auto !important;
+        }
+
+        .fc .fc-scrollgrid {
+            border-collapse: collapse !important;
+        }
+
+        .fc .fc-scrollgrid-section-header {
+            position: static !important;
+        }
+
+        .fc .fc-scrollgrid-section > * {
+            border-width: 1px !important;
+        }
+
+        .fc-theme-standard td, 
+        .fc-theme-standard th,
+        .fc-theme-standard .fc-scrollgrid {
+            border-color: #444c56;
+        }
+
+        /* Fix for the header background */
+        .fc .fc-col-header {
+            background-color: #22272e;
+            position: static !important;
+        }
+
+        .fc .fc-col-header-cell {
+            background-color: #22272e;
+            border-color: #444c56;
+            position: static !important;
+        }
+
+        .fc .fc-col-header-cell-cushion {
+            color: #fff;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 8px;
+        }
+
+        /* Week view specific fixes */
+        .fc-timegrid-axis-frame {
+            position: static !important;
+        }
+
+        .fc-timegrid-axis-cushion {
+            position: static !important;
+        }
+
+        .fc .fc-timegrid-slots {
+            position: static !important;
+        }
+
+        .fc .fc-timegrid-slot {
+            height: 40px !important;
+        }
+
+        /* Ensure proper spacing in month view */
+        .fc .fc-daygrid-body {
+            position: static !important;
+        }
+
+        .fc .fc-daygrid-day-frame {
+            min-height: 100px;
+        }
+
+        /* Ensure proper event display */
+        .fc-event {
+            position: relative !important;
+        }
+
+        .fc-daygrid-event-harness {
+            position: relative !important;
+        }
+
+        .fc-theme-standard td, 
+        .fc-theme-standard th,
+        .fc-theme-standard .fc-scrollgrid {
+            border-color: #444c56;
+        }
+
+        .fc-theme-standard .fc-toolbar {
+            background: #2d333b;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .fc .fc-toolbar-title {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Week number column in month view */
+        .fc .fc-daygrid-week-number {
+            background-color: #22272e;
+            color: #8b949e;
+            border-color: #444c56;
+        }
+
+        /* Time grid header */
+        .fc .fc-timegrid-axis {
+            background-color: #22272e;
+            border-color: #444c56;
+        }
+
+        .fc .fc-timegrid-slot-label {
+            background-color: #22272e;
+            border-color: #444c56;
+        }
+
+        /* List view headers */
+        .fc .fc-list-table th {
+            background-color: #22272e;
+            border-color: #444c56;
+        }
+
+        .fc .fc-list-day-cushion {
+            background-color: #22272e !important;
+        }
+
+        .fc .fc-daygrid-day-number {
+            color: #c9d1d9;
+            text-decoration: none;
+            padding: 8px;
+        }
+
+        .fc .fc-daygrid-day.fc-day-today {
+            background-color: rgba(88, 166, 255, 0.1) !important;
+        }
+
+        .fc .fc-button {
+            background-color: #238636;
+            border-color: #238636;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .fc .fc-button:hover {
+            background-color: #2ea043;
+            border-color: #2ea043;
+            transform: translateY(-1px);
+        }
+
+        .fc .fc-button-primary:not(:disabled).fc-button-active,
+        .fc .fc-button-primary:not(:disabled):active {
+            background-color: #2ea043;
+            border-color: #2ea043;
+        }
+
+        .fc-daygrid-day.fc-day {
+            background-color: #22272e;
+        }
+
+        .fc-daygrid-day.fc-day-today {
+            background-color: rgba(88, 166, 255, 0.1) !important;
+        }
+
+        .fc-event {
+            border: none !important;
+            padding: 4px 6px !important;
+            margin: 2px 0 !important;
+            cursor: pointer !important;
+            border-radius: 4px !important;
+            font-size: 0.9rem !important;
+        }
+
+        .fc-event-title {
+            font-weight: 500 !important;
+            color: white !important;
+            padding: 2px 0 !important;
+        }
+
+        .fc-event-time {
+            font-size: 0.85em !important;
+            opacity: 0.9 !important;
+            color: white !important;
+            padding: 0 4px !important;
+        }
+
+        .fc-daygrid-event {
+            white-space: normal !important;
+            align-items: normal !important;
+            margin: 2px !important;
+            background: rgba(0, 0, 0, 0.2) !important;
+        }
+
+        .fc-daygrid-event-dot {
+            display: none !important;
+        }
+
+        .fc-timegrid-event {
+            border-radius: 4px !important;
+            margin: 1px 0 !important;
+        }
+
+        .fc-timegrid-slot-label {
+            color: #c9d1d9 !important;
+        }
+
+        .fc-timegrid-axis {
+            color: #c9d1d9 !important;
+        }
+
+        .fc-list-day-cushion {
+            background-color: #2d333b !important;
+        }
+
+        .fc-list-event td {
+            color: #c9d1d9 !important;
+        }
+
+        .fc-list-day-text,
+        .fc-list-day-side-text {
+            color: #fff !important;
+        }
+
+        /* Modal Customization */
+        .modal-content {
+            background: #2d333b;
+            border: 1px solid #444c56;
+            color: #fff;
+        }
+
+        .modal-header {
+            background: #22272e;
+            border-bottom: 1px solid #444c56;
+        }
+
+        .modal-title {
+            color: #fff;
+        }
+
+        .btn-close-white {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        /* Responsive Design */
+        @@media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .view-controls {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .calendar-legend {
+                justify-content: center;
+                text-align: center;
+            }
+
+            .fc {
+                min-height: 500px;
+                font-size: 0.9rem;
+            }
+
+            .fc .fc-toolbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .fc .fc-toolbar-title {
+                font-size: 1.2rem;
+            }
+
+            .fc-event {
+                font-size: 0.8rem !important;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var events = @Html.Raw(ViewBag.Events ?? "[]");
+            console.log('Calendar events:', events); // Debug log
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: events.map(event => ({
+                    id: event.Id,
+                    title: event.Title,
+                    start: event.Start,
+                    end: event.End,
+                    description: event.Description,
+                    backgroundColor: event.Color,
+                    borderColor: event.Color,
+                    textColor: '#ffffff',
+                    allDay: event.AllDay || false,
+                    display: 'block'
+                })),
+                eventClick: function(info) {
+                    var event = info.event;
+                    console.log('Clicked event:', event); // Debug log
+                    var modalContent = `
+                        <div class="event-details">
+                            <h4>${event.title}</h4>
+                            <p><strong>Start:</strong> ${formatDateTime(event.start)}</p>
+                            <p><strong>End:</strong> ${formatDateTime(event.end)}</p>
+                            <p><strong>Description:</strong> ${event.extendedProps.description || 'No description available'}</p>
+                        </div>
+                    `;
+                    document.getElementById('eventDetails').innerHTML = modalContent;
+                    var modal = new bootstrap.Modal(document.getElementById('eventModal'));
+                    modal.show();
+                },
+                eventTimeFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    meridiem: true
+                },
+                dayMaxEvents: true,
+                displayEventTime: true,
+                displayEventEnd: true,
+                slotMinTime: '06:00:00',
+                slotMaxTime: '22:00:00',
+                height: 'auto',
+                aspectRatio: 1.8
+            });
+
+            calendar.render();
+            console.log('Calendar rendered'); // Debug log
+
+            // View controls
+            document.getElementById('monthView').addEventListener('click', function() {
+                calendar.changeView('dayGridMonth');
+                updateViewButtons('monthView');
+            });
+
+            document.getElementById('weekView').addEventListener('click', function() {
+                calendar.changeView('timeGridWeek');
+                updateViewButtons('weekView');
+            });
+
+            document.getElementById('dayView').addEventListener('click', function() {
+                calendar.changeView('timeGridDay');
+                updateViewButtons('dayView');
+            });
+
+            // Set initial active button
+            updateViewButtons('monthView');
+        });
+
+        function updateViewButtons(activeView) {
+            document.querySelectorAll('.view-controls .btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(activeView).classList.add('active');
+        }
+
+        function formatDateTime(date) {
+            if (!date) return 'N/A';
+            return new Date(date).toLocaleString('en-US', {
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                meridiem: true
+            });
+        }
+    </script>
+} 

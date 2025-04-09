@@ -43,6 +43,21 @@
                 <a asp-controller="Feedback" asp-action="Index">
                     <i class="fas fa-comment-dots"></i> Feedback & Complaints
                 </a>
+                <a asp-controller="Security" asp-action="VisitorPasses">
+                    <i class="fas fa-user-friends"></i> Visitor Passes
+                </a>
+                <a asp-controller="Security" asp-action="Vehicles">
+                    <i class="fas fa-car"></i> Vehicle Registration
+                </a>
+                <a asp-controller="Calendar" asp-action="Index">
+                    <i class="fas fa-calendar"></i> Community Calendar
+                </a>
+            }
+            @if (role == "Administrator" || role == "Staff")
+            {
+                <a asp-controller="Security" asp-action="ManageVehicles">
+                    <i class="fas fa-car"></i> Manage Vehicle Registrations
+                </a>
             }
             <a href="@Url.Action("Index", "Poll")">
                 <i class="fas fa-poll"></i> Polls & Surveys

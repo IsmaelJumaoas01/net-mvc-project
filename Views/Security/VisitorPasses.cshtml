@@ -1,0 +1,727 @@
+@model IEnumerable<homeowner.Models.VisitorPass>
+
+@{
+    ViewData["Title"] = "Visitor Passes";
+}
+
+<div class="container mt-4">
+    <div class="page-header">
+        <div class="header-content">
+            <h2>
+                <i class="fas fa-id-card"></i> Visitor Passes
+            </h2>
+            <p class="description">Manage your visitor pass requests</p>
+        </div>
+        <div class="header-actions">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#requestPassModal">
+                <i class="fas fa-plus"></i> Request New Pass
+            </button>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <div class="search-filter-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search by visitor name, contact, or purpose..." class="form-control">
+            </div>
+            <div class="filter-dropdown">
+                <select id="statusFilter" class="form-control">
+                    <option value="">All Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Visitor Name</th>
+                        <th>Contact</th>
+                        <th>Purpose</th>
+                        <th>Visit Date</th>
+                        <th>Visit Time</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        @foreach (var pass in Model)
+                        {
+                            <tr>
+                                <td>@pass.VisitorName</td>
+                                <td>@pass.VisitorContact</td>
+                                <td>@pass.Purpose</td>
+                                <td>@pass.VisitDate.ToString("MMM dd, yyyy")</td>
+                                <td>@pass.VisitTime.ToString(@"hh\:mm")</td>
+                                <td>@pass.ExpiryDate.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    @if (pass.Status == "Approved")
+                                    {
+                                        <span class="badge badge-success">Approved</span>
+                                    }
+                                    else if (pass.Status == "Pending")
+                                    {
+                                        <span class="badge badge-warning">Pending</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger">Rejected</span>
+                                        @if (!string.IsNullOrEmpty(pass.RejectionReason))
+                                        {
+                                            <div class="rejection-reason">@pass.RejectionReason</div>
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-info btn-sm" onclick="viewPass(@pass.VisitorPassId)">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        @if (pass.Status == "Approved")
+                                        {
+                                            <a href="@Url.Action("GenerateVisitorPass", "Security", new { id = pass.VisitorPassId })" 
+                                               class="btn btn-sm download-btn text-white" title="Download Pass">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center">
+                                <div class="no-data-message">
+                                    <i class="fas fa-info-circle"></i>
+                                    <p>No visitor passes found. Click the button above to request a new pass.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Request Pass Modal -->
+<div class="modal fade" id="requestPassModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Request Visitor Pass</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="visitorPassForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="VisitorName">
+                                <i class="fas fa-user"></i> Visitor Name
+                                <i class="fas fa-info-circle text-info ml-1" data-toggle="tooltip" 
+                                   title="Enter the full name of the visitor (2-100 characters)"></i>
+                            </label>
+                            <input type="text" class="form-control" id="VisitorName" name="VisitorName" required>
+                            <small class="form-help-text">Enter the complete name as it appears on their ID</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="VisitorContact">
+                                <i class="fas fa-phone"></i> Contact Number
+                                <i class="fas fa-info-circle text-info ml-1" data-toggle="tooltip" 
+                                   title="Enter a valid phone number (minimum 8 digits)"></i>
+                            </label>
+                            <input type="text" class="form-control" id="VisitorContact" name="VisitorContact" required>
+                            <small class="form-help-text">Include country code if applicable (e.g., +1 234 567 8900)</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Purpose">
+                                <i class="fas fa-info-circle"></i> Purpose of Visit
+                                <i class="fas fa-info-circle text-info ml-1" data-toggle="tooltip" 
+                                   title="Briefly describe the purpose of the visit (5-50 characters)"></i>
+                            </label>
+                            <input type="text" class="form-control" id="Purpose" name="Purpose" required>
+                            <small class="form-help-text">Provide a clear and concise reason for the visit</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="VisitDate">
+                                <i class="fas fa-calendar"></i> Visit Date
+                                <i class="fas fa-info-circle text-info ml-1" data-toggle="tooltip" 
+                                   title="Select the date of the visit (must be today or future date)"></i>
+                            </label>
+                            <input type="date" class="form-control" id="VisitDate" name="VisitDate" required>
+                            <small class="form-help-text">Select the planned date of visit</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="VisitTime">
+                                <i class="fas fa-clock"></i> Visit Time
+                                <i class="fas fa-info-circle text-info ml-1" data-toggle="tooltip" 
+                                   title="Select the expected time of arrival"></i>
+                            </label>
+                            <input type="time" class="form-control" id="VisitTime" name="VisitTime" required>
+                            <small class="form-help-text">Enter the expected arrival time</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ExpiryDate">
+                                <i class="fas fa-calendar-times"></i> Expiry Date
+                                <i class="fas fa-info-circle text-info ml-1" data-toggle="tooltip" 
+                                   title="Select when the pass should expire (must be after visit date)"></i>
+                            </label>
+                            <input type="date" class="form-control" id="ExpiryDate" name="ExpiryDate" required>
+                            <small class="form-help-text">Select when the visitor pass should expire</small>
+                        </div>
+                    </div>
+
+                    <div class="vehicle-info-section">
+                        <h3>Vehicle Information (Optional)</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="VehiclePlateNumber">
+                                    <i class="fas fa-car"></i> Plate Number
+                                </label>
+                                <input type="text" class="form-control" id="VehiclePlateNumber" name="VehiclePlateNumber">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="VehicleModel">
+                                    <i class="fas fa-car-side"></i> Model
+                                </label>
+                                <input type="text" class="form-control" id="VehicleModel" name="VehicleModel">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="VehicleColor">
+                                    <i class="fas fa-palette"></i> Color
+                                </label>
+                                <input type="text" class="form-control" id="VehicleColor" name="VehicleColor">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="submitPassRequest">
+                    <i class="fas fa-paper-plane"></i> Submit Request
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Success</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Visitor pass request submitted successfully!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- View Pass Modal -->
+<div class="modal fade" id="viewPassModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Visitor Pass Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="passDetails"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Add custom phone number validation method
+            $.validator.addMethod("phoneNumber", function(value, element) {
+                return this.optional(element) || /^\+?(\d[\d-. ]+)?(\([\d-. ]+\))?[\d-. ]+\d$/.test(value);
+            }, "Please enter a valid phone number");
+
+            // Add custom validation for future dates
+            $.validator.addMethod("futureDate", function(value, element) {
+                if (this.optional(element)) return true;
+                var inputDate = new Date(value);
+                var today = new Date();
+                today.setHours(0, 0, 0, 0);
+                return inputDate >= today;
+            }, "Date must be today or in the future");
+
+            // Add custom validation for expiry date after visit date
+            $.validator.addMethod("expiryAfterVisit", function(value, element) {
+                if (this.optional(element)) return true;
+                var expiryDate = new Date(value);
+                var visitDate = new Date($("#VisitDate").val());
+                return expiryDate >= visitDate;
+            }, "Expiry date must be after or equal to visit date");
+
+            // Initialize form validation
+            $("#visitorPassForm").validate({
+                rules: {
+                    VisitorName: {
+                        required: true,
+                        minlength: 2,
+                        maxlength: 100
+                    },
+                    VisitorContact: {
+                        required: true,
+                        phoneNumber: true,
+                        minlength: 8
+                    },
+                    Purpose: {
+                        required: true,
+                        minlength: 5,
+                        maxlength: 50
+                    },
+                    VisitDate: {
+                        required: true,
+                        futureDate: true
+                    },
+                    VisitTime: {
+                        required: true
+                    },
+                    ExpiryDate: {
+                        required: true,
+                        futureDate: true,
+                        expiryAfterVisit: true
+                    },
+                    VehiclePlateNumber: {
+                        maxlength: 20
+                    },
+                    VehicleModel: {
+                        maxlength: 50
+                    },
+                    VehicleColor: {
+                        maxlength: 20
+                    }
+                },
+                messages: {
+                    VisitorName: {
+                        required: "Please enter visitor's name",
+                        minlength: "Name must be at least 2 characters long",
+                        maxlength: "Name cannot exceed 100 characters"
+                    },
+                    VisitorContact: {
+                        required: "Please enter contact number",
+                        phoneNumber: "Please enter a valid phone number",
+                        minlength: "Contact number must be at least 8 digits"
+                    },
+                    Purpose: {
+                        required: "Please enter purpose of visit",
+                        minlength: "Purpose must be at least 5 characters long",
+                        maxlength: "Purpose cannot exceed 50 characters"
+                    },
+                    VisitDate: {
+                        required: "Please select visit date",
+                        futureDate: "Visit date must be today or in the future"
+                    },
+                    VisitTime: {
+                        required: "Please select visit time"
+                    },
+                    ExpiryDate: {
+                        required: "Please select expiry date",
+                        futureDate: "Expiry date must be today or in the future",
+                        expiryAfterVisit: "Expiry date must be after or equal to visit date"
+                    }
+                },
+                errorElement: "div",
+                errorPlacement: function(error, element) {
+                    error.addClass("invalid-feedback");
+                    element.closest(".form-group").append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass("is-invalid").removeClass("is-valid");
+                    $(element).closest('.form-group').find('.validation-icon').remove();
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass("is-invalid").addClass("is-valid");
+                    // Add check mark icon for valid fields
+                    var checkIcon = '<i class="fas fa-check validation-icon text-success"></i>';
+                    var formGroup = $(element).closest('.form-group');
+                    if (formGroup.find('.validation-icon').length === 0) {
+                        formGroup.append(checkIcon);
+                    }
+                }
+            });
+
+            // Real-time validation feedback
+            $('.form-control').on('input', function() {
+                $(this).valid();
+            });
+
+            // Set minimum date for visit date and expiry date
+            const today = new Date().toISOString().split('T')[0];
+            $("#VisitDate").attr("min", today);
+            $("#ExpiryDate").attr("min", today);
+
+            // Update expiry date minimum when visit date changes
+            $("#VisitDate").change(function() {
+                $("#ExpiryDate").attr("min", $(this).val());
+                $("#ExpiryDate").valid(); // Revalidate expiry date
+            });
+
+            // Add tooltips for form fields
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // Handle form submission
+            $("#submitPassRequest").click(function() {
+                const form = $("#visitorPassForm");
+                if (form.valid()) {
+                    // Show loading state
+                    $(this).prop("disabled", true).html('<i class="fas fa-spinner fa-spin"></i> Submitting...');
+                    
+                    // Get form data
+                    const formData = {
+                        visitorName: $("#VisitorName").val(),
+                        visitorContact: $("#VisitorContact").val(),
+                        purpose: $("#Purpose").val(),
+                        visitDate: $("#VisitDate").val(),
+                        visitTime: $("#VisitTime").val() + ":00", // Add seconds to match TimeSpan format
+                        expiryDate: $("#ExpiryDate").val(),
+                        vehiclePlateNumber: $("#VehiclePlateNumber").val() || null,
+                        vehicleModel: $("#VehicleModel").val() || null,
+                        vehicleColor: $("#VehicleColor").val() || null
+                    };
+                    
+                    // Debug logging
+                    console.log('Form Data:', formData);
+                    
+                    // Submit the form
+                    $.ajax({
+                        url: '@Url.Action("RequestVisitorPass", "Security")',
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(formData),
+                        success: function(response) {
+                            console.log('Success Response:', response);
+                            if (response.success) {
+                                // Show success modal
+                                $("#requestPassModal").modal('hide');
+                                $("#successModal").modal('show');
+                                // Reload the page after a short delay
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 1500);
+                            } else {
+                                console.log('Error Response:', response);
+                                alert(response.message || "An error occurred while submitting the request.");
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log('Error Details:', {
+                                status: status,
+                                error: error,
+                                response: xhr.responseText
+                            });
+                            var errorMessage = "An error occurred while submitting the request. Please try again.";
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = xhr.responseJSON.message;
+                            }
+                            alert(errorMessage);
+                        },
+                        complete: function() {
+                            // Reset loading state
+                            $("#submitPassRequest").prop("disabled", false).html('<i class="fas fa-paper-plane"></i> Submit Request');
+                        }
+                    });
+                } else {
+                    // Show validation errors
+                    form.validate().focusInvalid();
+                }
+            });
+
+            // Reset form when modal is closed
+            $("#requestPassModal").on('hidden.bs.modal', function() {
+                $("#visitorPassForm")[0].reset();
+                $("#visitorPassForm").validate().resetForm();
+                $(".form-control").removeClass("is-invalid is-valid");
+            });
+
+            // Search functionality
+            $('#searchInput').on('keyup', function() {
+                var value = $(this).val().toLowerCase();
+                $('tbody tr').filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+            // Status filter functionality
+            $('#statusFilter').on('change', function() {
+                var value = $(this).val().toLowerCase();
+                if (value === '') {
+                    $('tbody tr').show();
+                } else {
+                    $('tbody tr').each(function() {
+                        var status = $(this).find('.badge').text().toLowerCase();
+                        $(this).toggle(status === value);
+                    });
+                }
+            });
+        });
+
+        function viewPass(id) {
+            $.get('@Url.Action("GetVisitorPassDetails", "Security")', { id: id }, function(data) {
+                $('#passDetails').html(data);
+                $('#viewPassModal').modal('show');
+            });
+        }
+    </script>
+}
+
+<style>
+    body {
+        background-color: #0d1117;
+        color: #ffffff;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .container {
+        position: relative;
+        padding: 2rem;
+        background-color: #161b22;
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.5rem 2rem;
+        background: linear-gradient(145deg, #1a1a1a, #222);
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        margin-bottom: 2rem;
+    }
+
+    .header-content h2 {
+        color: #fff;
+        font-size: 1.8rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .header-content p {
+        color: #8b949e;
+        margin: 0.5rem 0 0 0;
+        font-size: 1rem;
+    }
+
+    .content-section {
+        background: #1e1e1e;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-filter-container {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .search-box {
+        position: relative;
+        flex: 1;
+    }
+
+    .search-box i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #666;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        background: #2d2d2d;
+        border: 1px solid #444;
+        border-radius: 8px;
+        color: #fff;
+    }
+
+    .filter-dropdown select {
+        padding: 0.75rem 1rem;
+        background: #2d2d2d;
+        border: 1px solid #444;
+        border-radius: 8px;
+        color: #fff;
+        min-width: 150px;
+    }
+
+    .table {
+        color: #fff;
+        margin-bottom: 0;
+    }
+
+    .table th {
+        background: #2d2d2d;
+        border-bottom: 2px solid #444;
+        font-weight: 600;
+        padding: 1rem;
+    }
+
+    .table td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #444;
+    }
+
+    .modal-content {
+        background: #2d2d2d;
+        border: 1px solid #444;
+        color: #fff;
+    }
+
+    .modal-header {
+        background: #21262d;
+        border-bottom: 1px solid #444;
+    }
+
+    .modal-footer {
+        background: #21262d;
+        border-top: 1px solid #444;
+    }
+
+    .form-control {
+        background: #1e1e1e;
+        border: 1px solid #444;
+        color: #fff;
+    }
+
+    .form-control:focus {
+        background: #1e1e1e;
+        border-color: #00bcd4;
+        box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.25);
+    }
+
+    .btn-primary {
+        background: #238636;
+        border: 1px solid rgba(240,246,252,0.1);
+        color: #fff;
+    }
+
+    .btn-primary:hover {
+        background: #2ea043;
+        transform: translateY(-1px);
+    }
+
+    .download-btn {
+        background-color: #238636;
+        border-color: #238636;
+    }
+
+    .download-btn:hover {
+        background-color: #2ea043;
+        border-color: #2ea043;
+    }
+
+    .badge {
+        padding: 0.5rem 0.75rem;
+        font-weight: 500;
+        border-radius: 6px;
+    }
+
+    .badge-success { background: #238636; }
+    .badge-warning { background: #d29922; color: #000; }
+    .badge-danger { background: #da3633; }
+
+    .rejection-reason {
+        font-size: 0.875rem;
+        color: #ff6b6b;
+        margin-top: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        background: rgba(220, 53, 69, 0.1);
+        border-radius: 4px;
+        border-left: 3px solid #dc3545;
+    }
+
+    /* Toast Notification */
+    .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        color: white;
+        font-weight: 500;
+        transform: translateX(120%);
+        transition: transform 0.3s ease;
+        z-index: 9999;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .toast.show {
+        transform: translateX(0);
+    }
+
+    .toast.success {
+        background: linear-gradient(45deg, #238636, #2ea043);
+    }
+
+    .toast.error {
+        background: linear-gradient(45deg, #da3633, #f85149);
+    }
+
+    /* Media Queries */
+    @@media (max-width: 768px) {
+        .container {
+            padding: 1rem;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .header-actions {
+            width: 100%;
+        }
+
+        .search-filter-container {
+            flex-direction: column;
+        }
+
+        .filter-dropdown {
+            width: 100%;
+        }
+
+        .table-responsive {
+            margin: 0 -1rem;
+        }
+    }
+</style> 

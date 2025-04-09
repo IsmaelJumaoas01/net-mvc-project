@@ -23,6 +23,8 @@ Homeowner Application (MVC/.NET8 PROJECT)
 | 2025-03-13 | v1.1.2  | Small changes |
 | 2025-03-16 | v1.1.3  | Added Billing function (fully functional), changed color them UI, contact directory usable now  |
 | 2025-03-27 | v1.0.4  | UI changes |
+| YYYY-MM-DD | v1.0.4  | dotnet add package iTextSharp | 
+| YYYY-MM-DD | v1.0.4  | ===== |
 | YYYY-MM-DD | v1.0.4  | ===== |
 
 

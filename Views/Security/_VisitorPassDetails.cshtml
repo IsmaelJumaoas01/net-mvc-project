@@ -1,0 +1,156 @@
+@model homeowner.Models.VisitorPass
+
+<div class="visitor-pass-details">
+    <div class="detail-section">
+        <h3>Visitor Information</h3>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <label>Name</label>
+                <span>@Model.VisitorName</span>
+            </div>
+            <div class="detail-item">
+                <label>Contact</label>
+                <span>@Model.VisitorContact</span>
+            </div>
+            <div class="detail-item">
+                <label>Purpose</label>
+                <span>@Model.Purpose</span>
+            </div>
+            <div class="detail-item">
+                <label>Visit Date</label>
+                <span>@Model.VisitDate.ToString("MMM dd, yyyy")</span>
+            </div>
+            <div class="detail-item">
+                <label>Visit Time</label>
+                <span>@Model.VisitTime.ToString(@"hh\:mm")</span>
+            </div>
+            <div class="detail-item">
+                <label>Expiry Date</label>
+                <span>@Model.ExpiryDate.ToString("MMM dd, yyyy")</span>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.VehiclePlateNumber))
+    {
+        <div class="detail-section">
+            <h3>Vehicle Information</h3>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <label>Plate Number</label>
+                    <span>@Model.VehiclePlateNumber</span>
+                </div>
+                <div class="detail-item">
+                    <label>Model</label>
+                    <span>@Model.VehicleModel</span>
+                </div>
+                <div class="detail-item">
+                    <label>Color</label>
+                    <span>@Model.VehicleColor</span>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="detail-section">
+        <h3>Status Information</h3>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <label>Status</label>
+                <span class="badge @(Model.Status == "Approved" ? "badge-success" : 
+                                   Model.Status == "Pending" ? "badge-warning" : "badge-danger")">
+                    @Model.Status
+                </span>
+            </div>
+            <div class="detail-item">
+                <label>Created At</label>
+                <span>@Model.CreatedAt.ToString("MMM dd, yyyy HH:mm")</span>
+            </div>
+            @if (Model.Status == "Approved" && Model.ApprovedAt.HasValue)
+            {
+                <div class="detail-item">
+                    <label>Approved At</label>
+                    <span>@Model.ApprovedAt.Value.ToString("MMM dd, yyyy HH:mm")</span>
+                </div>
+            }
+            @if (Model.Status == "Rejected" && !string.IsNullOrEmpty(Model.RejectionReason))
+            {
+                <div class="detail-item">
+                    <label>Rejection Reason</label>
+                    <span class="text-danger">@Model.RejectionReason</span>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .visitor-pass-details {
+            color: #fff;
+        }
+
+        .detail-section {
+            margin-bottom: 2rem;
+        }
+
+        .detail-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #00bcd4;
+            border-bottom: 1px solid #444;
+            padding-bottom: 0.5rem;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .detail-item {
+            background: #1e1e1e;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+
+        .detail-item label {
+            display: block;
+            font-size: 0.875rem;
+            color: #888;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-item span {
+            display: block;
+            font-size: 1rem;
+            color: #fff;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .badge-success { background: #198754; }
+        .badge-warning { background: #ffc107; color: #000; }
+        .badge-danger { background: #dc3545; }
+
+        .text-danger {
+            color: #dc3545;
+        }
+
+        @@media screen and (max-width: 768px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+} 

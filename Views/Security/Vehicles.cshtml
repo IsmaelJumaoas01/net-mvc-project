@@ -1,0 +1,226 @@
+@model IEnumerable<homeowner.Models.VehicleRegistration>
+
+@{
+    ViewData["Title"] = "Vehicle Registration";
+    bool isAdmin = ViewBag.IsAdmin ?? false;
+}
+
+<div class="container mt-4">
+    <div class="page-header">
+        <div class="header-content">
+            <h2>
+                <i class="fas fa-car"></i> Vehicle Registration
+            </h2>
+            <p>Manage your registered vehicles</p>
+        </div>
+        <div class="header-actions">
+            <a asp-action="RegisterVehicle" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Register New Vehicle
+            </a>
+        </div>
+    </div>
+
+    <div class="content-section">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-dark table-hover">
+                    <thead>
+                        <tr>
+                            <th>Plate Number</th>
+                            <th>Vehicle Type</th>
+                            <th>Brand & Model</th>
+                            <th>Color</th>
+                            <th>Registration Date</th>
+                            <th>Expiry Date</th>
+                            <th>Status</th>
+                            <th>State</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var vehicle in Model)
+                        {
+                            <tr>
+                                <td>@vehicle.PlateNumber</td>
+                                <td>@vehicle.VehicleType</td>
+                                <td>@vehicle.VehicleBrand @vehicle.VehicleModel</td>
+                                <td>@vehicle.VehicleColor</td>
+                                <td>@vehicle.RegistrationDate.ToString("MMM dd, yyyy")</td>
+                                <td>@vehicle.ExpiryDate.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <span class="badge @(vehicle.Status == "Active" ? "bg-success" : 
+                                                      vehicle.Status == "Pending" ? "bg-warning" : "bg-danger")">
+                                        @vehicle.Status
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge @(vehicle.State == "Accepted" ? "bg-success" : 
+                                                      vehicle.State == "Pending" ? "bg-warning" : "bg-danger")">
+                                        @vehicle.State
+                                    </span>
+                                    @if (vehicle.State == "Rejected" && !string.IsNullOrEmpty(vehicle.RejectionReason))
+                                    {
+                                        <div class="rejection-reason">@vehicle.RejectionReason</div>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewVehicleModal-@vehicle.VehicleId">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> No vehicles registered yet.
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.5rem 2rem;
+        background: linear-gradient(145deg, #1a1a1a, #222);
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        margin-bottom: 2rem;
+    }
+
+    .page-header h2 {
+        margin: 0;
+        font-size: 1.6rem;
+        font-weight: 600;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .page-header p {
+        color: #888;
+        margin: 0.3rem 0 0 0;
+        font-size: 0.9rem;
+    }
+
+    .content-section {
+        background: #1e1e1e;
+        border-radius: 15px;
+        padding: 1.5rem;
+        max-height: 600px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #333 #1e1e1e;
+    }
+
+    .content-section::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .content-section::-webkit-scrollbar-track {
+        background: #1e1e1e;
+        border-radius: 10px;
+    }
+
+    .content-section::-webkit-scrollbar-thumb {
+        background: #333;
+        border-radius: 10px;
+    }
+
+    .content-section::-webkit-scrollbar-thumb:hover {
+        background: #444;
+    }
+
+    .table {
+        color: #fff;
+        margin-bottom: 0;
+    }
+
+    .table th {
+        background-color: #2d2d2d;
+        border-bottom: 2px solid #444;
+        font-weight: 600;
+        padding: 1rem;
+    }
+
+    .table td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #444;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #2d2d2d;
+    }
+
+    .badge {
+        padding: 0.5rem 0.75rem;
+        font-weight: 500;
+        border-radius: 6px;
+    }
+
+    .btn-group .btn {
+        padding: 0.375rem 0.75rem;
+    }
+
+    .alert {
+        background-color: #2d2d2d;
+        border: 1px solid #444;
+        color: #fff;
+        padding: 1rem;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .alert i {
+        font-size: 1.2rem;
+    }
+
+    .rejection-reason {
+        font-size: 0.875rem;
+        color: #ff6b6b;
+        margin-top: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        background: rgba(220, 53, 69, 0.1);
+        border-radius: 4px;
+        border-left: 3px solid #dc3545;
+    }
+
+    @@media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            text-align: center;
+            gap: 1rem;
+        }
+
+        .header-actions {
+            width: 100%;
+        }
+
+        .header-actions .btn {
+            width: 100%;
+        }
+
+        .table-responsive {
+            margin: 0 -1rem;
+            padding: 0 1rem;
+        }
+
+        .table td, .table th {
+            white-space: nowrap;
+        }
+    }
+</style> 
