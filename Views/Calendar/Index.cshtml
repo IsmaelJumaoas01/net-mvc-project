@@ -110,10 +110,7 @@
             background: #1e1e1e;
             border-radius: 15px;
             padding: 1.5rem;
-            height: auto;
-            min-height: 600px;
-            max-height: none;
-            overflow: visible;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .calendar-legend {
@@ -316,9 +313,10 @@
         .fc .fc-button {
             background-color: #238636;
             border-color: #238636;
+            color: white;
             padding: 8px 16px;
             font-weight: 500;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
 
         .fc .fc-button:hover {
@@ -348,19 +346,24 @@
             cursor: pointer !important;
             border-radius: 4px !important;
             font-size: 0.9rem !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+            transition: all 0.3s ease !important;
         }
 
-        .fc-event-title {
-            font-weight: 500 !important;
+        .fc-event:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        .fc-event-main {
             color: white !important;
-            padding: 2px 0 !important;
+            font-weight: 500 !important;
+            padding: 2px 4px !important;
         }
 
         .fc-event-time {
+            color: rgba(255, 255, 255, 0.9) !important;
             font-size: 0.85em !important;
-            opacity: 0.9 !important;
-            color: white !important;
-            padding: 0 4px !important;
         }
 
         .fc-daygrid-event {
@@ -404,19 +407,109 @@
         .modal-content {
             background: #2d333b;
             border: 1px solid #444c56;
+            border-radius: 12px;
             color: #fff;
         }
 
         .modal-header {
             background: #22272e;
             border-bottom: 1px solid #444c56;
+            padding: 1.5rem;
+            border-radius: 12px 12px 0 0;
         }
 
         .modal-title {
             color: #fff;
+            font-size: 1.5rem;
+            font-weight: 600;
         }
 
-        .btn-close-white {
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .event-details {
+            background: #22272e;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .event-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #444c56;
+        }
+
+        .event-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .event-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #fff;
+            margin: 0;
+        }
+
+        .event-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            background: #2d333b;
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .info-item i {
+            color: #58a6ff;
+            font-size: 1.2rem;
+        }
+
+        .info-item span {
+            color: #c9d1d9;
+        }
+
+        .event-description {
+            background: #2d333b;
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .event-description h5 {
+            color: #58a6ff;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .event-description p {
+            color: #c9d1d9;
+            line-height: 1.6;
+            margin: 0;
+            white-space: pre-line;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #444c56;
+            padding: 1.5rem;
+        }
+
+        .btn-close {
             filter: invert(1) grayscale(100%) brightness(200%);
         }
 
@@ -464,6 +557,79 @@
                 font-size: 0.8rem !important;
             }
         }
+
+        /* Calendar Event Styles */
+        .calendar-event {
+            border-radius: 4px !important;
+            padding: 4px 6px !important;
+            margin: 2px 0 !important;
+            cursor: pointer !important;
+            font-size: 0.9rem !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+            transition: all 0.3s ease !important;
+            border: none !important;
+        }
+
+        .calendar-event:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        .fc-event {
+            border: none !important;
+            background: none !important;
+        }
+
+        .fc-daygrid-event {
+            background: none !important;
+            border: none !important;
+        }
+
+        .fc-h-event {
+            background: none !important;
+            border: none !important;
+        }
+
+        .fc-event-main {
+            padding: 4px 6px !important;
+            border-radius: 4px !important;
+        }
+
+        .fc-event-title {
+            color: white !important;
+            font-weight: 500 !important;
+        }
+
+        .fc-event-time {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        /* Remove any background color overrides */
+        .fc-daygrid-event-harness {
+            background: none !important;
+        }
+
+        .fc-event-main-frame {
+            background: inherit !important;
+        }
+
+        .calendar-day-header {
+            background-color: #22272e !important;
+            color: #c9d1d9 !important;
+            font-weight: 600 !important;
+            padding: 8px !important;
+        }
+
+        .calendar-day-cell {
+            background-color: #2d333b !important;
+            border-color: #444c56 !important;
+        }
+
+        .calendar-more-link {
+            color: #58a6ff !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+        }
     </style>
 }
 
@@ -473,14 +639,14 @@
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
             var events = @Html.Raw(ViewBag.Events ?? "[]");
-            console.log('Calendar events:', events); // Debug log
+            console.log('Calendar events:', events);
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    right: 'dayGridMonth'
                 },
                 events: events.map(event => ({
                     id: event.Id,
@@ -492,17 +658,55 @@
                     borderColor: event.Color,
                     textColor: '#ffffff',
                     allDay: event.AllDay || false,
-                    display: 'block'
+                    display: 'block',
+                    className: 'calendar-event'
                 })),
                 eventClick: function(info) {
                     var event = info.event;
-                    console.log('Clicked event:', event); // Debug log
+                    var eventType = event.id.substring(0, 2);
+                    var icon = '';
+                    var iconBg = event.backgroundColor;
+
+                    switch(eventType) {
+                        case 'AN':
+                            icon = '📢';
+                            break;
+                        case 'FR':
+                            icon = '🏢';
+                            break;
+                        case 'SR':
+                            icon = '🔧';
+                            break;
+                        case 'VP':
+                            icon = '👤';
+                            break;
+                        case 'BL':
+                            icon = '💰';
+                            break;
+                    }
+
                     var modalContent = `
                         <div class="event-details">
-                            <h4>${event.title}</h4>
-                            <p><strong>Start:</strong> ${formatDateTime(event.start)}</p>
-                            <p><strong>End:</strong> ${formatDateTime(event.end)}</p>
-                            <p><strong>Description:</strong> ${event.extendedProps.description || 'No description available'}</p>
+                            <div class="event-header">
+                                <div class="event-icon" style="background-color: ${iconBg}">
+                                    ${icon}
+                                </div>
+                                <h4 class="event-title">${event.title}</h4>
+                            </div>
+                            <div class="event-info">
+                                <div class="info-item">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>${formatDateTime(event.start)}</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>${formatDateTime(event.end)}</span>
+                                </div>
+                            </div>
+                            <div class="event-description">
+                                <h5>Details</h5>
+                                <p>${event.extendedProps.description || 'No description available'}</p>
+                            </div>
                         </div>
                     `;
                     document.getElementById('eventDetails').innerHTML = modalContent;
@@ -520,49 +724,27 @@
                 slotMinTime: '06:00:00',
                 slotMaxTime: '22:00:00',
                 height: 'auto',
-                aspectRatio: 1.8
+                aspectRatio: 1.8,
+                eventDisplay: 'block',
+                dayHeaderFormat: { weekday: 'long' },
+                dayHeaderClassNames: 'calendar-day-header',
+                dayCellClassNames: 'calendar-day-cell',
+                moreLinkText: 'more',
+                moreLinkClassNames: 'calendar-more-link'
             });
 
             calendar.render();
-            console.log('Calendar rendered'); // Debug log
-
-            // View controls
-            document.getElementById('monthView').addEventListener('click', function() {
-                calendar.changeView('dayGridMonth');
-                updateViewButtons('monthView');
-            });
-
-            document.getElementById('weekView').addEventListener('click', function() {
-                calendar.changeView('timeGridWeek');
-                updateViewButtons('weekView');
-            });
-
-            document.getElementById('dayView').addEventListener('click', function() {
-                calendar.changeView('timeGridDay');
-                updateViewButtons('dayView');
-            });
-
-            // Set initial active button
-            updateViewButtons('monthView');
         });
 
-        function updateViewButtons(activeView) {
-            document.querySelectorAll('.view-controls .btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.getElementById(activeView).classList.add('active');
-        }
-
         function formatDateTime(date) {
-            if (!date) return 'N/A';
-            return new Date(date).toLocaleString('en-US', {
-                weekday: 'short',
+            if (!date) return '';
+            return date.toLocaleString('en-US', {
+                weekday: 'long',
                 year: 'numeric',
-                month: 'short',
+                month: 'long',
                 day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-                meridiem: true
+                hour: '2-digit',
+                minute: '2-digit'
             });
         }
     </script>

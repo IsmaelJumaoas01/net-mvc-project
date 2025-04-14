@@ -222,5 +222,272 @@ namespace homeowner.Controllers
                 return builder.ToString();
             }
         }
+
+        [HttpGet]
+        public IActionResult GetStatistics()
+        {
+            string userId = HttpContext.Session.GetString("UserID");
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Json(new { success = false, message = "You must be logged in to view statistics." });
+            }
+
+            try
+            {
+                var stats = new
+                {
+                    totalBookings = 0,
+                    activeRequests = 0,
+                    totalPosts = 0,
+                    visitorPasses = 0
+                };
+
+                using (MySqlConnection conn = new MySqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    // Get total bookings
+                    string bookingsQuery = @"SELECT COUNT(*) FROM facility_reservations 
+                                          WHERE UserID = @UserID";
+                    MySqlCommand bookingsCmd = new MySqlCommand(bookingsQuery, conn);
+                    bookingsCmd.Parameters.AddWithValue("@UserID", userId);
+                    stats = new
+                    {
+                        totalBookings = Convert.ToInt32(bookingsCmd.ExecuteScalar()),
+                        activeRequests = 0,
+                        totalPosts = 0,
+                        visitorPasses = 0
+                    };
+
+                    // Get active service requests
+                    string requestsQuery = @"SELECT COUNT(*) FROM service_requests 
+                                          WHERE UserID = @UserID AND Status IN ('Pending', 'In Progress')";
+                    MySqlCommand requestsCmd = new MySqlCommand(requestsQuery, conn);
+                    requestsCmd.Parameters.AddWithValue("@UserID", userId);
+                    stats = new
+                    {
+                        stats.totalBookings,
+                        activeRequests = Convert.ToInt32(requestsCmd.ExecuteScalar()),
+                        stats.totalPosts,
+                        stats.visitorPasses
+                    };
+
+                    // Get total forum posts
+                    string postsQuery = @"SELECT COUNT(*) FROM forum_posts 
+                                       WHERE UserID = @UserID";
+                    MySqlCommand postsCmd = new MySqlCommand(postsQuery, conn);
+                    postsCmd.Parameters.AddWithValue("@UserID", userId);
+                    stats = new
+                    {
+                        stats.totalBookings,
+                        stats.activeRequests,
+                        totalPosts = Convert.ToInt32(postsCmd.ExecuteScalar()),
+                        stats.visitorPasses
+                    };
+
+                    // Get active visitor passes
+                    string passesQuery = @"SELECT COUNT(*) FROM visitor_passes 
+                                        WHERE UserID = @UserID AND Status = 'Active'";
+                    MySqlCommand passesCmd = new MySqlCommand(passesQuery, conn);
+                    passesCmd.Parameters.AddWithValue("@UserID", userId);
+                    stats = new
+                    {
+                        stats.totalBookings,
+                        stats.activeRequests,
+                        stats.totalPosts,
+                        visitorPasses = Convert.ToInt32(passesCmd.ExecuteScalar())
+                    };
+                }
+
+                _logger.LogInformation("Retrieved statistics for user {UserId}: {@Stats}", userId, stats);
+                return Json(new { success = true, stats = stats });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving statistics for user {UserId}", userId);
+                return Json(new { success = false, message = "Error retrieving statistics." });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetMonthlyActivity()
+        {
+            string userId = HttpContext.Session.GetString("UserID");
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Json(new { success = false, message = "You must be logged in to view activity." });
+            }
+
+            try
+            {
+                var months = new List<string>();
+                var data = new List<int>();
+
+                using (MySqlConnection conn = new MySqlConnection(connectionString))
+                {
+                    conn.Open();
+                    string query = @"SELECT 
+                                    DATE_FORMAT(ReservationDate, '%Y-%m') as Month,
+                                    COUNT(*) as Count
+                                  FROM facility_reservations 
+                                  WHERE UserID = @UserID
+                                  AND ReservationDate >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+                                  GROUP BY DATE_FORMAT(ReservationDate, '%Y-%m')
+                                  ORDER BY Month";
+
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            months.Add(DateTime.Parse(reader.GetString("Month") + "-01").ToString("MMM yyyy"));
+                            data.Add(reader.GetInt32("Count"));
+                        }
+                    }
+                }
+
+                _logger.LogInformation("Retrieved monthly activity for user {UserId}", userId);
+                return Json(new { success = true, months = months, data = data });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving monthly activity for user {UserId}", userId);
+                return Json(new { success = false, message = "Error retrieving monthly activity." });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetServiceRequestStatus()
+        {
+            string userId = HttpContext.Session.GetString("UserID");
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Json(new { success = false, message = "You must be logged in to view service request status." });
+            }
+
+            try
+            {
+                var labels = new List<string>();
+                var data = new List<int>();
+
+                using (MySqlConnection conn = new MySqlConnection(connectionString))
+                {
+                    conn.Open();
+                    string query = @"SELECT Status, COUNT(*) as Count
+                                  FROM service_requests
+                                  WHERE UserID = @UserID
+                                  GROUP BY Status";
+
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            labels.Add(reader.GetString("Status"));
+                            data.Add(reader.GetInt32("Count"));
+                        }
+                    }
+                }
+
+                _logger.LogInformation("Retrieved service request status for user {UserId}", userId);
+                return Json(new { success = true, labels = labels, data = data });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving service request status for user {UserId}", userId);
+                return Json(new { success = false, message = "Error retrieving service request status." });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetRecentActivities()
+        {
+            string userId = HttpContext.Session.GetString("UserID");
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Json(new { success = false, message = "You must be logged in to view recent activities." });
+            }
+
+            try
+            {
+                var activities = new List<dynamic>();
+
+                using (MySqlConnection conn = new MySqlConnection(connectionString))
+                {
+                    conn.Open();
+                    string query = @"SELECT 
+                                    'booking' as type,
+                                    fr.ReservationID as id,
+                                    fr.ReservationDate as timestamp,
+                                    CONCAT('Facility: ', f.FacilityName) as title
+                                  FROM facility_reservations fr
+                                  JOIN facilities f ON fr.FacilityID = f.FacilityID
+                                  WHERE fr.UserID = @UserID
+                                  
+                                  UNION ALL
+                                  
+                                  SELECT 
+                                    'request' as type,
+                                    sr.RequestID as id,
+                                    sr.RequestDate as timestamp,
+                                    CONCAT('Service: ', st.ServiceTypeName) as title
+                                  FROM service_requests sr
+                                  JOIN service_types st ON sr.ServiceTypeID = st.ServiceTypeID
+                                  WHERE sr.UserID = @UserID
+                                  
+                                  UNION ALL
+                                  
+                                  SELECT 
+                                    'post' as type,
+                                    fp.PostID as id,
+                                    fp.CreatedAt as timestamp,
+                                    CONCAT('Post: ', fp.Title) as title
+                                  FROM forum_posts fp
+                                  WHERE fp.UserID = @UserID
+                                  
+                                  UNION ALL
+                                  
+                                  SELECT 
+                                    'visitor' as type,
+                                    vp.VisitorPassID as id,
+                                    vp.CreatedAt as timestamp,
+                                    CONCAT('Visitor: ', vp.VisitorName) as title
+                                  FROM visitor_passes vp
+                                  WHERE vp.UserID = @UserID
+                                  
+                                  ORDER BY timestamp DESC
+                                  LIMIT 10";
+
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            activities.Add(new
+                            {
+                                type = reader.GetString("type"),
+                                id = reader.GetInt32("id"),
+                                timestamp = reader.GetDateTime("timestamp"),
+                                title = reader.GetString("title")
+                            });
+                        }
+                    }
+                }
+
+                _logger.LogInformation("Retrieved recent activities for user {UserId}", userId);
+                return Json(new { success = true, activities = activities });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving recent activities for user {UserId}", userId);
+                return Json(new { success = false, message = "Error retrieving recent activities." });
+            }
+        }
     }
 }
