@@ -37,6 +37,10 @@
                             <span>@Model.PhoneNumber</span>
                         </div>
                         <div class="detail-item">
+                            <i class="fas fa-home"></i>
+                            <span>@(Model.Address ?? "No address provided")</span>
+                        </div>
+                        <div class="detail-item">
                             <i class="fas fa-calendar-alt"></i>
                             <span>Member since @Model.CreatedAt.ToString("MMMM yyyy")</span>
                         </div>
@@ -196,9 +200,13 @@
                         </div>
                     </div>
                     <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="address" name="address" placeholder="@Model.Address">
+                    </div>
+                    <div class="mb-3">
                         <label for="currentPassword" class="form-label">Current Password</label>
                         <input type="password" class="form-control" id="currentPassword" name="currentPassword">
-                                    </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="newPassword" class="form-label">New Password</label>
@@ -678,12 +686,13 @@
             // Handle profile update
             $('#saveProfileBtn').click(function() {
                 var formData = {
-                    firstName: $('#firstName').val(),
-                    middleName: $('#middleName').val(),
-                    lastName: $('#lastName').val(),
-                    phoneNumber: $('#phoneNumber').val(),
-                    email: $('#email').val(),
-                    username: $('#username').val(),
+                    firstName: $('#firstName').val() || $('#firstName').attr('placeholder'),
+                    middleName: $('#middleName').val() || $('#middleName').attr('placeholder'),
+                    lastName: $('#lastName').val() || $('#lastName').attr('placeholder'),
+                    phoneNumber: $('#phoneNumber').val() || $('#phoneNumber').attr('placeholder'),
+                    email: $('#email').val() || $('#email').attr('placeholder'),
+                    username: $('#username').val() || $('#username').attr('placeholder'),
+                    address: $('#address').val() || $('#address').attr('placeholder'),
                     currentPassword: $('#currentPassword').val(),
                     newPassword: $('#newPassword').val(),
                     confirmPassword: $('#confirmPassword').val()
@@ -702,30 +711,34 @@
             // Edit Profile Modal
             $('#editProfileBtn').click(function() {
                 // Get current user data from the profile section
-                const currentUsername = $('#username').text();
-                const currentEmail = $('#email').text();
-                const currentFirstName = $('#firstName').text();
-                const currentMiddleName = $('#middleName').text();
-                const currentLastName = $('#lastName').text();
-                const currentPhone = $('#phoneNumber').text();
+                const currentUsername = $('.detail-item:contains("Username") span').text();
+                const currentEmail = $('.detail-item:contains("Email") span').text();
+                const currentFirstName = $('.detail-item:contains("First Name") span').text();
+                const currentMiddleName = $('.detail-item:contains("Middle Name") span').text();
+                const currentLastName = $('.detail-item:contains("Last Name") span').text();
+                const currentPhone = $('.detail-item:contains("Phone") span').text();
+                const currentAddress = $('.detail-item:contains("Address") span').text();
 
                 // Set the current values as placeholders
-                $('#editUsername').attr('placeholder', currentUsername);
-                $('#editEmail').attr('placeholder', currentEmail);
-                $('#editFirstName').attr('placeholder', currentFirstName);
-                $('#editMiddleName').attr('placeholder', currentMiddleName);
-                $('#editLastName').attr('placeholder', currentLastName);
-                $('#editPhoneNumber').attr('placeholder', currentPhone);
+                $('#username').attr('placeholder', currentUsername);
+                $('#email').attr('placeholder', currentEmail);
+                $('#firstName').attr('placeholder', currentFirstName);
+                $('#middleName').attr('placeholder', currentMiddleName);
+                $('#lastName').attr('placeholder', currentLastName);
+                $('#phoneNumber').attr('placeholder', currentPhone);
+                $('#address').attr('placeholder', currentAddress);
 
                 // Clear the input values
-                $('#editUsername').val('');
-                $('#editEmail').val('');
-                $('#editFirstName').val('');
-                $('#editMiddleName').val('');
-                $('#editLastName').val('');
-                $('#editPhoneNumber').val('');
-                $('#editPassword').val('');
-                $('#editConfirmPassword').val('');
+                $('#username').val('');
+                $('#email').val('');
+                $('#firstName').val('');
+                $('#middleName').val('');
+                $('#lastName').val('');
+                $('#phoneNumber').val('');
+                $('#address').val('');
+                $('#currentPassword').val('');
+                $('#newPassword').val('');
+                $('#confirmPassword').val('');
 
                 $('#editProfileModal').modal('show');
             });

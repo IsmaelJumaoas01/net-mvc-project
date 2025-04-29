@@ -3,12 +3,33 @@
     var username = Context.Session.GetString("Username");
 }
 
-<link rel="stylesheet" href="~/css/admin-dashboard.css" />
+<link rel="stylesheet" href="~/css/staff-dashboard.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
-<div class="admin-dashboard">
+<div class="staff-dashboard">
     <div class="dashboard-header">
         <h1>Welcome, @username!</h1>
+        <div class="header-actions">
+            <a href="@Url.Action("Profile", "Homeowner")" class="btn btn-secondary">
+                <i class="fas fa-user-circle"></i>
+                My Profile
+            </a>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <a href="@Url.Action("ManageRequests", "ServiceRequests")" class="quick-action-btn">
+            <i class="fas fa-tasks"></i>
+            Pending Services
+        </a>
+        <a href="@Url.Action("Index", "FacilityReservation")" class="quick-action-btn">
+            <i class="fas fa-calendar-check"></i>
+            Today's Reservations
+        </a>
+        <a href="@Url.Action("Index", "Feedback")" class="quick-action-btn">
+            <i class="fas fa-comments"></i>
+            New Feedback
+        </a>
     </div>
 
     <div class="dashboard-stats">
@@ -38,7 +59,7 @@
     </div>
 
     <div class="dashboard-grid">
-        <div class="card">
+        <div class="card priority-card high">
             <div class="card-header">
                 <i class="fas fa-calendar-alt"></i>
                 <h3>Facility Reservations</h3>
@@ -51,7 +72,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card priority-card high">
             <div class="card-header">
                 <i class="fas fa-tools"></i>
                 <h3>Service Requests</h3>
@@ -64,7 +85,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card priority-card medium">
             <div class="card-header">
                 <i class="fas fa-file-invoice-dollar"></i>
                 <h3>Billing Management</h3>
@@ -81,7 +102,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card priority-card medium">
             <div class="card-header">
                 <i class="fas fa-comment-dots"></i>
                 <h3>Feedback & Complaints</h3>
@@ -94,7 +115,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card priority-card low">
             <div class="card-header">
                 <i class="fas fa-poll"></i>
                 <h3>Polls & Surveys</h3>
@@ -107,7 +128,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card priority-card medium">
             <div class="card-header">
                 <i class="fas fa-id-card"></i>
                 <h3>Visitor Passes</h3>
@@ -120,7 +141,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card priority-card low">
             <div class="card-header">
                 <i class="fas fa-calendar"></i>
                 <h3>Community Calendar</h3>

@@ -35,6 +35,9 @@ namespace homeowner.Models
         [StringLength(20)]
         public string? PhoneNumber { get; set; }
 
+        [StringLength(200)]
+        public string? Address { get; set; }
+
         [Required]
         [StringLength(20)]
         public string Role { get; set; } = "Homeowner"; // Default role

@@ -50,6 +50,7 @@ namespace homeowner.Controllers
                         MiddleName = reader["MiddleName"] as string,
                         LastName = reader["LastName"] as string,
                         PhoneNumber = reader["PhoneNumber"] as string,
+                        Address = reader["Address"] as string,
                         Role = reader.GetString("Role"),
                         CreatedAt = reader.GetDateTime("CreatedAt")
                     };
@@ -66,7 +67,7 @@ namespace homeowner.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditProfile(string username, string email, string firstName, string middleName, string lastName, string phoneNumber, string password, string confirmPassword)
+        public IActionResult EditProfile(string username, string email, string firstName, string middleName, string lastName, string phoneNumber, string address, string password, string confirmPassword)
         {
             string userId = HttpContext.Session.GetString("UserID");
             if (string.IsNullOrEmpty(userId))
@@ -162,6 +163,11 @@ namespace homeowner.Controllers
                     {
                         updateFields.Add("PhoneNumber = @PhoneNumber");
                         parameters.Add(new MySqlParameter("@PhoneNumber", phoneNumber));
+                    }
+                    if (!string.IsNullOrEmpty(address))
+                    {
+                        updateFields.Add("Address = @Address");
+                        parameters.Add(new MySqlParameter("@Address", address));
                     }
                     if (!string.IsNullOrEmpty(password))
                     {
