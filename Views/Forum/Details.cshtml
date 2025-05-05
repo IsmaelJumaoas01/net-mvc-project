@@ -4,111 +4,121 @@
     var currentUserId = ViewBag.CurrentUserId;
 }
 
-<div class="forum-details">
-    <div class="post-container" data-post-id="@Model.PostID">
-        <div class="post-header">
-            <h1>@Model.Title</h1>
-            <div class="post-meta">
-                <span class="author"><i class="fas fa-user"></i> @Model.Username</span>
-                <span class="date"><i class="fas fa-calendar"></i> @Model.CreatedAt.ToString("MMM dd, yyyy hh:mm tt")</span>
-            </div>
-        </div>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-        <div class="post-content">
-            <p>@Model.Content</p>
-            @if (Model.Image != null && Model.Image.Length > 0)
-            {
-                <img src="data:image/png;base64,@Convert.ToBase64String(Model.Image)" class="post-image" alt="Post Image">
-            }
-        </div>
-
-        <div class="post-actions">
-            <div class="vote-section">
-                <button class="vote-btn upvote-btn @(Model.HasUpvoted ? "active" : "")" data-post-id="@Model.PostID" data-vote="1">
-                    <i class="fas fa-arrow-up"></i>
-                    <span class="upvote-count">@Model.Upvotes</span>
-                </button>
-                <button class="vote-btn downvote-btn @(Model.HasDownvoted ? "active" : "")" data-post-id="@Model.PostID" data-vote="-1">
-                    <i class="fas fa-arrow-down"></i>
-                    <span class="downvote-count">@Model.Downvotes</span>
-                </button>
+<div class="forum-container">
+    <div class="forum-details">
+        <div class="post-container" data-post-id="@Model.PostID">
+            <div class="post-header">
+                <div class="post-title">
+                    <h1>@Model.Title</h1>
+                    <div class="post-meta">
+                        <span class="author"><i class="fas fa-user"></i> @Model.Username</span>
+                        <span class="date"><i class="fas fa-calendar"></i> @Model.CreatedAt.ToString("MMM dd, yyyy hh:mm tt")</span>
+                    </div>
+                </div>
             </div>
-            
-            @if (currentUserId != null && Model.UserID.ToString() == currentUserId)
-            {
-                <div class="post-edit-actions">
-                    <button class="btn btn-primary edit-post-btn" data-post-id="@Model.PostID">
-                        <i class="fas fa-edit"></i> Edit Post
+
+            <div class="post-content">
+                <p>@Model.Content</p>
+                @if (Model.Image != null && Model.Image.Length > 0)
+                {
+                    <div class="post-image-container">
+                        <img src="data:image/png;base64,@Convert.ToBase64String(Model.Image)" class="post-image" alt="Post Image">
+                    </div>
+                }
+            </div>
+
+            <div class="post-actions">
+                <div class="vote-section">
+                    <button class="vote-btn upvote-btn @(Model.HasUpvoted ? "active" : "")" data-post-id="@Model.PostID" data-vote="1">
+                        <i class="fas fa-arrow-up"></i>
+                        <span class="upvote-count">@Model.Upvotes</span>
                     </button>
-                    <button class="btn btn-danger delete-post-btn" data-post-id="@Model.PostID">
-                        <i class="fas fa-trash"></i> Delete Post
+                    <button class="vote-btn downvote-btn @(Model.HasDownvoted ? "active" : "")" data-post-id="@Model.PostID" data-vote="-1">
+                        <i class="fas fa-arrow-down"></i>
+                        <span class="downvote-count">@Model.Downvotes</span>
                     </button>
                 </div>
-            }
-        </div>
-    </div>
-
-    <div class="comments-section">
-        <h2>Comments</h2>
-        <form id="commentForm" class="comment-form">
-            <div class="form-group">
-                <textarea class="form-control" name="Content" rows="3" placeholder="Write your comment..." required></textarea>
-            </div>
-            <div class="form-group">
-                <label class="custom-file-upload">
-                    <input type="file" name="imageFile" accept="image/*">
-                    <i class="fas fa-image"></i> Add Image
-                </label>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-paper-plane"></i> Post Comment
-                </button>
-            </div>
-        </form>
-
-        <div id="commentsContainer">
-        @foreach (var comment in ViewBag.Comments)
-        {
-                <div class="comment-card" data-comment-id="@comment.CommentID">
-                    <div class="comment-content">
-                        <div class="comment-header">
-                            <span class="comment-author">@comment.Username</span>
-                            <span class="comment-date">@comment.CreatedAt.ToString("MMM dd, yyyy hh:mm tt")</span>
-                        </div>
-                        <p>@comment.Content</p>
-                    @if (comment.Image != null && comment.Image.Length > 0)
-                    {
-                            <img src="data:image/png;base64,@Convert.ToBase64String(comment.Image)" class="comment-image" alt="Comment Image">
-                        }
+                
+                @if (currentUserId != null && Model.UserID.ToString() == currentUserId)
+                {
+                    <div class="post-edit-actions">
+                        <button class="btn btn-primary edit-post-btn" data-post-id="@Model.PostID">
+                            <i class="fas fa-edit"></i> Edit Post
+                        </button>
+                        <button class="btn btn-danger delete-post-btn" data-post-id="@Model.PostID">
+                            <i class="fas fa-trash"></i> Delete Post
+                        </button>
                     </div>
+                }
+            </div>
+        </div>
 
-                    <div class="comment-actions">
-                        <div class="vote-section">
-                            <button class="vote-btn upvote-btn @(comment.HasUpvoted ? "active" : "")" 
-                                    data-comment-id="@comment.CommentID" data-vote="1">
-                                <i class="fas fa-arrow-up"></i>
-                                <span class="upvote-count">@comment.Upvotes</span>
-                        </button>
-                            <button class="vote-btn downvote-btn @(comment.HasDownvoted ? "active" : "")" 
-                                    data-comment-id="@comment.CommentID" data-vote="-1">
-                                <i class="fas fa-arrow-down"></i>
-                                <span class="downvote-count">@comment.Downvotes</span>
-                        </button>
-                        </div>
+        <div class="comments-section">
+            <h2><i class="fas fa-comments"></i> Comments</h2>
+            <form id="commentForm" class="comment-form">
+                <div class="form-group">
+                    <textarea class="form-control" name="Content" rows="3" placeholder="Share your thoughts..." required></textarea>
+                </div>
+                <div class="form-actions">
+                    <label class="custom-file-upload">
+                        <input type="file" name="imageFile" accept="image/*">
+                        <i class="fas fa-image"></i> Add Image
+                    </label>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Post Comment
+                    </button>
+                </div>
+            </form>
 
-                        @if (currentUserId != null && comment.UserID.ToString() == currentUserId)
-                        {
-                            <div class="comment-edit-actions">
-                                <button class="btn btn-sm btn-primary edit-comment-btn" data-comment-id="@comment.CommentID">
-                                    <i class="fas fa-edit"></i>
+            <div id="commentsContainer">
+                @foreach (var comment in ViewBag.Comments)
+                {
+                    <div class="comment-card" data-comment-id="@comment.CommentID">
+                        <div class="comment-content">
+                            <div class="comment-header">
+                                <div class="comment-info">
+                                    <span class="comment-author"><i class="fas fa-user-circle"></i> @comment.Username</span>
+                                    <span class="comment-date"><i class="far fa-clock"></i> @comment.CreatedAt.ToString("MMM dd, yyyy hh:mm tt")</span>
+                                </div>
+                                @if (currentUserId != null && comment.UserID.ToString() == currentUserId)
+                                {
+                                    <div class="comment-actions">
+                                        <button class="btn btn-sm btn-primary edit-comment-btn" data-comment-id="@comment.CommentID">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger delete-comment-btn" data-comment-id="@comment.CommentID">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+                            <div class="comment-text">
+                                <p>@comment.Content</p>
+                            </div>
+                            @if (comment.Image != null && comment.Image.Length > 0)
+                            {
+                                <div class="comment-image-container">
+                                    <img src="data:image/png;base64,@Convert.ToBase64String(comment.Image)" class="comment-image" alt="Comment Image">
+                                </div>
+                            }
+                            <div class="vote-section">
+                                <button class="vote-btn upvote-btn @(comment.HasUpvoted ? "active" : "")" 
+                                        data-comment-id="@comment.CommentID" data-vote="1">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span class="upvote-count">@comment.Upvotes</span>
                                 </button>
-                                <button class="btn btn-sm btn-danger delete-comment-btn" data-comment-id="@comment.CommentID">
-                                    <i class="fas fa-trash"></i>
+                                <button class="vote-btn downvote-btn @(comment.HasDownvoted ? "active" : "")" 
+                                        data-comment-id="@comment.CommentID" data-vote="-1">
+                                    <i class="fas fa-arrow-down"></i>
+                                    <span class="downvote-count">@comment.Downvotes</span>
                                 </button>
                             </div>
-                        }
+                        </div>
                     </div>
-                </div>
-            }
+                }
+            </div>
         </div>
     </div>
 </div>
@@ -118,7 +128,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Edit Post</h5>
+                <h5 class="modal-title"><i class="fas fa-edit"></i> Edit Post</h5>
                 <button type="button" class="close" data-dismiss="modal">
                     <span>&times;</span>
                 </button>
@@ -158,7 +168,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Edit Comment</h5>
+                <h5 class="modal-title"><i class="fas fa-edit"></i> Edit Comment</h5>
                 <button type="button" class="close" data-dismiss="modal">
                     <span>&times;</span>
                 </button>
@@ -179,39 +189,45 @@
 
 <style>
     body {
-        background-color: #0d1117; /* GitHub dark theme background */
-        color: #ffffff;
+        background-color: #0d1117;
+        color: #c9d1d9;
         font-family: 'Poppins', sans-serif;
     }
 
+    .forum-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
     .forum-details {
-        padding: 2rem;
-        background-color: #161b22; /* GitHub dark theme container */
+        background: linear-gradient(145deg, #161b22, #1c2128);
         border-radius: 20px;
         box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
     }
 
     .post-container {
-        background: #21262d; /* GitHub dark theme section */
-        border-radius: 12px;
         padding: 2rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        border: 1px solid #30363d;
+        border-bottom: 1px solid #30363d;
     }
 
-    .post-header h1 {
-        color: #fff;
+    .post-header {
+        margin-bottom: 2rem;
+    }
+
+    .post-title h1 {
+        color: #ffffff;
         font-size: 2rem;
-        margin: 0;
+        font-weight: 600;
         margin-bottom: 1rem;
     }
 
     .post-meta {
         display: flex;
-        gap: 1rem;
+        gap: 1.5rem;
         color: #8b949e;
-        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
     }
 
     .post-meta span {
@@ -226,22 +242,28 @@
 
     .post-content {
         color: #c9d1d9;
-        line-height: 1.6;
-        margin-bottom: 1.5rem;
+        line-height: 1.8;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    .post-image-container {
+        margin: 1.5rem 0;
+        border-radius: 12px;
+        overflow: hidden;
     }
 
     .post-image {
         max-width: 100%;
-        border-radius: 10px;
-        margin-top: 1rem;
-        border: 1px solid #30363d;
+        height: auto;
+        display: block;
     }
 
     .post-actions {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-top: 1.5rem;
+        margin-top: 2rem;
         padding-top: 1.5rem;
         border-top: 1px solid #30363d;
     }
@@ -257,225 +279,244 @@
         color: #c9d1d9;
         padding: 0.5rem 1rem;
         border-radius: 6px;
-        transition: all 0.2s ease;
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
     }
 
     .vote-btn:hover {
-        transform: translateY(-2px);
+        background: #2d333b;
+        border-color: #58a6ff;
     }
 
     .vote-btn.active {
-        background: #238636;
-        color: #fff;
+        background: #1f6feb;
+        color: #ffffff;
+        border-color: #1f6feb;
     }
 
-    .upvote-btn:hover {
-        background: #238636;
-        border-color: #238636;
-        color: #fff;
-    }
-
-    .downvote-btn:hover {
-        background: #f85149;
-        border-color: #f85149;
-        color: #fff;
+    .vote-btn i {
+        font-size: 1rem;
     }
 
     .comments-section {
-        background: #21262d;
-        border-radius: 12px;
         padding: 2rem;
-        border: 1px solid #30363d;
     }
 
     .comments-section h2 {
-        color: #fff;
-        margin-bottom: 1.5rem;
+        color: #ffffff;
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .comments-section h2 i {
+        color: #58a6ff;
     }
 
     .comment-form {
-        background: #2d333b;
+        background: #21262d;
         padding: 1.5rem;
-        border-radius: 10px;
+        border-radius: 12px;
         margin-bottom: 2rem;
-        border: 1px solid #30363d;
     }
 
-    .form-control {
-        background: #2d333b;
+    .comment-form textarea {
+        background: #0d1117;
         border: 1px solid #30363d;
-        color: #c9d1d9 !important;
+        color: #c9d1d9;
         border-radius: 6px;
-    }
-
-    .form-control:focus {
-        background: #2d333b;
-        border-color: #58a6ff;
-        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
-        color: #c9d1d9 !important;
-    }
-
-    .form-control::placeholder {
-        color: #8b949e;
-    }
-
-    textarea.form-control {
-        min-height: 100px;
+        padding: 1rem;
+        font-size: 1rem;
         resize: vertical;
     }
 
-    .comment-card {
-        background: #2d333b;
-        border-radius: 10px;
-        padding: 1.5rem;
-        margin-bottom: 1rem;
-        border: 1px solid #30363d;
-        transition: transform 0.3s ease;
+    .comment-form textarea:focus {
+        border-color: #58a6ff;
+        box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
     }
 
-    .comment-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    }
-
-    .comment-header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 0.5rem;
-    }
-
-    .comment-author {
-        color: #58a6ff;
-        font-weight: 500;
-    }
-
-    .comment-date {
-        color: #8b949e;
-        font-size: 0.9rem;
-    }
-
-    .comment-content {
-        color: #c9d1d9;
-    }
-
-    .comment-image {
-        max-width: 100%;
-        border-radius: 8px;
-        margin-top: 1rem;
-        border: 1px solid #30363d;
-    }
-
-    .comment-actions {
+    .form-actions {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid #30363d;
-    }
-
-    .modal-content {
-        background: #21262d;
-        border: 1px solid #30363d;
-        color: #c9d1d9;
-    }
-
-    .modal-header {
-        background: #2d333b;
-        border-bottom: 1px solid #30363d;
-        padding: 1.5rem;
-    }
-
-    .modal-title {
-        color: #fff;
-        font-size: 1.5rem;
-        font-weight: 600;
-    }
-
-    .modal-body {
-        background: #21262d;
-        padding: 1.5rem;
-    }
-
-    .modal-footer {
-        background: #2d333b;
-        border-top: 1px solid #30363d;
-        padding: 1rem;
-    }
-
-    .btn-primary {
-        background: #238636;
-        border: 1px solid rgba(240,246,252,0.1);
-        color: #fff;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        transition: all 0.2s ease;
-    }
-
-    .btn-primary:hover {
-        background: #2ea043;
-        transform: translateY(-1px);
-    }
-
-    .btn-danger {
-        background: #f85149;
-        border: 1px solid rgba(240,246,252,0.1);
-        color: #fff;
-    }
-
-    .btn-danger:hover {
-        background: #f85149;
-        opacity: 0.9;
-        transform: translateY(-1px);
     }
 
     .custom-file-upload {
-        display: inline-block;
-        padding: 0.75rem 1.5rem;
         background: #2d333b;
-        border: 1px solid #30363d;
-        border-radius: 6px;
         color: #c9d1d9;
+        padding: 0.75rem 1.25rem;
+        border-radius: 6px;
         cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
         transition: all 0.3s ease;
     }
 
     .custom-file-upload:hover {
-        background: #444;
-        border-color: #58a6ff;
+        background: #30363d;
+        color: #58a6ff;
     }
 
     .custom-file-upload input[type="file"] {
         display: none;
     }
 
-    .toast {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 1rem 2rem;
-        border-radius: 10px;
-        color: white;
+    .comment-card {
+        background: #21262d;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+        border: 1px solid #30363d;
+    }
+
+    .comment-content {
+        padding: 1.5rem;
+    }
+
+    .comment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .comment-info {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .comment-author {
+        color: #58a6ff;
         font-weight: 500;
-        transform: translateX(120%);
-        transition: transform 0.3s ease;
-        z-index: 9999;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
-    .toast.show {
-        transform: translateX(0);
+    .comment-date {
+        color: #8b949e;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
-    .toast.success {
-        background: linear-gradient(45deg, #238636, #2ea043);
+    .comment-text {
+        color: #c9d1d9;
+        line-height: 1.6;
+        margin-bottom: 1rem;
     }
 
-    .toast.error {
-        background: linear-gradient(45deg, #f85149, #f85149);
+    .comment-image-container {
+        margin: 1rem 0;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .comment-image {
+        max-width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: linear-gradient(45deg, #58a6ff, #1f6feb);
+        border: none;
+        color: #ffffff;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(45deg, #1f6feb, #58a6ff);
+        transform: translateY(-2px);
+    }
+
+    .btn-danger {
+        background: linear-gradient(45deg, #f85149, #da3633);
+        border: none;
+        color: #ffffff;
+    }
+
+    .btn-danger:hover {
+        background: linear-gradient(45deg, #da3633, #f85149);
+        transform: translateY(-2px);
+    }
+
+    .modal-content {
+        background: #21262d;
+        border: 1px solid #30363d;
+        border-radius: 12px;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #30363d;
+        padding: 1.5rem;
+    }
+
+    .modal-title {
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .modal-title i {
+        color: #58a6ff;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        color: #c9d1d9;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .form-control {
+        background: #0d1117;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+    }
+
+    .form-control:focus {
+        border-color: #58a6ff;
+        box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+    }
+
+    .close {
+        color: #8b949e;
+        opacity: 1;
+        transition: all 0.3s ease;
+    }
+
+    .close:hover {
+        color: #ffffff;
+        opacity: 1;
     }
 </style>
 
@@ -510,7 +551,7 @@
                         }
 
                         showToast('Vote recorded successfully!', 'success');
-                } else {
+                    } else {
                         showToast(response.message, 'error');
                     }
                 }
@@ -546,40 +587,41 @@
                         }
 
                         showToast('Vote recorded successfully!', 'success');
-                } else {
+                    } else {
                         showToast(response.message, 'error');
                     }
                 }
             });
         });
 
-// Add comment
-$('#commentForm').submit(function(e) {
-    e.preventDefault();
-    const formData = new FormData(this);
-    formData.append('PostID', '@Model.PostID');
+        // Add comment
+        $('#commentForm').submit(function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            formData.append('PostID', '@Model.PostID');
 
-    $.ajax({
-        url: '@Url.Action("AddComment", "Forum")',
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            if (response.success) {
-                // Clear form
-                $('#commentForm')[0].reset();
-                $('#commentImagePreview').hide();
-                // Add new comment to the list
-                const newComment = createCommentElement(response.comment);
-                $('#commentsContainer').prepend(newComment);
-                showToast('Comment added successfully!', 'success');
+            $.ajax({
+                url: '@Url.Action("AddComment", "Forum")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        // Clear form
+                        $('#commentForm')[0].reset();
+                        $('#commentImagePreview').hide();
+                        // Add new comment to the list
+                        const newComment = createCommentElement(response.comment);
+                        $('#commentsContainer').prepend(newComment);
+                        showToast('Comment added successfully!', 'success');
                     } else {
-                showToast(response.message, 'error');
-            }
-        }
-    });
-});
+                        showToast(response.message, 'error');
+                    }
+                }
+            });
+        });
+
         // Image preview for comment
         $('input[name="imageFile"]').change(function() {
             const file = this.files[0];
@@ -604,45 +646,45 @@ $('#commentForm').submit(function(e) {
             $('#editPostModal').modal('show');
         });
 
-       // Edit post
-$('#editPostForm').submit(function(e) {
-    e.preventDefault();
-    const formData = new FormData(this);
-    const postContainer = $('.post-container');
+        // Edit post
+        $('#editPostForm').submit(function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const postContainer = $('.post-container');
 
-    $.ajax({
-        url: '@Url.Action("EditPost", "Forum")',
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            if (response.success) {
-                // Update post content without reload
-                postContainer.find('h1').text(formData.get('Title'));
-                postContainer.find('.post-content p').text(formData.get('Content'));
-                if (response.imageUrl) {
-                    postContainer.find('.post-image').attr('src', response.imageUrl).show();
-                } else if (formData.get('imageFile').size === 0) {
-                    postContainer.find('.post-image').show();
-                } else {
-                    postContainer.find('.post-image').hide();
+            $.ajax({
+                url: '@Url.Action("EditPost", "Forum")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        // Update post content without reload
+                        postContainer.find('h1').text(formData.get('Title'));
+                        postContainer.find('.post-content p').text(formData.get('Content'));
+                        if (response.imageUrl) {
+                            postContainer.find('.post-image').attr('src', response.imageUrl).show();
+                        } else if (formData.get('imageFile').size === 0) {
+                            postContainer.find('.post-image').show();
+                        } else {
+                            postContainer.find('.post-image').hide();
+                        }
+                        $('#editPostModal').modal('hide');
+                        showToast('Post updated successfully!', 'success');
+                    } else {
+                        showToast(response.message, 'error');
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.responseText.includes("Packets larger than max_allowed_packet")) {
+                        showToast("The image is too large to upload. Please choose a smaller image.", 'error');
+                    } else {
+                        showToast("An error occurred while updating the post.", 'error');
+                    }
                 }
-                $('#editPostModal').modal('hide');
-                showToast('Post updated successfully!', 'success');
-            } else {
-                showToast(response.message, 'error');
-            }
-        },
-        error: function(xhr) {
-            if (xhr.responseText.includes("Packets larger than max_allowed_packet")) {
-                showToast("The image is too large to upload. Please choose a smaller image.", 'error');
-            } else {
-                showToast("An error occurred while updating the post.", 'error');
-            }
-        }
-    });
-});
+            });
+        });
 
         // Remove post image
         $('#removeImage').click(function() {
@@ -657,7 +699,7 @@ $('#editPostForm').submit(function(e) {
                         $('.post-image').hide();
                         $('#removeImage').hide();
                         showToast('Image removed successfully!', 'success');
-                } else {
+                    } else {
                         showToast(response.message, 'error');
                     }
                 }
@@ -766,46 +808,49 @@ $('#editPostForm').submit(function(e) {
             }
         });
 
-       // Helper function to create comment element
-function createCommentElement(comment) {
-    const currentUserId = '@currentUserId';
-    const isOwner = currentUserId === comment.UserID.toString();
-    
-    return `
-        <div class="comment-card" data-comment-id="${comment.CommentID}">
-            <div class="comment-content">
-                <div class="comment-header">
-                    <span class="comment-author">${comment.Username}</span>
-                    <span class="comment-date">${new Date(comment.CreatedAt).toLocaleString()}</span>
-                </div>
-                <p>${comment.Content}</p>
-                ${comment.Image ? `<img src="data:image/png;base64,${comment.Image}" class="comment-image" alt="Comment Image">` : ''}
-            </div>
-            <div class="comment-actions">
-                <div class="vote-section">
-                    <button class="vote-btn upvote-btn" data-comment-id="${comment.CommentID}" data-vote="1">
-                        <i class="fas fa-arrow-up"></i>
-                        <span class="upvote-count">0</span>
-                    </button>
-                    <button class="vote-btn downvote-btn" data-comment-id="${comment.CommentID}" data-vote="-1">
-                        <i class="fas fa-arrow-down"></i>
-                        <span class="downvote-count">0</span>
-                    </button>
-                </div>
-                ${isOwner ? `
-                    <div class="comment-edit-actions">
-                        <button class="btn btn-sm btn-primary edit-comment-btn" data-comment-id="${comment.CommentID}">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger delete-comment-btn" data-comment-id="${comment.CommentID}">
-                            <i class="fas fa-trash"></i>
-                        </button>
+        // Helper function to create comment element
+        function createCommentElement(comment) {
+            const currentUserId = '@currentUserId';
+            const isOwner = currentUserId === comment.UserID.toString();
+            
+            return `
+                <div class="comment-card" data-comment-id="${comment.CommentID}">
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <div class="comment-info">
+                                <span class="comment-author">${comment.Username}</span>
+                                <span class="comment-date">${new Date(comment.CreatedAt).toLocaleString()}</span>
+                            </div>
+                            ${isOwner ? `
+                                <div class="comment-actions">
+                                    <button class="btn btn-sm btn-primary edit-comment-btn" data-comment-id="${comment.CommentID}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger delete-comment-btn" data-comment-id="${comment.CommentID}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="comment-text">
+                            <p>${comment.Content}</p>
+                        </div>
+                        ${comment.Image ? `<div class="comment-image-container"><img src="data:image/png;base64,${comment.Image}" class="comment-image" alt="Comment Image"></div>` : ''}
+                        <div class="vote-section">
+                            <button class="vote-btn upvote-btn" data-comment-id="${comment.CommentID}" data-vote="1">
+                                <i class="fas fa-arrow-up"></i>
+                                <span class="upvote-count">0</span>
+                            </button>
+                            <button class="vote-btn downvote-btn" data-comment-id="${comment.CommentID}" data-vote="-1">
+                                <i class="fas fa-arrow-down"></i>
+                                <span class="downvote-count">0</span>
+                            </button>
+                        </div>
                     </div>
-                ` : ''}
-            </div>
-        </div>
-    `;
-}
+                </div>
+            `;
+        }
+
         // Toast notification
         function showToast(message, type) {
             const toast = $('<div>').addClass('toast ' + type).text(message);

@@ -52,6 +52,7 @@ namespace homeowner.Controllers
                         MiddleName = reader["MiddleName"] as string,
                         LastName = reader["LastName"] as string,
                         PhoneNumber = reader["PhoneNumber"] as string,
+                        Address = reader["Address"] as string,
                         Role = reader.GetString("Role"),
                         CreatedAt = reader.GetDateTime("CreatedAt")
                     });
@@ -169,8 +170,8 @@ namespace homeowner.Controllers
                     string hashedPassword = HashPassword(user.PasswordHash);
 
                     string query = @"INSERT INTO USERS 
-                        (Username, PasswordHash, Email, FirstName, MiddleName, LastName, PhoneNumber, Role, CreatedAt) 
-                        VALUES (@Username, @Password, @Email, @FirstName, @MiddleName, @LastName, @PhoneNumber, @Role, NOW())";
+                        (Username, PasswordHash, Email, FirstName, MiddleName, LastName, PhoneNumber, Role, Address, CreatedAt) 
+                        VALUES (@Username, @Password, @Email, @FirstName, @MiddleName, @LastName, @PhoneNumber, @Role, @Address, NOW())";
                     
                     MySqlCommand cmd = new MySqlCommand(query, conn);
                     cmd.Parameters.AddWithValue("@Username", user.Username);
@@ -181,6 +182,7 @@ namespace homeowner.Controllers
                     cmd.Parameters.AddWithValue("@LastName", user.LastName ?? "");
                     cmd.Parameters.AddWithValue("@PhoneNumber", user.PhoneNumber ?? "");
                     cmd.Parameters.AddWithValue("@Role", user.Role);
+                    cmd.Parameters.AddWithValue("@Address", user.Address ?? "");
 
                     cmd.ExecuteNonQuery();
 
@@ -193,6 +195,7 @@ namespace homeowner.Controllers
                         middleName = user.MiddleName,
                         lastName = user.LastName,
                         phoneNumber = user.PhoneNumber,
+                        address = user.Address,
                         role = user.Role,
                         createdAt = DateTime.Now
                     };
@@ -235,6 +238,7 @@ namespace homeowner.Controllers
                         MiddleName = reader["MiddleName"] as string,
                         LastName = reader["LastName"] as string,
                         PhoneNumber = reader["PhoneNumber"] as string,
+                        Address = reader["Address"] as string,
                         Role = reader.GetString("Role"),
                         CreatedAt = reader.GetDateTime("CreatedAt")
                     };
@@ -255,6 +259,7 @@ namespace homeowner.Controllers
                 middleName = user.MiddleName,
                 lastName = user.LastName,
                 phoneNumber = user.PhoneNumber,
+                address = user.Address,
                 role = user.Role
             });
         }
@@ -353,7 +358,7 @@ namespace homeowner.Controllers
                     }
 
                     string query = "UPDATE USERS SET Username = @Username, Email = @Email, FirstName = @FirstName, " +
-                                  "MiddleName = @MiddleName, LastName = @LastName, PhoneNumber = @PhoneNumber, Role = @Role";
+                                  "MiddleName = @MiddleName, LastName = @LastName, PhoneNumber = @PhoneNumber, Role = @Role, Address = @Address";
                                 
                     if (!string.IsNullOrEmpty(user.PasswordHash))
                     {
@@ -369,6 +374,7 @@ namespace homeowner.Controllers
                     cmd.Parameters.AddWithValue("@LastName", user.LastName ?? "");
                     cmd.Parameters.AddWithValue("@PhoneNumber", user.PhoneNumber ?? "");
                     cmd.Parameters.AddWithValue("@Role", user.Role);
+                    cmd.Parameters.AddWithValue("@Address", user.Address ?? "");
                     cmd.Parameters.AddWithValue("@UserID", user.UserID);
 
                     if (!string.IsNullOrEmpty(user.PasswordHash))
@@ -388,6 +394,7 @@ namespace homeowner.Controllers
                         middleName = user.MiddleName,
                         lastName = user.LastName,
                         phoneNumber = user.PhoneNumber,
+                        address = user.Address,
                         role = user.Role
                     };
 

@@ -18,26 +18,83 @@
         </div>
     </div>
 
-    <div class="users-section">
+    <!-- Homeowners Section -->
+    <div class="users-section homeowners-section">
         <div class="section-header">
-            <h2><i class="fas fa-users"></i> Users</h2>
-            <div class="filter-controls">
-                <select id="roleFilter" class="form-control">
-                    <option value="All">All Roles</option>
-                    <option value="Administrator">Administrator</option>
-                    <option value="Staff">Staff</option>
-                    <option value="Homeowner">Homeowner</option>
-                </select>
+            <h2><i class="fas fa-home"></i> Homeowners</h2>
+            <div class="section-actions">
+                <button class="btn btn-outline" id="exportHomeowners">
+                    <i class="fas fa-download"></i> Export List
+                </button>
             </div>
         </div>
 
         <div class="user-grid">
-            @foreach (var user in Model.Users)
+            @foreach (var user in Model.Users.Where(u => u.Role == "Homeowner"))
             {
                 <div class="user-card" data-role="@user.Role">
                     <div class="user-header">
                         <div class="user-avatar">
-                            <i class="fas fa-user"></i>
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div class="user-info">
+                            <h3>@user.Username</h3>
+                            <span class="role-badge @user.Role.ToLower()">@user.Role</span>
+                        </div>
+                        <div class="user-actions">
+                            <button class="btn btn-icon edit-user" data-user-id="@user.UserID">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-icon delete-user" data-user-id="@user.UserID">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="user-details">
+                        <div class="detail-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>@user.Email</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-phone"></i>
+                            <span>@(string.IsNullOrEmpty(user.PhoneNumber) ? "Not provided" : user.PhoneNumber)</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-user-circle"></i>
+                            <span>@($"{user.FirstName} {user.LastName}")</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>@(string.IsNullOrEmpty(user.Address) ? "No address provided" : user.Address)</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>Joined @user.CreatedAt.ToString("MMM dd, yyyy")</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Staff & Admin Section -->
+    <div class="users-section staff-section">
+        <div class="section-header">
+            <h2><i class="fas fa-user-tie"></i> Staff & Administrators</h2>
+            <div class="section-actions">
+                <button class="btn btn-outline" id="exportStaff">
+                    <i class="fas fa-download"></i> Export List
+                </button>
+            </div>
+        </div>
+
+        <div class="user-grid">
+            @foreach (var user in Model.Users.Where(u => u.Role == "Staff" || u.Role == "Administrator"))
+            {
+                <div class="user-card" data-role="@user.Role">
+                    <div class="user-header">
+                        <div class="user-avatar">
+                            <i class="fas fa-user-tie"></i>
                         </div>
                         <div class="user-info">
                             <h3>@user.Username</h3>
@@ -127,6 +184,10 @@
                             <option value="Administrator">Administrator</option>
                         </select>
                     </div>
+                    <div class="form-group address-group" style="display: none;">
+                        <label>Address</label>
+                        <textarea class="form-control" name="Address" rows="3"></textarea>
+                    </div>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Add User
                     </button>
@@ -188,6 +249,10 @@
                             <option value="Administrator">Administrator</option>
                         </select>
                     </div>
+                    <div class="form-group address-group" style="display: none;">
+                        <label>Address</label>
+                        <textarea class="form-control" name="Address" rows="3"></textarea>
+                    </div>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> Save Changes
                     </button>
@@ -202,7 +267,9 @@
         /* Dashboard Layout */
         .user-management {
             padding: 2rem;
-            background: #1a1a1a;
+            background: linear-gradient(rgba(26, 26, 26, 0.9), rgba(26, 26, 26, 0.9)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1600&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
             min-height: 100vh;
         }
 
@@ -211,6 +278,10 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
+            background: rgba(34, 34, 34, 0.9);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .dashboard-header h1 {
@@ -260,9 +331,24 @@
 
         /* Users Section */
         .users-section {
-            background: #222;
+            background: rgba(34, 34, 34, 0.9);
             border-radius: 15px;
             padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .homeowners-section {
+            background: linear-gradient(rgba(34, 34, 34, 0.9), rgba(34, 34, 34, 0.9)), url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1600&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .staff-section {
+            background: linear-gradient(rgba(34, 34, 34, 0.9), rgba(34, 34, 34, 0.9)), url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1600&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
         }
 
         .section-header {
@@ -270,6 +356,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .section-header h2 {
@@ -293,10 +381,12 @@
         }
 
         .user-card {
-            background: #2a2a2a;
+            background: rgba(42, 42, 42, 0.9);
             border-radius: 12px;
             padding: 1.5rem;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .user-card:hover {
@@ -504,16 +594,19 @@
                 });
             });
 
-            // Role filter
-            $('#roleFilter').change(function() {
-                const selectedRole = $(this).val();
-                if (selectedRole === 'All') {
-                    $('.user-card').show();
-                } else {
-                    $('.user-card').each(function() {
-                        $(this).toggle($(this).data('role') === selectedRole);
-                    });
-                }
+            // Show/hide address field based on role
+            function toggleAddressField(role) {
+                $('.address-group').toggle(role === 'Homeowner');
+            }
+
+            // Initial toggle for add user form
+            $('#addUserForm select[name="Role"]').change(function() {
+                toggleAddressField($(this).val());
+            });
+
+            // Initial toggle for edit user form
+            $('#editUserForm select[name="Role"]').change(function() {
+                toggleAddressField($(this).val());
             });
 
             // Toggle password visibility
@@ -536,7 +629,7 @@
                     <div class="user-card" data-role="${user.role}" data-user-id="${user.userID}">
                         <div class="user-header">
                             <div class="user-avatar">
-                                <i class="fas fa-user"></i>
+                                <i class="fas fa-${user.role === 'Homeowner' ? 'home' : 'user-tie'}"></i>
                             </div>
                             <div class="user-info">
                                 <h3>${user.username}</h3>
@@ -564,6 +657,12 @@
                                 <i class="fas fa-user-circle"></i>
                                 <span>${user.firstName || ''} ${user.lastName || ''}</span>
                             </div>
+                            ${user.role === 'Homeowner' ? `
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${user.address || 'No address provided'}</span>
+                            </div>
+                            ` : ''}
                             <div class="detail-item">
                                 <i class="fas fa-calendar"></i>
                                 <span>Joined ${new Date(user.createdAt).toLocaleDateString()}</span>
@@ -609,7 +708,12 @@
                     form.find('[name="LastName"]').val(data.lastName);
                     form.find('[name="PhoneNumber"]').val(data.phoneNumber);
                     form.find('[name="Role"]').val(data.role);
+                    form.find('[name="Address"]').val(data.address);
                     form.find('[name="Password"]').val('');
+                    
+                    // Toggle address field based on role
+                    toggleAddressField(data.role);
+                    
                     $('#editUserModal').modal('show');
                 });
             });

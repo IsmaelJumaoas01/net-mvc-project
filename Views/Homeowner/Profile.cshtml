@@ -15,19 +15,21 @@
     <div class="row">
         <!-- Profile Information -->
         <div class="col-md-4">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Profile Information</h5>
-                </div>
-                <div class="card-body">
-                    <div class="text-center mb-4">
-                        <div class="avatar-circle mb-3">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-cover">
+                        <img src="https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=1920&auto=format&fit=crop&q=80" alt="Cover" class="cover-image">
+                    </div>
+                    <div class="profile-avatar">
+                        <div class="avatar-circle">
                             <span class="initials">@Model.FirstName[0]@Model.LastName[0]</span>
                         </div>
-                        <h4>@Model.FirstName @Model.LastName</h4>
-                        <p class="text-muted">@Model.Role</p>
+                    </div>
                 </div>
-                <div class="profile-details">
+                <div class="profile-info">
+                    <h4>@Model.FirstName @Model.LastName</h4>
+                    <p class="role-badge">@Model.Role</p>
+                    <div class="profile-details">
                         <div class="detail-item">
                             <i class="fas fa-envelope"></i>
                             <span>@Model.Email</span>
@@ -57,54 +59,49 @@
             <div class="row">
                 <!-- Quick Stats -->
                 <div class="col-12">
-                    <div class="card shadow-sm mb-4">
-                        <div class="card-header">
-                            <h5 class="mb-0">Quick Stats</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-3 col-6 mb-3">
-                <div class="stat-card">
-                                        <div class="stat-icon bg-primary">
-                    <i class="fas fa-calendar-check"></i>
-                                        </div>
-                    <div class="stat-info">
-                                            <h3 id="totalBookings">0</h3>
-                                            <p>Total Bookings</p>
-                                        </div>
-                    </div>
-                </div>
-                                <div class="col-md-3 col-6 mb-3">
-                <div class="stat-card">
-                                        <div class="stat-icon bg-warning">
-                    <i class="fas fa-tools"></i>
-                                        </div>
-                                        <div class="stat-info">
-                                            <h3 id="activeRequests">0</h3>
-                                            <p>Active Requests</p>
-                                        </div>
+                    <div class="stats-container">
+                        <div class="row">
+                            <div class="col-md-3 col-6 mb-3">
+                                <div class="stat-card">
+                                    <div class="stat-icon bg-primary">
+                                        <i class="fas fa-calendar-check"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h3 id="totalBookings">0</h3>
+                                        <p>Total Bookings</p>
                                     </div>
                                 </div>
-                                <div class="col-md-3 col-6 mb-3">
-                                    <div class="stat-card">
-                                        <div class="stat-icon bg-success">
-                                            <i class="fas fa-comments"></i>
-                                        </div>
-                                        <div class="stat-info">
-                                            <h3 id="totalPosts">0</h3>
-                                            <p>Forum Posts</p>
-                                        </div>
+                            </div>
+                            <div class="col-md-3 col-6 mb-3">
+                                <div class="stat-card">
+                                    <div class="stat-icon bg-warning">
+                                        <i class="fas fa-tools"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h3 id="activeRequests">0</h3>
+                                        <p>Active Requests</p>
                                     </div>
                                 </div>
-                                <div class="col-md-3 col-6 mb-3">
-                                    <div class="stat-card">
-                                        <div class="stat-icon bg-info">
-                                            <i class="fas fa-user-friends"></i>
-                                        </div>
-                    <div class="stat-info">
-                                            <h3 id="visitorPasses">0</h3>
-                                            <p>Visitor Passes</p>
-                                        </div>
+                            </div>
+                            <div class="col-md-3 col-6 mb-3">
+                                <div class="stat-card">
+                                    <div class="stat-icon bg-success">
+                                        <i class="fas fa-comments"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h3 id="totalPosts">0</h3>
+                                        <p>Forum Posts</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6 mb-3">
+                                <div class="stat-card">
+                                    <div class="stat-icon bg-info">
+                                        <i class="fas fa-user-friends"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h3 id="visitorPasses">0</h3>
+                                        <p>Visitor Passes</p>
                                     </div>
                                 </div>
                             </div>
@@ -117,11 +114,11 @@
                     <div class="row">
                         <!-- Monthly Activity -->
                         <div class="col-md-8">
-                            <div class="card shadow-sm mb-4">
-                                <div class="card-header">
-                                    <h5 class="mb-0">Monthly Activity</h5>
+                            <div class="chart-card">
+                                <div class="chart-header">
+                                    <h5>Monthly Activity</h5>
                                 </div>
-                                <div class="card-body">
+                                <div class="chart-body">
                                     <canvas id="activityChart" height="200"></canvas>
                                 </div>
                             </div>
@@ -129,11 +126,11 @@
 
                         <!-- Service Request Status -->
                         <div class="col-md-4">
-                            <div class="card shadow-sm mb-4">
-                                <div class="card-header">
-                                    <h5 class="mb-0">Service Request Status</h5>
+                            <div class="chart-card">
+                                <div class="chart-header">
+                                    <h5>Service Request Status</h5>
                                 </div>
-                                <div class="card-body">
+                                <div class="chart-body">
                                     <canvas id="requestStatusChart" height="200"></canvas>
                                 </div>
                             </div>
@@ -143,16 +140,16 @@
 
                 <!-- Recent Activities -->
                 <div class="col-12">
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h5 class="mb-0">Recent Activities</h5>
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <h5>Recent Activities</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="activity-body">
                             <div id="recentActivities" class="activity-list">
                                 <!-- Activities will be loaded here -->
-            </div>
-                </div>
-            </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -211,7 +208,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="newPassword" class="form-label">New Password</label>
                             <input type="password" class="form-control" id="newPassword" name="newPassword">
-                                    </div>
+                        </div>
                         <div class="col-md-6 mb-3">
                             <label for="confirmPassword" class="form-label">Confirm New Password</label>
                             <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
@@ -230,17 +227,35 @@
 @section Styles {
 <style>
     body {
-            background-color: #0d1117;
+        background-color: #0d1117;
         color: #ffffff;
         font-family: 'Poppins', sans-serif;
+        position: relative;
+        min-height: 100vh;
+    }
+
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            linear-gradient(rgba(13, 17, 23, 0.97), rgba(13, 17, 23, 0.97)),
+            url('https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=1920&auto=format&fit=crop&q=80') center/cover no-repeat;
+        z-index: -1;
+        opacity: 0.15;
     }
 
     .container {
         position: relative;
         padding: 2rem;
-            background-color: #161b22;
+        background-color: rgba(22, 27, 34, 0.95);
         border-radius: 20px;
         box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .page-header {
@@ -248,301 +263,360 @@
         align-items: center;
         margin-bottom: 2rem;
         padding: 1.5rem;
-            background: #21262d;
+        background: rgba(33, 38, 45, 0.95);
         border-radius: 12px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .header-content {
-        flex: 1;
+    .profile-card {
+        background: rgba(33, 38, 45, 0.95);
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .page-header h2 {
-        color: #fff;
-        font-size: 1.8rem;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 0.8rem;
+    .profile-header {
+        position: relative;
+        height: 200px;
     }
 
-    .page-header p {
-            color: #8b949e;
-        margin: 0.5rem 0 0 0;
-        font-size: 1rem;
+    .profile-cover {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
     }
 
-        .card {
-        background: #21262d;
-        border: 1px solid #30363d;
-            color: #c9d1d9;
-        }
+    .cover-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(0.7);
+    }
 
-        .card-header {
-            background: #2d333b;
-            border-bottom: 1px solid #30363d;
-            padding: 1.5rem;
-        }
+    .profile-avatar {
+        position: absolute;
+        bottom: -50px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 
-        .card-header h5 {
-            color: #fff;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .card-body {
-            padding: 1.5rem;
-        }
-
-        .avatar-circle {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(45deg, #4e73df, #224abe);
+    .avatar-circle {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(45deg, #4e73df, #224abe);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-            margin: 0 auto;
-        }
+        border: 4px solid rgba(33, 38, 45, 0.95);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
 
-        .initials {
-            font-size: 2.5rem;
+    .initials {
+        font-size: 2.5rem;
         color: white;
-            font-weight: bold;
-        }
+        font-weight: bold;
+    }
 
-        .profile-details {
-            margin-top: 1.5rem;
-        }
+    .profile-info {
+        padding: 60px 2rem 2rem;
+        text-align: center;
+    }
 
-        .detail-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-            color: #c9d1d9;
-        }
+    .profile-info h4 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: #fff;
+    }
 
-        .detail-item i {
-            width: 30px;
-            color: #58a6ff;
+    .role-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background: rgba(88, 166, 255, 0.1);
+        color: #58a6ff;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .profile-details {
+        margin-top: 1.5rem;
+        text-align: left;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        color: #c9d1d9;
+    }
+
+    .detail-item i {
+        width: 30px;
+        color: #58a6ff;
+    }
+
+    .stats-container {
+        background: rgba(33, 38, 45, 0.95);
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .stat-card {
-            background: #2d333b;
-            border-radius: 10px;
-            padding: 1rem;
-            text-align: center;
+        background: rgba(45, 51, 59, 0.95);
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: center;
         transition: transform 0.3s ease;
-            border: 1px solid #30363d;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
     }
 
     .stat-card:hover {
         transform: translateY(-5px);
+        border-color: rgba(88, 166, 255, 0.3);
     }
 
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-        }
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        background: rgba(88, 166, 255, 0.2);
+        box-shadow: 0 0 15px rgba(88, 166, 255, 0.15);
+    }
 
-        .stat-icon i {
-            font-size: 1.5rem;
-            color: white;
-        }
+    .stat-icon i {
+        font-size: 1.5rem;
+        color: #fff;
+        text-shadow: 0 0 10px rgba(88, 166, 255, 0.5);
+    }
 
-        .stat-info h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
+    .stat-card:hover .stat-icon {
+        background: rgba(88, 166, 255, 0.3);
+        transform: scale(1.05);
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover .stat-icon i {
+        color: #fff;
+        text-shadow: 0 0 15px rgba(88, 166, 255, 0.7);
+    }
+
+    .stat-info h3 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
         color: #fff;
     }
 
     .stat-info p {
-            margin: 0;
-            color: #8b949e;
-        }
-
-        .activity-list {
-            max-height: 300px;
-            overflow-y: auto;
-            padding: 0.5rem;
-        }
-
-        .activity-item {
-            padding: 0.75rem;
-            border-bottom: 1px solid #30363d;
-        display: flex;
-        align-items: center;
-            gap: 0.75rem;
-            transition: background-color 0.2s ease;
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-item:hover {
-            background-color: #2d333b;
-        }
-
-        .activity-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-        display: flex;
-        align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .activity-icon.booking {
-            background-color: #238636;
-        }
-
-        .activity-icon.request {
-            background-color: #f6c23e;
-        }
-
-        .activity-icon.post {
-            background-color: #58a6ff;
-        }
-
-        .activity-icon.visitor {
-            background-color: #f85149;
-        }
-
-        .activity-icon i {
-            color: white;
-            font-size: 0.875rem;
-        }
-
-        .activity-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .activity-title {
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-            color: #fff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .activity-time {
-            font-size: 0.75rem;
-            color: #8b949e;
-        }
-
-        /* Custom scrollbar for activity list */
-        .activity-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .activity-list::-webkit-scrollbar-track {
-            background: #21262d;
-        }
-
-        .activity-list::-webkit-scrollbar-thumb {
-            background: #30363d;
-            border-radius: 3px;
-        }
-
-        .activity-list::-webkit-scrollbar-thumb:hover {
-            background: #444c56;
-        }
-
-    .modal-content {
-            background: #21262d;
-        border: 1px solid #30363d;
-            color: #c9d1d9;
+        margin: 0;
+        color: #8b949e;
     }
 
-    .modal-header {
-            background: #2d333b;
-        border-bottom: 1px solid #30363d;
+    .chart-card, .activity-card {
+        background: rgba(33, 38, 45, 0.95);
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 1.5rem;
+    }
+
+    .chart-header, .activity-header {
+        background: rgba(45, 51, 59, 0.95);
         padding: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .modal-title {
-            color: #fff;
-        font-size: 1.5rem;
+    .chart-header h5, .activity-header h5 {
+        margin: 0;
+        color: #fff;
+        font-size: 1.2rem;
         font-weight: 600;
     }
 
+    .chart-body, .activity-body {
+        padding: 1.5rem;
+    }
+
+    .activity-list {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .activity-item {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: background-color 0.2s ease;
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-item:hover {
+        background: rgba(45, 51, 59, 0.95);
+    }
+
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .activity-icon.booking {
+        background: rgba(35, 134, 54, 0.1);
+    }
+
+    .activity-icon.request {
+        background: rgba(246, 194, 62, 0.1);
+    }
+
+    .activity-icon.post {
+        background: rgba(88, 166, 255, 0.1);
+    }
+
+    .activity-icon.visitor {
+        background: rgba(248, 81, 73, 0.1);
+    }
+
+    .activity-icon i {
+        font-size: 1rem;
+    }
+
+    .activity-icon.booking i {
+        color: #238636;
+    }
+
+    .activity-icon.request i {
+        color: #f6c23e;
+    }
+
+    .activity-icon.post i {
+        color: #58a6ff;
+    }
+
+    .activity-icon.visitor i {
+        color: #f85149;
+    }
+
+    .activity-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .activity-title {
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+        color: #fff;
+    }
+
+    .activity-time {
+        font-size: 0.875rem;
+        color: #8b949e;
+    }
+
+    .modal-content {
+        background: rgba(33, 38, 45, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+    }
+
+    .modal-header {
+        background: rgba(45, 51, 59, 0.95);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-title {
+        color: #fff;
+    }
+
     .modal-body {
-            background: #21262d;
-            padding: 1.5rem;
+        background: rgba(33, 38, 45, 0.95);
     }
 
     .modal-footer {
-            background: #2d333b;
-        border-top: 1px solid #30363d;
-            padding: 1rem;
+        background: rgba(45, 51, 59, 0.95);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-        .form-label {
-            color: #c9d1d9;
-        font-weight: 500;
-            margin-bottom: 0.5rem;
+    .form-label {
+        color: #c9d1d9;
     }
 
-        .form-control {
-            background: #2d333b;
-        border: 1px solid #30363d;
-            color: #c9d1d9;
-            border-radius: 6px;
-        }
+    .form-control {
+        background: rgba(45, 51, 59, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #c9d1d9;
+    }
 
-        .form-control:focus {
-            background: #2d333b;
-            border-color: #58a6ff;
-            color: #c9d1d9;
-            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
-        }
+    .form-control:focus {
+        background: rgba(45, 51, 59, 0.95);
+        border-color: #58a6ff;
+        color: #c9d1d9;
+        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
+    }
 
-        .btn-close {
-            color: #8b949e;
-            opacity: 0.8;
-            filter: invert(1) grayscale(100%) brightness(200%);
-        }
+    .btn-primary {
+        background: #238636;
+        border: 1px solid rgba(240,246,252,0.1);
+        color: #fff;
+    }
 
-        .btn-close:hover {
-            color: #fff;
-            opacity: 1;
-        }
+    .btn-primary:hover {
+        background: #2ea043;
+        transform: translateY(-1px);
+    }
 
-        .btn-primary {
-            background: #238636;
-            border: 1px solid rgba(240,246,252,0.1);
-            color: #fff;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-        }
+    .btn-secondary {
+        background: rgba(45, 51, 59, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #c9d1d9;
+    }
 
-        .btn-primary:hover {
-            background: #2ea043;
-            transform: translateY(-1px);
-        }
+    .btn-secondary:hover {
+        background: rgba(88, 166, 255, 0.1);
+        border-color: #58a6ff;
+        color: #fff;
+    }
 
-        .btn-secondary {
-            background: #21262d;
-            border: 1px solid #30363d;
-            color: #c9d1d9;
-        }
+    /* Custom scrollbar */
+    .activity-list::-webkit-scrollbar {
+        width: 6px;
+    }
 
-        .btn-secondary:hover {
-            background: #2d333b;
-            border-color: #58a6ff;
-            color: #fff;
-        }
-    </style>
+    .activity-list::-webkit-scrollbar-track {
+        background: rgba(33, 38, 45, 0.95);
+    }
+
+    .activity-list::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+    }
+
+    .activity-list::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+</style>
 }
 
 @section Scripts {

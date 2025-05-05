@@ -407,3 +407,4 @@ X:\vscode projects\net-mvc-project\obj\Debug\net8.0\homeowner_app.pdb
 X:\vscode projects\net-mvc-project\obj\Debug\net8.0\homeowner_app.genruntimeconfig.cache
 X:\vscode projects\net-mvc-project\obj\Debug\net8.0\ref\homeowner_app.dll
 X:\vscode projects\net-mvc-project\bin\Debug\net8.0\itextsharp.dll
+C:\Users\ASUS\Desktop\net-mvc-project\bin\Debug\net8.0\itextsharp.dll

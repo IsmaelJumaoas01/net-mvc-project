@@ -42,22 +42,28 @@
     </div>
 
     <div class="facilities-grid">
-                                @foreach (var facility in facilities)
-                                {
-            string imagePath = facility.FacilityName.ToLower().Contains("basketball") ? "/images/basketball_court.jpg" :
-                             facility.FacilityName.ToLower().Contains("pool") ? "/images/swimming_pool.jpg" :
-                             facility.FacilityName.ToLower().Contains("beach") ? "/images/beach.png.jpg" :
-                             facility.FacilityName.ToLower().Contains("shore") ? "/images/shore.png.jpg" :
-                             "/images/beach.png.jpg";
+        @foreach (var facility in facilities)
+        {
+            string imagePath = facility.FacilityName.ToLower().Contains("basketball") ? "https://images.unsplash.com/photo-1519861531473-9200262188bf?w=800&auto=format&fit=crop" :
+                             facility.FacilityName.ToLower().Contains("pool") ? "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=800&auto=format&fit=crop" :
+                             facility.FacilityName.ToLower().Contains("tennis") ? "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=800&auto=format&fit=crop" :
+                             facility.FacilityName.ToLower().Contains("fitness") ? "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&auto=format&fit=crop" :
+                             facility.FacilityName.ToLower().Contains("hall") ? "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&auto=format&fit=crop" :
+                             facility.FacilityName.ToLower().Contains("party") ? "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=800&auto=format&fit=crop" :
+                             facility.FacilityName.ToLower().Contains("bbq") ? "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop" :
+                             facility.FacilityName.ToLower().Contains("playground") ? "https://images.unsplash.com/photo-1560713781-d983d6f5b4e1?w=800&auto=format&fit=crop" :
+                             facility.FacilityName.ToLower().Contains("garden") ? "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&auto=format&fit=crop" :
+                             facility.FacilityName.ToLower().Contains("parking") ? "https://images.unsplash.com/photo-1573348722427-f1d6819fdf98?w=800&auto=format&fit=crop" :
+                             "https://images.unsplash.com/photo-1560090995-01632a28895b?w=800&auto=format&fit=crop";
 
             <div class="facility-card" onclick="selectFacility('@facility.FacilityID', '@facility.FacilityName')" data-aos="fade-up">
                 <div class="facility-image" style="background-image: url('@imagePath')">
-                                            <div class="facility-overlay">
+                    <div class="facility-overlay">
                         <h3>@facility.FacilityName</h3>
                         <button class="btn btn-book">
                             <i class="fas fa-calendar-check"></i> Book Now
-                                </button>
-                            </div>
+                        </button>
+                    </div>
                 </div>
             </div>
         }
@@ -69,27 +75,35 @@
             <i class="fas fa-calendar-alt"></i> Your Reservations
         </h2>
         
-    <div class="reservation-timeline" data-aos="fade-up">
-        @if (paginatedReservations.Any())
-        {
+        <div class="reservation-timeline" data-aos="fade-up">
+            @if (paginatedReservations.Any())
+            {
                 foreach (var res in paginatedReservations)
                 {
                     string statusClass = res.Status.ToLower();
                     string statusIcon = res.Status == "Confirmed" ? "check-circle" :
                                       res.Status == "Pending" ? "clock" : "times-circle";
                     
+                    string imagePath = res.FacilityName.ToLower().Contains("basketball") ? "https://images.unsplash.com/photo-1546519638-68e109acd27b?w=800&auto=format&fit=crop" :
+                                     res.FacilityName.ToLower().Contains("pool") ? "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=800&auto=format&fit=crop" :
+                                     res.FacilityName.ToLower().Contains("tennis") ? "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=800&auto=format&fit=crop" :
+                                     res.FacilityName.ToLower().Contains("fitness") ? "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&auto=format&fit=crop" :
+                                     res.FacilityName.ToLower().Contains("hall") ? "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&auto=format&fit=crop" :
+                                     res.FacilityName.ToLower().Contains("party") ? "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=800&auto=format&fit=crop" :
+                                     res.FacilityName.ToLower().Contains("bbq") ? "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop" :
+                                     res.FacilityName.ToLower().Contains("playground") ? "https://images.unsplash.com/photo-1560713781-d983d6f5b4e1?w=800&auto=format&fit=crop" :
+                                     res.FacilityName.ToLower().Contains("garden") ? "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&auto=format&fit=crop" :
+                                     res.FacilityName.ToLower().Contains("parking") ? "https://images.unsplash.com/photo-1573348722427-f1d6819fdf98?w=800&auto=format&fit=crop" :
+                                     "https://images.unsplash.com/photo-1560090995-01632a28895b?w=800&auto=format&fit=crop";
+                    
                     <div class="timeline-card @statusClass">
-                    <div class="timeline-icon">
+                        <div class="timeline-icon">
                             <i class="fas fa-@statusIcon"></i>
                         </div>
                         <div class="timeline-content">
-                            <div class="facility-img" style="background-image: url('@(res.FacilityName.ToLower().Contains("basketball") ? "/images/basketball_court.jpg" : 
-                                                                                    res.FacilityName.ToLower().Contains("pool") ? "/images/swimming_pool.jpg" : 
-                                                                                    res.FacilityName.ToLower().Contains("beach") ? "/images/beach.png.jpg" :
-                                                                                    res.FacilityName.ToLower().Contains("shore") ? "/images/shore.png.jpg" :
-                                                                                    "/images/beach.png.jpg")')">
-                        </div>
-                        <div class="details">
+                            <div class="facility-img" style="background-image: url('@imagePath')">
+                            </div>
+                            <div class="details">
                                 <h4>@res.FacilityName</h4>
                                 <div class="reservation-details">
                                     <div class="detail-item">
@@ -103,41 +117,41 @@
                                 </div>
                                 <span class="status-badge @statusClass">@res.Status</span>
                             </div>
+                        </div>
                     </div>
-                </div>
-            }
+                }
 
-            @if (totalPages > 1)
+                @if (totalPages > 1)
+                {
+                    <div class="pagination-container" data-aos="fade-up">
+                        <div class="pagination">
+                            @if (currentPage > 1)
+                            {
+                                <a href="?page=@(currentPage - 1)" class="page-link">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            }
+
+                            @for (int i = 1; i <= totalPages; i++)
+                            {
+                                <a href="?page=@i" class="page-link @(i == currentPage ? "active" : "")">@i</a>
+                            }
+
+                            @if (currentPage < totalPages)
+                            {
+                                <a href="?page=@(currentPage + 1)" class="page-link">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+            else
             {
-                <div class="pagination-container" data-aos="fade-up">
-                    <div class="pagination">
-                        @if (currentPage > 1)
-                        {
-                            <a href="?page=@(currentPage - 1)" class="page-link">
-                                <i class="fas fa-chevron-left"></i>
-                            </a>
-                        }
-
-                        @for (int i = 1; i <= totalPages; i++)
-                        {
-                            <a href="?page=@i" class="page-link @(i == currentPage ? "active" : "")">@i</a>
-                        }
-
-                        @if (currentPage < totalPages)
-                        {
-                            <a href="?page=@(currentPage + 1)" class="page-link">
-                                <i class="fas fa-chevron-right"></i>
-                            </a>
-                        }
-                    </div>
-                </div>
-            }
-        }
-        else
-        {
-            <div class="no-reservations" data-aos="fade-up">
-                <i class="fas fa-calendar-times"></i>
-                <p>No reservations found</p>
+                <div class="no-reservations" data-aos="fade-up">
+                    <i class="fas fa-calendar-times"></i>
+                    <p>No reservations found</p>
                     <span>Book a facility to get started!</span>
                 </div>
             }
@@ -648,7 +662,6 @@
         background: #30363d;
         color: #58a6ff;
         transform: translateY(-2px);
-        border-color: #58a6ff;
     }
 
     .page-link.active {

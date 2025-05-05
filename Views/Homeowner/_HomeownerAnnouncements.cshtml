@@ -7,6 +7,7 @@
 
 <link rel="stylesheet" href="~/css/home.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
@@ -15,8 +16,13 @@
 <div class="container mt-4">
     <div class="page-header">
         <div class="header-content">
-            <h2><i class="fas fa-bullhorn"></i> Latest Announcements</h2>
-            <p>Stay updated with community news and updates</p>
+            <div class="header-icon">
+                <i class="fas fa-bullhorn"></i>
+            </div>
+            <div class="header-text">
+                <h2>Latest Announcements</h2>
+                <p>Stay updated with community news and updates</p>
+            </div>
         </div>
     </div>
 
@@ -83,9 +89,6 @@
                         <i class="fas fa-bullhorn modal-icon"></i>
                         <h5 class="modal-title" id="announcementModalLabel">Announcement Title</h5>
                     </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
                 </div>
                 <div class="modal-body">
                     <p id="announcementContent"></p>
@@ -97,7 +100,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    <p class="close-instruction">Click anywhere to close</p>
                 </div>
             </div>
         </div>
@@ -106,7 +109,7 @@
 
 <style>
     body {
-        background-color: #0d1117; /* GitHub dark theme background */
+        background-color: #0d1117;
         color: #ffffff;
         font-family: 'Poppins', sans-serif;
     }
@@ -114,7 +117,7 @@
     .container {
         position: relative;
         padding: 2rem;
-        background-color: #161b22; /* GitHub dark theme container */
+        background: linear-gradient(145deg, #161b22, #1c2128);
         border-radius: 20px;
         box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
     }
@@ -124,26 +127,42 @@
         align-items: center;
         margin-bottom: 2rem;
         padding: 1.5rem;
-        background: #21262d; /* GitHub dark theme header */
+        background: linear-gradient(145deg, #21262d, #2d333b);
         border-radius: 12px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
     .header-content {
-        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
     }
 
-    .page-header h2 {
+    .header-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(45deg, #58a6ff, #238636);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(88, 166, 255, 0.2);
+    }
+
+    .header-icon i {
+        font-size: 1.8rem;
+        color: white;
+    }
+
+    .header-text h2 {
         color: #fff;
         font-size: 1.8rem;
         margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 0.8rem;
+        font-weight: 600;
     }
 
-    .page-header p {
-        color: #8b949e; /* GitHub dark theme text */
+    .header-text p {
+        color: #8b949e;
         margin: 0.5rem 0 0 0;
         font-size: 1rem;
     }
@@ -153,7 +172,7 @@
     }
 
     .content-section {
-        background: #21262d; /* GitHub dark theme section */
+        background: linear-gradient(145deg, #21262d, #2d333b);
         border-radius: 15px;
         padding: 1.5rem;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -169,14 +188,15 @@
         display: flex;
         align-items: center;
         gap: 1rem;
-        background: #2d333b;
+        background: linear-gradient(145deg, #2d333b, #373e47);
         padding: 0.8rem 1.2rem;
         border-radius: 12px;
         border: 1px solid #30363d;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     .sort-control i {
-        color: #58a6ff; /* GitHub blue */
+        color: #58a6ff;
     }
 
     .sort-control select {
@@ -185,6 +205,7 @@
         color: #c9d1d9;
         font-size: 1rem;
         cursor: pointer;
+        font-family: 'Poppins', sans-serif;
     }
 
     .announcement-grid {
@@ -194,17 +215,34 @@
     }
 
     .announcement-card {
-        background: #2d333b;
+        background: linear-gradient(145deg, #2d333b, #373e47);
         border-radius: 15px;
         overflow: hidden;
         transition: all 0.3s ease;
         cursor: pointer;
         border: 1px solid #30363d;
+        position: relative;
+    }
+
+    .announcement-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #58a6ff, #238636);
+        opacity: 0;
+        transition: opacity 0.3s ease;
     }
 
     .announcement-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .announcement-card:hover::before {
+        opacity: 1;
     }
 
     .card-content {
@@ -220,6 +258,7 @@
         align-items: center;
         justify-content: center;
         margin-bottom: 1.5rem;
+        box-shadow: 0 4px 15px rgba(88, 166, 255, 0.2);
     }
 
     .announcement-icon i {
@@ -232,12 +271,14 @@
         font-weight: 600;
         margin-bottom: 1rem;
         color: #fff;
+        line-height: 1.4;
     }
 
     .announcement-preview {
         color: #c9d1d9;
         line-height: 1.6;
         margin-bottom: 1.5rem;
+        font-size: 0.95rem;
     }
 
     .announcement-footer {
@@ -245,6 +286,8 @@
         gap: 1.5rem;
         color: #8b949e;
         font-size: 0.9rem;
+        padding-top: 1rem;
+        border-top: 1px solid #30363d;
     }
 
     .announcement-footer span {
@@ -253,91 +296,123 @@
         gap: 0.5rem;
     }
 
+    .announcement-footer i {
+        color: #58a6ff;
+    }
+
     /* Modal Styles */
     .modal-content {
-        background: #21262d;
+        background: linear-gradient(145deg, #21262d, #2d333b);
         border: 1px solid #30363d;
-        color: #fff;
+        border-radius: 15px;
     }
 
     .modal-header {
-        background: #2d333b;
         border-bottom: 1px solid #30363d;
         padding: 1.5rem;
     }
 
+    .modal-title-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .modal-icon {
+        color: #58a6ff;
+        font-size: 1.5rem;
+    }
+
     .modal-title {
         color: #fff;
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         font-weight: 600;
+        margin: 0;
     }
 
     .modal-body {
         padding: 2rem;
-        font-size: 1.1rem;
-        line-height: 1.8;
         color: #c9d1d9;
+        line-height: 1.8;
     }
 
     .modal-footer {
         border-top: 1px solid #30363d;
         padding: 1.5rem;
+        text-align: center;
     }
 
-    .close {
+    .modal-footer-info {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #30363d;
         color: #8b949e;
-        opacity: 0.8;
+    }
+
+    .btn-primary {
+        background: linear-gradient(45deg, #58a6ff, #238636);
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
         transition: all 0.3s ease;
     }
 
-    .close:hover {
-        color: #fff;
-        opacity: 1;
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(88, 166, 255, 0.3);
+    }
+
+    .close-instruction {
+        color: #8b949e;
+        font-size: 0.9rem;
+        margin: 0;
+        font-style: italic;
+    }
+
+    /* Remove the old close button styles since we're not using them anymore */
+    .close {
+        display: none;
     }
 </style>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const sortSelect = document.getElementById("sortSelect");
-        const container = document.getElementById("announcementContainer");
-        const cards = Array.from(container.getElementsByClassName("announcement-card"));
-
-        function sortAnnouncements(order) {
-            const sorted = cards.sort((a, b) => {
-                const dateA = new Date(a.getAttribute("data-created-at"));
-                const dateB = new Date(b.getAttribute("data-created-at"));
-                return order === "newest" ? dateB - dateA : dateA - dateB;
-            });
-            
-            // Clear container
-            container.innerHTML = "";
-            
-            // Add animation classes to cards
-            sorted.forEach((card, index) => {
-                card.style.animation = `fadeInUp 0.5s ease forwards ${index * 0.1}s`;
-                container.appendChild(card);
-            });
-        }
-
-        sortSelect.addEventListener("change", function () {
-            sortAnnouncements(this.value);
-        });
-
-        // Initial sort
-        sortAnnouncements("newest");
-    });
-
     function openAnnouncementModal(element) {
-        const title = element.getAttribute("data-title");
-        const content = element.getAttribute("data-content");
-        const date = element.getAttribute("data-date");
+        const title = element.getAttribute('data-title');
+        const content = element.getAttribute('data-content');
+        const date = element.getAttribute('data-date');
 
-        document.getElementById("announcementModalLabel").innerText = title;
-        document.getElementById("announcementContent").innerText = content;
-        document.querySelector("#announcementDate .date-text").innerText = date;
+        document.getElementById('announcementModalLabel').textContent = title;
+        document.getElementById('announcementContent').textContent = content;
+        document.querySelector('.date-text').textContent = date;
 
+        $('#announcementModal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
         $('#announcementModal').modal('show');
     }
+
+    // Add click event to close modal when clicking anywhere
+    $('#announcementModal').on('click', function(e) {
+        if (e.target === this) {
+            $(this).modal('hide');
+        }
+    });
+
+    document.getElementById('sortSelect').addEventListener('change', function() {
+        const container = document.getElementById('announcementContainer');
+        const cards = Array.from(container.getElementsByClassName('announcement-card'));
+        
+        cards.sort((a, b) => {
+            const dateA = new Date(a.getAttribute('data-created-at'));
+            const dateB = new Date(b.getAttribute('data-created-at'));
+            
+            return this.value === 'newest' ? dateB - dateA : dateA - dateB;
+        });
+        
+        cards.forEach(card => container.appendChild(card));
+    });
 </script>
 
 

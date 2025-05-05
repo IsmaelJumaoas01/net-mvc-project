@@ -14,6 +14,7 @@ namespace homeowner.Controllers
         public IActionResult Index()
         {
             string role = HttpContext.Session.GetString("Role") ?? "";
+            string userIdStr = HttpContext.Session.GetString("UserID");
             ViewBag.IsAdmin = role == "Administrator";
             ViewBag.IsStaff = role == "Staff";
 
@@ -24,8 +25,13 @@ namespace homeowner.Controllers
                 string sql = @"SELECT f.*, u.Username 
                               FROM feedback f
                               JOIN users u ON f.UserID = u.UserID
+                              WHERE (@IsAdmin = 1 OR @IsStaff = 1 OR f.UserID = @UserID)
                               ORDER BY f.CreatedAt DESC";
-                feedbacks = connection.Query<FeedbackModel>(sql).ToList();
+                feedbacks = connection.Query<FeedbackModel>(sql, new { 
+                    IsAdmin = role == "Administrator" ? 1 : 0,
+                    IsStaff = role == "Staff" ? 1 : 0,
+                    UserID = userIdStr
+                }).ToList();
             }
 
             return View(feedbacks);

@@ -16,52 +16,75 @@
     @if (isLoggedIn)
     {
         <div class="nav-links">
-            <a asp-controller="Home" asp-action="Index">
-                <i class="fas fa-home"></i> Home
-            </a>
-            <a asp-controller="Announcements" asp-action="Index">
-                <i class="fas fa-bullhorn"></i> Announcements
-            </a>
-            <a asp-controller="Forum" asp-action="Index">
-                <i class="fas fa-newspaper"></i> Forums
-            </a>
-            <a asp-controller="Billing" asp-action="Dashboard">
-                <i class="fas fa-file-invoice-dollar"></i> Billing & Payments
-            </a>
+            <!-- Main Navigation -->
+            <div class="nav-category">
+                <h3>Main Menu</h3>
+                <a asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a asp-controller="Announcements" asp-action="Index">
+                    <i class="fas fa-bullhorn"></i> Announcements
+                </a>
+                <a asp-controller="Forum" asp-action="Index">
+                    <i class="fas fa-newspaper"></i> Forums
+                </a>
+            </div>
 
-            @if (role == "Homeowner")
-            {
-                <a asp-controller="FacilityBooking" asp-action="Index">
-                    <i class="fas fa-calendar-alt"></i> Facility Booking
+            <!-- Community Services -->
+            <div class="nav-category">
+                <h3>Community Services</h3>
+                <a asp-controller="Billing" asp-action="Dashboard">
+                    <i class="fas fa-file-invoice-dollar"></i> Billing & Payments
                 </a>
-                <a asp-controller="ServiceRequests" asp-action="Index">
-                    <i class="fas fa-tools"></i> Service Request
-                </a>
-                <a asp-controller="ContactDirectory" asp-action="Index">
-                    <i class="fas fa-address-book"></i> Contact Directory
-                </a>
-                <a asp-controller="Feedback" asp-action="Index">
-                    <i class="fas fa-comment-dots"></i> Feedback & Complaints
-                </a>
-                <a asp-controller="Security" asp-action="VisitorPasses">
-                    <i class="fas fa-user-friends"></i> Visitor Passes
-                </a>
-                <a asp-controller="Security" asp-action="Vehicles">
-                    <i class="fas fa-car"></i> Vehicle Registration
+                <a href="@Url.Action("Index", "Poll")">
+                    <i class="fas fa-poll"></i> Polls & Surveys
                 </a>
                 <a asp-controller="Calendar" asp-action="Index">
                     <i class="fas fa-calendar"></i> Community Calendar
                 </a>
+                <a asp-controller="ContactDirectory" asp-action="Index">
+                    <i class="fas fa-address-book"></i> Contact Directory
+                </a>
+            </div>
+
+            @if (role == "Homeowner")
+            {
+                <!-- Facilities & Services -->
+                <div class="nav-category">
+                    <h3>Facilities & Services</h3>
+                    <a asp-controller="FacilityBooking" asp-action="Index">
+                        <i class="fas fa-calendar-alt"></i> Facility Booking
+                    </a>
+                    <a asp-controller="ServiceRequests" asp-action="Index">
+                        <i class="fas fa-tools"></i> Service Request
+                    </a>
+                    <a asp-controller="Feedback" asp-action="Index">
+                        <i class="fas fa-comment-dots"></i> Feedback & Complaints
+                    </a>
+                </div>
+
+                <!-- Security & Registration -->
+                <div class="nav-category">
+                    <h3>Security & Registration</h3>
+                    <a asp-controller="Security" asp-action="VisitorPasses">
+                        <i class="fas fa-user-friends"></i> Visitor Passes
+                    </a>
+                    <a asp-controller="Security" asp-action="Vehicles">
+                        <i class="fas fa-car"></i> Vehicle Registration
+                    </a>
+                </div>
             }
             @if (role == "Administrator" || role == "Staff")
             {
-                <a asp-controller="Security" asp-action="ManageVehicles">
-                    <i class="fas fa-car"></i> Manage Vehicle Registrations
-                </a>
+                <!-- Management Tools -->
+                <div class="nav-category">
+                    <h3>Management</h3>
+                    <a asp-controller="Security" asp-action="ManageVehicles">
+                        <i class="fas fa-car"></i> Vehicle Management
+                    </a>
+                    <!-- Add other admin/staff specific links here -->
+                </div>
             }
-            <a href="@Url.Action("Index", "Poll")">
-                <i class="fas fa-poll"></i> Polls & Surveys
-            </a>
         </div>
     }
     else
@@ -445,6 +468,48 @@
     .nav-links i {
         width: 20px;
         text-align: center;
+    }
+
+    .nav-category {
+        margin: 1rem 0;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #30363d;
+    }
+
+    .nav-category:last-child {
+        border-bottom: none;
+    }
+
+    .nav-category h3 {
+        color: #58a6ff;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        margin: 0.5rem 1rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .nav-links a {
+        padding: 0.75rem 1.5rem;
+        color: #c9d1d9;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        transition: all 0.3s ease;
+        border-radius: 6px;
+        margin: 0.25rem 0.75rem;
+    }
+
+    .nav-links a:hover {
+        background: #30363d;
+        color: #58a6ff;
+    }
+
+    .nav-links a i {
+        width: 20px;
+        text-align: center;
+        font-size: 1.1rem;
     }
 </style>
 
