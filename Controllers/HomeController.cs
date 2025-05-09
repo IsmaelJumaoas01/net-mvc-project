@@ -80,20 +80,68 @@ namespace homeowner.Controllers
             {
                 connection.Open();
 
-                // Get total users count
+                // Basic Stats
                 var totalUsers = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM USERS");
-
-                // Get today's reservations count
                 var todaysReservations = connection.ExecuteScalar<int>(
                     "SELECT COUNT(*) FROM facility_reservations WHERE DATE(ReservationDate) = CURDATE()");
-
-                // Get pending service requests count
                 var pendingServices = connection.ExecuteScalar<int>(
                     "SELECT COUNT(*) FROM service_requests WHERE Status = 'Pending'");
 
+                // Financial Stats
+                var totalBilled = connection.ExecuteScalar<decimal>(
+                    "SELECT COALESCE(SUM(Amount), 0) FROM bills WHERE Status != 'Cancelled'");
+                var totalCollected = connection.ExecuteScalar<decimal>(
+                    "SELECT COALESCE(SUM(Amount), 0) FROM payments");
+                var pendingPayments = connection.ExecuteScalar<decimal>(
+                    "SELECT COALESCE(SUM(Amount), 0) FROM bills WHERE Status = 'Pending'");
+
+                // Service Request Stats
+                var totalServiceRequests = connection.ExecuteScalar<int>(
+                    "SELECT COUNT(*) FROM service_requests");
+                var completedServices = connection.ExecuteScalar<int>(
+                    "SELECT COUNT(*) FROM service_requests WHERE Status = 'Completed'");
+                var inProgressServices = connection.ExecuteScalar<int>(
+                    "SELECT COUNT(*) FROM service_requests WHERE Status = 'In Progress'");
+
+                // Community Engagement Stats
+                var totalAnnouncements = connection.ExecuteScalar<int>(
+                    "SELECT COUNT(*) FROM announcements");
+                var totalForumPosts = connection.ExecuteScalar<int>(
+                    "SELECT COUNT(*) FROM forum_posts");
+                var totalPolls = connection.ExecuteScalar<int>(
+                    "SELECT COUNT(*) FROM polls");
+                var totalPollResponses = connection.ExecuteScalar<int>(
+                    "SELECT COUNT(*) FROM poll_responses");
+
+                // Recent Activity
+                var recentPayments = connection.Query<dynamic>(
+                    @"SELECT p.PaymentID, p.Amount, p.PaymentDate, p.PaymentMethod, u.Username 
+                    FROM payments p 
+                    JOIN users u ON p.UserID = u.UserID 
+                    ORDER BY p.PaymentDate DESC LIMIT 5").ToList();
+
+                var recentServiceRequests = connection.Query<dynamic>(
+                    @"SELECT sr.RequestID, sr.Description as Title, sr.Status, sr.RequestDate as CreatedAt, u.Username 
+                    FROM service_requests sr 
+                    JOIN users u ON sr.UserID = u.UserID 
+                    ORDER BY sr.RequestDate DESC LIMIT 5").ToList();
+
+                // Set ViewBag values
                 ViewBag.TotalUsers = totalUsers;
                 ViewBag.TodaysReservations = todaysReservations;
                 ViewBag.PendingServices = pendingServices;
+                ViewBag.TotalBilled = totalBilled;
+                ViewBag.TotalCollected = totalCollected;
+                ViewBag.PendingPayments = pendingPayments;
+                ViewBag.TotalServiceRequests = totalServiceRequests;
+                ViewBag.CompletedServices = completedServices;
+                ViewBag.InProgressServices = inProgressServices;
+                ViewBag.TotalAnnouncements = totalAnnouncements;
+                ViewBag.TotalForumPosts = totalForumPosts;
+                ViewBag.TotalPolls = totalPolls;
+                ViewBag.TotalPollResponses = totalPollResponses;
+                ViewBag.RecentPayments = recentPayments;
+                ViewBag.RecentServiceRequests = recentServiceRequests;
             }
 
             return View();
